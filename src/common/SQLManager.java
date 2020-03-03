@@ -3,7 +3,7 @@ package common;
 import com.mysql.jdbc.PreparedStatement;
 import common.Constantes;
 import common.LesGuardians;
-import common.World;
+import common.Mundo;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,30 +14,30 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
-import objects.Acao;
-import objects.Animacao;
+import objects.Acción;
+import objects.Animación;
 import objects.Casa;
 import objects.Cofre;
-import objects.Coletor;
-import objects.Conta;
-import objects.Desafios;
-import objects.Dragossauros;
-import objects.Guild;
-import objects.Incarnacao;
-import objects.MOB_tmpl;
-import objects.Maps;
-import objects.Mercador;
-import objects.NPC_tmpl;
+import objects.Recaudador;
+import objects.Cuenta;
+import objects.Reto;
+import objects.Dragopavo;
+import objects.Gremio;
+import objects.Encarnación;
+import objects.MobModelo;
+import objects.Mapa;
+import objects.Mercadillo;
+import objects.NPCModelo;
 import objects.Objeto;
-import objects.Personagens;
-import objects.Pets;
+import objects.Personaje;
+import objects.Mascota;
 import objects.Prisma;
-import objects.Profissao;
-import objects.RankPVP;
-import objects.Set_Vivo;
-import objects.Spell;
-import objects.Spell.StatsHechizos;
-import objects.Stockage;
+import objects.Oficio;
+import objects.RankingPVP;
+import objects.Objevivo;
+import objects.Hechizo;
+import objects.Hechizo.StatsHechizos;
+import objects.Tienda;
 import objects.Tutorial;
 
 import org.fusesource.jansi.AnsiConsole;
@@ -237,7 +237,7 @@ public class SQLManager {
         }
     }
 
-    public static void SALVAR_CUENTA(Conta cuenta) {
+    public static void SALVAR_CUENTA(Cuenta cuenta) {
         try {
             String consultaSQL = "UPDATE accounts SET `kamas` = ?,`objets` = ?,`level` = ?,`etable` = ?,`banned` = ?,`friends` = ?,`enemy` = ?,`lastIP` = ?,`lastConnectionDate` = ? WHERE `guid` = ?;";
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -274,7 +274,7 @@ public class SQLManager {
         }
     }
 
-    public static void ACTUALIZAR_PRIMERA_VEZ(Conta cuenta) {
+    public static void ACTUALIZAR_PRIMERA_VEZ(Cuenta cuenta) {
         try {
             String consultaSQL = "UPDATE accounts SET primeravez = 0 WHERE `guid` = ?;";
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -292,14 +292,14 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from crafts;", LesGuardians.BDD_STATIC);
             while (resultado.next()) {
-                ArrayList<World.Duo<Integer, Integer>> arrayDuos = new ArrayList<World.Duo<Integer, Integer>>();
+                ArrayList<Mundo.Duo<Integer, Integer>> arrayDuos = new ArrayList<Mundo.Duo<Integer, Integer>>();
                 boolean continua = false;
                 for (String str : resultado.getString("craft").split(";")) {
                     try {
                         String[] s = str.split("\\*");
                         int idModeloObj = Integer.parseInt(s[0]);
                         int cantidad = Integer.parseInt(s[1]);
-                        arrayDuos.add(new World.Duo<Integer, Integer>(idModeloObj, cantidad));
+                        arrayDuos.add(new Mundo.Duo<Integer, Integer>(idModeloObj, cantidad));
                         continua = true;
                     }
                     catch (Exception e) {
@@ -308,7 +308,7 @@ public class SQLManager {
                     }
                 }
                 if (!continua) continue;
-                World.addReceta(resultado.getInt("id"), arrayDuos);
+                Mundo.addReceta(resultado.getInt("id"), arrayDuos);
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -322,7 +322,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from guilds;", LesGuardians.BDD_OTHER);
             while (resultado.next()) {
-                World.addGremio(new Guild(resultado.getInt("id"), resultado.getString("name"), resultado.getString("emblem"), resultado.getInt("lvl"), resultado.getLong("xp"), resultado.getInt("capital"), resultado.getInt("nbrmax"), resultado.getString("sorts"), resultado.getString("stats")));
+                Mundo.addGremio(new Gremio(resultado.getInt("id"), resultado.getString("name"), resultado.getString("emblem"), resultado.getInt("lvl"), resultado.getLong("xp"), resultado.getInt("capital"), resultado.getInt("nbrmax"), resultado.getString("sorts"), resultado.getString("stats")));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -337,7 +337,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from guild_members;", LesGuardians.BDD_OTHER);
             while (resultado.next()) {
-                Guild gremio = World.getGremio(resultado.getInt("guild"));
+                Gremio gremio = Mundo.getGremio(resultado.getInt("guild"));
                 if (gremio == null) continue;
                 gremio.addMiembro(resultado.getInt("guid"), resultado.getString("name"), resultado.getInt("level"), resultado.getInt("gfxid"), resultado.getInt("rank"), resultado.getByte("pxp"), resultado.getLong("xpdone"), resultado.getInt("rights"), resultado.getDate("lastConnection").toString().replaceAll("-", "~"));
                 ++numero;
@@ -356,7 +356,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from mounts_data;", LesGuardians.BDD_OTHER);
             while (resultado.next()) {
-                World.addDragopavo(new Dragossauros(resultado.getInt("id"), resultado.getInt("color"), resultado.getInt("sexe"), resultado.getInt("amour"), resultado.getInt("endurance"), resultado.getInt("level"), resultado.getLong("xp"), resultado.getString("name"), resultado.getInt("fatigue"), resultado.getInt("energie"), resultado.getInt("reproductions"), resultado.getInt("maturite"), resultado.getInt("serenite"), resultado.getString("items"), resultado.getString("ancetres"), resultado.getString("ability"), resultado.getInt("size"), resultado.getShort("cell"), resultado.getShort("map"), resultado.getInt("owner"), resultado.getInt("orientation"), resultado.getInt("reproductions"), resultado.getInt("couple"), resultado.getString("vip")));
+                Mundo.addDragopavo(new Dragopavo(resultado.getInt("id"), resultado.getInt("color"), resultado.getInt("sexe"), resultado.getInt("amour"), resultado.getInt("endurance"), resultado.getInt("level"), resultado.getLong("xp"), resultado.getString("name"), resultado.getInt("fatigue"), resultado.getInt("energie"), resultado.getInt("reproductions"), resultado.getInt("maturite"), resultado.getInt("serenite"), resultado.getString("items"), resultado.getString("ancetres"), resultado.getString("ability"), resultado.getInt("size"), resultado.getShort("cell"), resultado.getShort("map"), resultado.getInt("owner"), resultado.getInt("orientation"), resultado.getInt("reproductions"), resultado.getInt("couple"), resultado.getString("vip")));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -370,8 +370,8 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from drops;", LesGuardians.BDD_STATIC);
             while (resultado.next()) {
-                MOB_tmpl MM = World.getMobModelo(resultado.getInt("mob"));
-                MM.addDrop(new World.Drop(resultado.getInt("item"), resultado.getInt("seuil"), resultado.getInt("taux"), resultado.getInt("max")));
+                MobModelo MM = Mundo.getMobModelo(resultado.getInt("mob"));
+                MM.addDrop(new Mundo.Drop(resultado.getInt("item"), resultado.getInt("seuil"), resultado.getInt("taux"), resultado.getInt("max")));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -385,7 +385,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from itemsets;", LesGuardians.BDD_STATIC);
             while (resultado.next()) {
-                World.addObjetoSet(new World.ObjetoSet(resultado.getInt("ID"), resultado.getString("items"), resultado.getString("bonus")));
+                Mundo.addObjetoSet(new Mundo.ObjetoSet(resultado.getInt("ID"), resultado.getString("items"), resultado.getString("bonus")));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -399,7 +399,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from interactive_objects_data;", LesGuardians.BDD_STATIC);
             while (resultado.next()) {
-                World.addObjInteractivo(new World.ObjInteractivoModelo(resultado.getInt("id"), resultado.getInt("respawn"), resultado.getInt("duration"), resultado.getInt("actionPersonnage"), resultado.getInt("walkable") == 1));
+                Mundo.addObjInteractivo(new Mundo.ObjInteractivoModelo(resultado.getInt("id"), resultado.getInt("respawn"), resultado.getInt("duration"), resultado.getInt("actionPersonnage"), resultado.getInt("walkable") == 1));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -414,10 +414,10 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from mountpark;", LesGuardians.BDD_OTHER);
             while (resultado.next()) {
-                Maps mapa = World.getMapa(resultado.getShort("mapid"));
+                Mapa mapa = Mundo.getMapa(resultado.getShort("mapid"));
                 if (mapa == null) continue;
-                Maps.Cercado cercado = new Maps.Cercado(resultado.getInt("owner"), mapa, resultado.getShort("cellid"), resultado.getInt("taille"), resultado.getInt("guild"), resultado.getInt("price"), resultado.getShort("cellmonture"), resultado.getString("sensibilisation"), resultado.getShort("cellporte"), resultado.getString("cellsitem"), resultado.getInt("objets"), resultado.getString("objetoscolocados"));
-                World.addCercado(cercado);
+                Mapa.Cercado cercado = new Mapa.Cercado(resultado.getInt("owner"), mapa, resultado.getShort("cellid"), resultado.getInt("taille"), resultado.getInt("guild"), resultado.getInt("price"), resultado.getShort("cellmonture"), resultado.getString("sensibilisation"), resultado.getShort("cellporte"), resultado.getString("cellsitem"), resultado.getInt("objets"), resultado.getString("objetoscolocados"));
+                Mundo.addCercado(cercado);
                 ++num;
             }
             SQLManager.cerrarResultado(resultado);
@@ -434,7 +434,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from jobs_data;", LesGuardians.BDD_STATIC);
             while (resultado.next()) {
-                World.addOficio(new Profissao(resultado.getInt("id"), resultado.getString("tools"), resultado.getString("crafts")));
+                Mundo.addOficio(new Oficio(resultado.getInt("id"), resultado.getString("tools"), resultado.getString("crafts")));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -448,8 +448,8 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from area_data;", LesGuardians.BDD_OTHER);
             while (resultado.next()) {
-                World.Area A = new World.Area(resultado.getShort("id"), resultado.getInt("superarea"), resultado.getString("name"), resultado.getInt("alignement"), resultado.getInt("prisme"));
-                World.addArea(A);
+                Mundo.Area A = new Mundo.Area(resultado.getShort("id"), resultado.getInt("superarea"), resultado.getString("name"), resultado.getInt("alignement"), resultado.getInt("prisme"));
+                Mundo.addArea(A);
                 A.getSuperArea().addArea(A);
             }
             SQLManager.cerrarResultado(resultado);
@@ -464,8 +464,8 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from subarea_data;", LesGuardians.BDD_OTHER);
             while (resultado.next()) {
-                World.SubArea SA = new World.SubArea(resultado.getInt("id"), resultado.getShort("area"), resultado.getInt("alignement"), resultado.getString("name"), resultado.getInt("conquerissable"), resultado.getInt("prisme"));
-                World.addSubArea(SA);
+                Mundo.SubArea SA = new Mundo.SubArea(resultado.getInt("id"), resultado.getShort("area"), resultado.getInt("alignement"), resultado.getString("name"), resultado.getInt("conquerissable"), resultado.getInt("prisme"));
+                Mundo.addSubArea(SA);
                 if (SA.getArea() == null) continue;
                 SA.getArea().addSubArea(SA);
             }
@@ -477,7 +477,7 @@ public class SQLManager {
         }
     }
 
-    public static void ACTUALIZAR_SUBAREA(World.SubArea subarea) {
+    public static void ACTUALIZAR_SUBAREA(Mundo.SubArea subarea) {
         try {
             String consultaSQL = "REPLACE INTO `subarea_data` VALUES (?,?,?,?,?,?);";
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -495,7 +495,7 @@ public class SQLManager {
         }
     }
 
-    public static void ACTUALIZAR_AREA(World.Area area) {
+    public static void ACTUALIZAR_AREA(Mundo.Area area) {
         try {
             String consultaSQL = "UPDATE `area_data` SET `alignement` = ?, `prisme` = ? WHERE id = ?;";
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -515,7 +515,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from npcs;", LesGuardians.BDD_STATIC);
             while (resultado.next()) {
-                Maps mapa = World.getMapa(resultado.getShort("mapid"));
+                Mapa mapa = Mundo.getMapa(resultado.getShort("mapid"));
                 if (mapa == null) continue;
                 mapa.addNPC(resultado.getInt("npcid"), resultado.getShort("cellid"), resultado.getByte("orientation"));
                 ++numero;
@@ -535,10 +535,10 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from percepteurs;", LesGuardians.BDD_OTHER);
             while (resultado.next()) {
-                Maps mapa = World.getMapa(resultado.getShort("mapid"));
+                Mapa mapa = Mundo.getMapa(resultado.getShort("mapid"));
                 if (mapa == null) continue;
-                Coletor recaudador = new Coletor(resultado.getInt("id"), resultado.getShort("mapid"), resultado.getShort("cellid"), resultado.getByte("orientation"), resultado.getInt("guild_id"), resultado.getString("N1"), resultado.getString("N2"), resultado.getString("objets"), resultado.getLong("kamas"), resultado.getLong("xp"));
-                World.addRecaudador(recaudador);
+                Recaudador recaudador = new Recaudador(resultado.getInt("id"), resultado.getShort("mapid"), resultado.getShort("cellid"), resultado.getByte("orientation"), resultado.getInt("guild_id"), resultado.getString("N1"), resultado.getString("N2"), resultado.getString("objets"), resultado.getLong("kamas"), resultado.getLong("xp"));
+                Mundo.addRecaudador(recaudador);
                 ++numero;
             }
             SQLManager.cerrarResultado(resultado);
@@ -556,9 +556,9 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from houses;", LesGuardians.BDD_OTHER);
             while (resultado.next()) {
-                Maps mapa = World.getMapa(resultado.getShort("map_id"));
+                Mapa mapa = Mundo.getMapa(resultado.getShort("map_id"));
                 if (mapa == null) continue;
-                World.agregarCasa(new Casa(resultado.getInt("id"), resultado.getShort("map_id"), resultado.getShort("cell_id"), resultado.getInt("owner_id"), resultado.getInt("sale"), resultado.getInt("guild_id"), resultado.getInt("access"), resultado.getString("key"), resultado.getInt("guild_rights"), resultado.getShort("mapid"), resultado.getShort("caseid")));
+                Mundo.agregarCasa(new Casa(resultado.getInt("id"), resultado.getShort("map_id"), resultado.getShort("cell_id"), resultado.getInt("owner_id"), resultado.getInt("sale"), resultado.getInt("guild_id"), resultado.getInt("access"), resultado.getString("key"), resultado.getInt("guild_rights"), resultado.getShort("mapid"), resultado.getShort("caseid")));
                 ++numero;
             }
             SQLManager.cerrarResultado(resultado);
@@ -577,8 +577,8 @@ public class SQLManager {
             String consultaSQL = "UPDATE accounts SET `reload_needed` = 0  WHERE guid = ?;";
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
             while (resultado.next()) {
-                Conta C = new Conta(resultado.getInt("guid"), resultado.getString("account").toLowerCase(), resultado.getString("pass"), resultado.getString("pseudo"), resultado.getString("question"), resultado.getString("reponse"), resultado.getInt("level"), resultado.getInt("vip"), resultado.getInt("banned") == 1, resultado.getString("lastIP"), resultado.getString("lastConnectionDate"), resultado.getString("objets"), resultado.getInt("kamas"), resultado.getString("friends"), resultado.getString("enemy"), resultado.getString("etable"), resultado.getInt("primeravez"), resultado.getInt("cadeau"));
-                World.addCuenta(C);
+                Cuenta C = new Cuenta(resultado.getInt("guid"), resultado.getString("account").toLowerCase(), resultado.getString("pass"), resultado.getString("pseudo"), resultado.getString("question"), resultado.getString("reponse"), resultado.getInt("level"), resultado.getInt("vip"), resultado.getInt("banned") == 1, resultado.getString("lastIP"), resultado.getString("lastConnectionDate"), resultado.getString("objets"), resultado.getInt("kamas"), resultado.getString("friends"), resultado.getString("enemy"), resultado.getString("etable"), resultado.getInt("primeravez"), resultado.getInt("cadeau"));
+                Mundo.addCuenta(C);
                 declaracion.setInt(1, resultado.getInt("guid"));
                 declaracion.executeUpdate();
             }
@@ -602,8 +602,8 @@ public class SQLManager {
                 stats.put(126, resultado.getInt("intelligence"));
                 stats.put(123, resultado.getInt("chance"));
                 stats.put(119, resultado.getInt("agilite"));
-                Personagens perso = new Personagens(resultado.getInt("guid"), resultado.getString("name"), resultado.getInt("sexe"), resultado.getInt("class"), resultado.getInt("color1"), resultado.getInt("color2"), resultado.getInt("color3"), resultado.getLong("kamas"), resultado.getInt("spellboost"), resultado.getInt("capital"), resultado.getInt("energy"), resultado.getInt("level"), resultado.getLong("xp"), resultado.getInt("size"), resultado.getInt("gfx"), resultado.getByte("alignement"), resultado.getInt("account"), stats, resultado.getInt("seeFriend"), resultado.getByte("seeAlign"), resultado.getString("canaux"), resultado.getShort("map"), resultado.getInt("cell"), resultado.getString("objets"), resultado.getInt("pdvper"), resultado.getString("spells"), resultado.getString("savepos"), resultado.getString("jobs"), resultado.getInt("mountxpgive"), resultado.getInt("mount"), resultado.getInt("honor"), resultado.getInt("deshonor"), resultado.getInt("alvl"), resultado.getString("zaaps"), resultado.getByte("title"), resultado.getInt("esposo"), resultado.getString("tienda"), resultado.getInt("mercante"), resultado.getInt("sForce"), resultado.getInt("sIntelligence"), resultado.getInt("sAgilite"), resultado.getInt("sChance"), resultado.getInt("sVitalite"), resultado.getInt("sSagesse"), resultado.getInt("restrictionA"), resultado.getInt("restrictionB"), resultado.getInt("incarnation"));
-                World.addPersonaje(perso);
+                Personaje perso = new Personaje(resultado.getInt("guid"), resultado.getString("name"), resultado.getInt("sexe"), resultado.getInt("class"), resultado.getInt("color1"), resultado.getInt("color2"), resultado.getInt("color3"), resultado.getLong("kamas"), resultado.getInt("spellboost"), resultado.getInt("capital"), resultado.getInt("energy"), resultado.getInt("level"), resultado.getLong("xp"), resultado.getInt("size"), resultado.getInt("gfx"), resultado.getByte("alignement"), resultado.getInt("account"), stats, resultado.getInt("seeFriend"), resultado.getByte("seeAlign"), resultado.getString("canaux"), resultado.getShort("map"), resultado.getInt("cell"), resultado.getString("objets"), resultado.getInt("pdvper"), resultado.getString("spells"), resultado.getString("savepos"), resultado.getString("jobs"), resultado.getInt("mountxpgive"), resultado.getInt("mount"), resultado.getInt("honor"), resultado.getInt("deshonor"), resultado.getInt("alvl"), resultado.getString("zaaps"), resultado.getByte("title"), resultado.getInt("esposo"), resultado.getString("tienda"), resultado.getInt("mercante"), resultado.getInt("sForce"), resultado.getInt("sIntelligence"), resultado.getInt("sAgilite"), resultado.getInt("sChance"), resultado.getInt("sVitalite"), resultado.getInt("sSagesse"), resultado.getInt("restrictionA"), resultado.getInt("restrictionB"), resultado.getInt("incarnation"));
+                Mundo.addPersonaje(perso);
             }
         }
         catch (SQLException e) {
@@ -616,12 +616,12 @@ public class SQLManager {
         }
     }
 
-    public static void CARGAR_PERSONAJES_POR_CUENTA(Conta cuenta) {
+    public static void CARGAR_PERSONAJES_POR_CUENTA(Cuenta cuenta) {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * FROM personnages WHERE account = " + cuenta.getID() + ";", LesGuardians.BDD_OTHER);
             while (resultado.next()) {
                 try {
-                    Personagens perso = World.getPersonaje(resultado.getInt("guid"));
+                    Personaje perso = Mundo.getPersonaje(resultado.getInt("guid"));
                     cuenta.addPerso(perso);
                 }
                 catch (NullPointerException e) {
@@ -635,7 +635,7 @@ public class SQLManager {
         }
     }
 
-    public static boolean DELETE_PERSONAJE(Personagens perso) {
+    public static boolean DELETE_PERSONAJE(Personaje perso) {
         int id = perso.getID();
         String consultaSQL = "DELETE FROM personnages WHERE guid = ?;";
         try {
@@ -653,7 +653,7 @@ public class SQLManager {
                 declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
                 declaracion.setInt(1, perso.getMontura().getID());
                 declaracion.executeUpdate();
-                World.borrarDragopavo(perso.getMontura().getID());
+                Mundo.borrarDragopavo(perso.getMontura().getID());
             }
             if (perso.getMiembroGremio() != null) {
                 perso.getGremio().expulsarMiembro(perso);
@@ -672,7 +672,7 @@ public class SQLManager {
         }
     }
 
-    public static boolean AGREGAR_PJ_EN_BD(Personagens perso, String objetos) {
+    public static boolean AGREGAR_PJ_EN_BD(Personaje perso, String objetos) {
         String consultaSQL = "INSERT INTO personnages(`guid`,`name`,`sexe`,`class`,`color1`,`color2`,`color3`,`kamas`,`spellboost`,`capital`,`energy`,`level`,`xp`,`size`,`gfx`,`account`,`cell`,`map`,`spells`,`objets`,`tienda`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'');";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -711,7 +711,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from experience;", LesGuardians.BDD_STATIC);
             while (resultado.next()) {
-                World.addExpLevel(resultado.getInt("lvl"), new World.ExpNivel(resultado.getLong("perso"), resultado.getInt("metier"), resultado.getInt("dinde"), resultado.getInt("pvp"), resultado.getInt("incarnation")));
+                Mundo.addExpLevel(resultado.getInt("lvl"), new Mundo.ExpNivel(resultado.getLong("perso"), resultado.getInt("metier"), resultado.getInt("dinde"), resultado.getInt("pvp"), resultado.getInt("incarnation")));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -726,7 +726,7 @@ public class SQLManager {
             int numero = 0;
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * FROM `scripted_cells`", LesGuardians.BDD_STATIC);
             while (resultado.next()) {
-                Maps mapa = World.getMapa(resultado.getShort("MapID"));
+                Mapa mapa = Mundo.getMapa(resultado.getShort("MapID"));
                 if (mapa == null || mapa.getCelda(resultado.getShort("CellID")) == null) continue;
                 switch (resultado.getInt("EventID")) {
                     case 1: {
@@ -753,7 +753,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT  * from maps LIMIT " + LesGuardians.LIMITE_MAPAS + ";", LesGuardians.BDD_STATIC);
             while (resultado.next()) {
-                World.addMapa(new Maps(resultado.getShort("id"), resultado.getString("date"), resultado.getByte("width"), resultado.getByte("heigth"), resultado.getString("key"), resultado.getString("places"), resultado.getString("mapData"), resultado.getString("cells"), resultado.getString("monsters"), resultado.getString("mappos"), resultado.getByte("numgroup"), resultado.getByte("groupmaxsize"), resultado.getByte("capabilities"), resultado.getInt("description")));
+                Mundo.addMapa(new Mapa(resultado.getShort("id"), resultado.getString("date"), resultado.getByte("width"), resultado.getByte("heigth"), resultado.getString("key"), resultado.getString("places"), resultado.getString("mapData"), resultado.getString("cells"), resultado.getString("monsters"), resultado.getString("mappos"), resultado.getByte("numgroup"), resultado.getByte("groupmaxsize"), resultado.getByte("capabilities"), resultado.getInt("description")));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -768,7 +768,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT  * from mobgroups_fix;", LesGuardians.BDD_STATIC);
             while (resultado.next()) {
-                Maps mapa = World.getMapa(resultado.getShort("mapid"));
+                Mapa mapa = Mundo.getMapa(resultado.getShort("mapid"));
                 if (mapa == null || mapa.getCelda(resultado.getShort("cellid")) == null) continue;
                 mapa.addGrupoMobPermanente(resultado.getShort("cellid"), resultado.getString("groupData"));
                 ++numero;
@@ -782,7 +782,7 @@ public class SQLManager {
         return numero;
     }
 
-    public static void CAMBIAR_SEXO_CLASE(Personagens perso) {
+    public static void CAMBIAR_SEXO_CLASE(Personaje perso) {
         String consultaSQL = "UPDATE `personnages` SET `sexe`=?, `class`= ?, `objets`= ? WHERE `guid`= ?";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -799,7 +799,7 @@ public class SQLManager {
         }
     }
 
-    public static void ACTUALIZAR_NOMBRE(Personagens perso) {
+    public static void ACTUALIZAR_NOMBRE(Personaje perso) {
         String consultaSQL = "UPDATE `personnages` SET `name` = ? WHERE `guid` = ? ;";
         PreparedStatement declaracion = null;
         try {
@@ -814,7 +814,7 @@ public class SQLManager {
         }
     }
 
-    public static void SALVAR_PERSONAJE(Personagens perso, boolean salvarObjetos) {
+    public static void SALVAR_PERSONAJE(Personaje perso, boolean salvarObjetos) {
         String consultaSQL = "UPDATE `personnages` SET `seeFriend`= ?,`canaux`= ?,`pdvper`= ?,`map`= ?,`cell`= ?,`vitalite`= ?,`force`= ?,`sagesse`= ?,`intelligence`= ?,`chance`= ?,`agilite`= ?,`alignement`= ?,`honor`= ?,`deshonor`= ?,`alvl`= ?,`gfx`= ?,`xp`= ?,`level`= ?,`energy`= ?,`capital`= ?,`spellboost`= ?,`kamas`= ?,`size` = ?,`spells` = ?,`objets` = ?,`savepos` = ?,`mountxpgive` = ?,`zaaps` = ?,`mount` = ?,`seeAlign` = ?,`title` = ?,`esposo` = ?,`tienda` = ?,`mercante` = ?,`sForce`=?,`sIntelligence`=?,`sAgilite`=?,`sChance`=?,`sVitalite`=?,`sSagesse`=?, `restrictionA`= ?, `restrictionB`= ?, `jobs`= ?, `incarnation`=? WHERE `personnages`.`guid` = ? LIMIT 1 ;";
         PreparedStatement declaracion = null;
         try {
@@ -904,7 +904,7 @@ public class SQLManager {
             for (String idStr : perso.getObjetosBancoPorID(":").split(":")) {
                 try {
                     int id = Integer.parseInt(idStr);
-                    Objeto obj = World.getObjeto(id);
+                    Objeto obj = Mundo.getObjeto(id);
                     if (obj == null) continue;
                     declaracion.setInt(1, obj.getID());
                     declaracion.setInt(2, obj.getIDModelo());
@@ -927,29 +927,29 @@ public class SQLManager {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT  * from sorts;", LesGuardians.BDD_STATIC);
             while (resultado.next()) {
                 int id = resultado.getInt("id");
-                Spell hechizo = new Spell(id, resultado.getString("nom"), resultado.getInt("sprite"), resultado.getString("spriteInfos"), resultado.getString("effectTarget"));
-                World.addHechizo(hechizo);
-                Spell.StatsHechizos l1 = null;
+                Hechizo hechizo = new Hechizo(id, resultado.getString("nom"), resultado.getInt("sprite"), resultado.getString("spriteInfos"), resultado.getString("effectTarget"));
+                Mundo.addHechizo(hechizo);
+                Hechizo.StatsHechizos l1 = null;
                 if (!resultado.getString("lvl1").equalsIgnoreCase("-1")) {
                     l1 = SQLManager.analizarHechizoStats(id, 1, resultado.getString("lvl1"));
                 }
-                Spell.StatsHechizos l2 = null;
+                Hechizo.StatsHechizos l2 = null;
                 if (!resultado.getString("lvl2").equalsIgnoreCase("-1")) {
                     l2 = SQLManager.analizarHechizoStats(id, 2, resultado.getString("lvl2"));
                 }
-                Spell.StatsHechizos l3 = null;
+                Hechizo.StatsHechizos l3 = null;
                 if (!resultado.getString("lvl3").equalsIgnoreCase("-1")) {
                     l3 = SQLManager.analizarHechizoStats(id, 3, resultado.getString("lvl3"));
                 }
-                Spell.StatsHechizos l4 = null;
+                Hechizo.StatsHechizos l4 = null;
                 if (!resultado.getString("lvl4").equalsIgnoreCase("-1")) {
                     l4 = SQLManager.analizarHechizoStats(id, 4, resultado.getString("lvl4"));
                 }
-                Spell.StatsHechizos l5 = null;
+                Hechizo.StatsHechizos l5 = null;
                 if (!resultado.getString("lvl5").equalsIgnoreCase("-1")) {
                     l5 = SQLManager.analizarHechizoStats(id, 5, resultado.getString("lvl5"));
                 }
-                Spell.StatsHechizos l6 = null;
+                Hechizo.StatsHechizos l6 = null;
                 if (!resultado.getString("lvl6").equalsIgnoreCase("-1")) {
                     l6 = SQLManager.analizarHechizoStats(id, 6, resultado.getString("lvl6"));
                 }
@@ -972,7 +972,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT  * from item_template;", LesGuardians.BDD_STATIC);
             while (resultado.next()) {
-                World.addObjModelo(new Objeto.ObjetoModelo(resultado.getInt("id"), resultado.getString("statsTemplate"), resultado.getString("name"), resultado.getInt("type"), resultado.getInt("level"), resultado.getInt("pod"), resultado.getInt("prix"), resultado.getInt("panoplie"), resultado.getString("condition"), resultado.getString("armesInfos"), resultado.getInt("sold"), resultado.getInt("avgPrice"), resultado.getInt("pointsVIP")));
+                Mundo.addObjModelo(new Objeto.ObjetoModelo(resultado.getInt("id"), resultado.getString("statsTemplate"), resultado.getString("name"), resultado.getInt("type"), resultado.getInt("level"), resultado.getInt("pod"), resultado.getInt("prix"), resultado.getInt("panoplie"), resultado.getString("condition"), resultado.getString("armesInfos"), resultado.getInt("sold"), resultado.getInt("avgPrice"), resultado.getInt("pointsVIP")));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -1011,7 +1011,7 @@ public class SQLManager {
 			boolean finTurnoSiFC = stat[19].trim().equalsIgnoreCase("true");
 			stats = new StatsHechizos(id, nivel, costePA, alcMin, alcMax, afectados, afectadosCriticos, lanzarLinea,
 			lineaVista, celdaVacia, alcanceModificable, maxPorTurno, maxPorObjetivo, sigLanzamiento, nivelMin, finTurnoSiFC,
-			efectos, efectosCriticos, areaAfectados, estadosProhibidos, estadosNecesarios, World.getHechizo(id),
+			efectos, efectosCriticos, areaAfectados, estadosProhibidos, estadosNecesarios, Mundo.getHechizo(id),
 			tipoHechizo);
 			return stats;
 		} catch (Exception e) {
@@ -1048,7 +1048,7 @@ public class SQLManager {
                 String xp = resultado.getString("exps");
                 int talla = resultado.getInt("size");
                 boolean capturable = resultado.getInt("capturable") == 1;
-                World.addMobModelo(id, new MOB_tmpl(id, nombre, gfxID, alineacion, colores, grados, hechizos, stats, pdvs, pts, iniciativa, mK, MK, xp, tipoIA, capturable, talla));
+                Mundo.addMobModelo(id, new MobModelo(id, nombre, gfxID, alineacion, colores, grados, hechizos, stats, pdvs, pts, iniciativa, mK, MK, xp, tipoIA, capturable, talla));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -1078,7 +1078,7 @@ public class SQLManager {
                 String ventas = resultado.getString("ventes");
                 String nombre = resultado.getString("name");
                 long kamas = resultado.getLong("kamas");
-                World.addNpcModelo(new NPC_tmpl(id, bonusValue, gfxID, escalaX, escalaY, sexo, color1, color2, color3, accesorios, extraClip, customArtWork, preguntaID, ventas, nombre, kamas));
+                Mundo.addNpcModelo(new NPCModelo(id, bonusValue, gfxID, escalaX, escalaY, sexo, color1, color2, color3, accesorios, extraClip, customArtWork, preguntaID, ventas, nombre, kamas));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -1088,7 +1088,7 @@ public class SQLManager {
         }
     }
 
-    public static void ACTUALIZAR_NPC_COLOR_SEXO(NPC_tmpl npc) {
+    public static void ACTUALIZAR_NPC_COLOR_SEXO(NPCModelo npc) {
         String consultaSQL = "UPDATE npc_template SET `gfxID` = ?, `sex` = ?, `color1` = ?, `color2` = ?, `color3` = ?, `accessories` = ? WHERE `id` = ?;";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_STATIC);
@@ -1109,7 +1109,7 @@ public class SQLManager {
         }
     }
 
-    public static void ACTUALIZAR_NPC_KAMAS(NPC_tmpl npc) {
+    public static void ACTUALIZAR_NPC_KAMAS(NPCModelo npc) {
         String consultaSQL = "UPDATE npc_template SET `kamas` = ? WHERE `id` = ?;";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_STATIC);
@@ -1125,7 +1125,7 @@ public class SQLManager {
         }
     }
 
-    public static void ACTUALIZAR_NPC_VENTAS(NPC_tmpl npc) {
+    public static void ACTUALIZAR_NPC_VENTAS(NPCModelo npc) {
         String consultaSQL = "UPDATE npc_template SET `ventes` = ? WHERE `id` = ?;";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_STATIC);
@@ -1162,7 +1162,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * FROM npc_questions;", LesGuardians.BDD_STATIC);
             while (resultado.next()) {
-                World.addPreguntaNPC(new NPC_tmpl.PreguntaNPC(resultado.getInt("ID"), resultado.getString("responses"), resultado.getString("params"), resultado.getString("cond"), resultado.getInt("ifFalse")));
+                Mundo.addPreguntaNPC(new NPCModelo.PreguntaNPC(resultado.getInt("ID"), resultado.getString("responses"), resultado.getString("params"), resultado.getString("cond"), resultado.getInt("ifFalse")));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -1179,10 +1179,10 @@ public class SQLManager {
                 int id = resultado.getInt("ID");
                 int tipo = resultado.getInt("type");
                 String args = resultado.getString("args");
-                if (World.getRespuestaNPC(id) == null) {
-                    World.addRespuestaNPC(new NPC_tmpl.RespuestaNPC(id));
+                if (Mundo.getRespuestaNPC(id) == null) {
+                    Mundo.addRespuestaNPC(new NPCModelo.RespuestaNPC(id));
                 }
-                World.getRespuestaNPC(id).addAccion(new Acao(tipo, args, ""));
+                Mundo.getRespuestaNPC(id).addAccion(new Acción(tipo, args, ""));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -1197,9 +1197,9 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * FROM endfight_action;", LesGuardians.BDD_STATIC);
             while (resultado.next()) {
-                Maps mapa = World.getMapa(resultado.getShort("map"));
+                Mapa mapa = Mundo.getMapa(resultado.getShort("map"));
                 if (mapa == null) continue;
-                mapa.addAccionFinPelea(resultado.getInt("fighttype"), new Acao(resultado.getInt("action"), resultado.getString("args"), resultado.getString("cond")));
+                mapa.addAccionFinPelea(resultado.getInt("fighttype"), new Acción(resultado.getInt("action"), resultado.getString("args"), resultado.getString("cond")));
                 ++numero;
             }
             SQLManager.cerrarResultado(resultado);
@@ -1218,10 +1218,10 @@ public class SQLManager {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * FROM use_item_actions;", LesGuardians.BDD_STATIC);
             while (resultado.next()) {
                 int id = resultado.getInt("template");
-                if (World.getObjModelo(id) == null) continue;
+                if (Mundo.getObjModelo(id) == null) continue;
                 int tipo = resultado.getInt("type");
                 String args = resultado.getString("args");
-                World.getObjModelo(id).addAccion(new Acao(tipo, args, ""));
+                Mundo.getObjModelo(id).addAccion(new Acción(tipo, args, ""));
                 ++numero;
             }
             SQLManager.cerrarResultado(resultado);
@@ -1242,7 +1242,7 @@ public class SQLManager {
                 String inicio = resultado.getString("debut");
                 String recompensa = String.valueOf(resultado.getString("recompense1")) + "$" + resultado.getString("recompense2") + "$" + resultado.getString("recompense3") + "$" + resultado.getString("recompense4");
                 String fin = resultado.getString("final");
-                World.addTutorial(new Tutorial(id, recompensa, inicio, fin));
+                Mundo.addTutorial(new Tutorial(id, recompensa, inicio, fin));
             }
             SQLManager.cerrarResultado(resultado);
             return;
@@ -1265,7 +1265,7 @@ public class SQLManager {
                 int posicion = resultado.getInt("pos");
                 String stats = resultado.getString("stats");
                 int objevivo = resultado.getInt("obvijevan");
-                World.addObjeto(World.objetoIniciarServer(id, modeloID, cantidad, posicion, stats, objevivo), false);
+                Mundo.addObjeto(Mundo.objetoIniciarServer(id, modeloID, cantidad, posicion, stats, objevivo), false);
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -1294,7 +1294,7 @@ public class SQLManager {
         }
     }
 
-    public static void DELETE_DRAGOPAVO(Dragossauros drago) {
+    public static void DELETE_DRAGOPAVO(Dragopavo drago) {
         String consultaSQL = "DELETE FROM mounts_data WHERE id = ?;";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -1347,9 +1347,9 @@ public class SQLManager {
             String consultaSQL = "UPDATE accounts SET `reload_needed` = 0 WHERE guid = ?;";
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
             while (resultado.next()) {
-                if (World.getCuenta(resultado.getInt("guid")) != null && World.getCuenta(resultado.getInt("guid")).enLinea()) continue;
-                Conta cuenta = new Conta(resultado.getInt("id"), resultado.getString("account").toLowerCase(), resultado.getString("pass"), resultado.getString("pseudo"), resultado.getString("question"), resultado.getString("reponse"), resultado.getInt("level"), resultado.getInt("vip"), resultado.getInt("banned") == 1, resultado.getString("lastIP"), resultado.getString("lastConnectionDate"), resultado.getString("objets"), resultado.getLong("kamas"), resultado.getString("friends"), resultado.getString("enemy"), resultado.getString("etable"), resultado.getInt("primeravez"), resultado.getInt("cadeau"));
-                World.addCuenta(cuenta);
+                if (Mundo.getCuenta(resultado.getInt("guid")) != null && Mundo.getCuenta(resultado.getInt("guid")).enLinea()) continue;
+                Cuenta cuenta = new Cuenta(resultado.getInt("id"), resultado.getString("account").toLowerCase(), resultado.getString("pass"), resultado.getString("pseudo"), resultado.getString("question"), resultado.getString("reponse"), resultado.getInt("level"), resultado.getInt("vip"), resultado.getInt("banned") == 1, resultado.getString("lastIP"), resultado.getString("lastConnectionDate"), resultado.getString("objets"), resultado.getLong("kamas"), resultado.getString("friends"), resultado.getString("enemy"), resultado.getString("etable"), resultado.getInt("primeravez"), resultado.getInt("cadeau"));
+                Mundo.addCuenta(cuenta);
                 declaracion.setInt(1, resultado.getInt("id"));
                 declaracion.executeUpdate();
             }
@@ -1368,9 +1368,9 @@ public class SQLManager {
             String consultaSQL = "UPDATE accounts SET `reload_needed` = 0  WHERE guid = ?;";
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
             while (resultado.next()) {
-                if (World.getCuenta(resultado.getInt("guid")) != null && World.getCuenta(resultado.getInt("guid")).enLinea()) continue;
-                Conta cuenta = new Conta(resultado.getInt("guid"), resultado.getString("account").toLowerCase(), resultado.getString("pass"), resultado.getString("pseudo"), resultado.getString("question"), resultado.getString("reponse"), resultado.getInt("level"), resultado.getInt("vip"), resultado.getInt("banned") == 1, resultado.getString("lastIP"), resultado.getString("lastConnectionDate"), resultado.getString("objets"), resultado.getInt("kamas"), resultado.getString("friends"), resultado.getString("enemy"), resultado.getString("etable"), resultado.getInt("primeravez"), resultado.getInt("cadeau"));
-                World.addCuenta(cuenta);
+                if (Mundo.getCuenta(resultado.getInt("guid")) != null && Mundo.getCuenta(resultado.getInt("guid")).enLinea()) continue;
+                Cuenta cuenta = new Cuenta(resultado.getInt("guid"), resultado.getString("account").toLowerCase(), resultado.getString("pass"), resultado.getString("pseudo"), resultado.getString("question"), resultado.getString("reponse"), resultado.getInt("level"), resultado.getInt("vip"), resultado.getInt("banned") == 1, resultado.getString("lastIP"), resultado.getString("lastConnectionDate"), resultado.getString("objets"), resultado.getInt("kamas"), resultado.getString("friends"), resultado.getString("enemy"), resultado.getString("etable"), resultado.getInt("primeravez"), resultado.getInt("cadeau"));
+                Mundo.addCuenta(cuenta);
                 declaracion.setInt(1, resultado.getInt("guid"));
                 declaracion.executeUpdate();
             }
@@ -1397,7 +1397,7 @@ public class SQLManager {
         }
     }
 
-    public static void ACTUALIZAR_REGALO(Conta cuenta) {
+    public static void ACTUALIZAR_REGALO(Cuenta cuenta) {
         String consultaSQL = "UPDATE accounts SET `cadeau` = 0 WHERE `guid` = ?;";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -1412,7 +1412,7 @@ public class SQLManager {
         }
     }
 
-    public static void REPLACE_MONTURA(Dragossauros DP, boolean salvarObjetos) {
+    public static void REPLACE_MONTURA(Dragopavo DP, boolean salvarObjetos) {
         String consultaSQL = "REPLACE INTO `mounts_data` VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -1474,7 +1474,7 @@ public class SQLManager {
         }
     }
 
-    public static void UPDATE_CERCADO(Maps.Cercado cercado) {
+    public static void UPDATE_CERCADO(Mapa.Cercado cercado) {
         String consultaSQL = "UPDATE `mountpark` SET `cellid`=?, `owner` =?, `guild`=?, `price`=? , `sensibilisation`=?, `objetoscolocados`=? WHERE `mapid`=?;";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -1494,7 +1494,7 @@ public class SQLManager {
         }
     }
 
-    public static void UPDATE_RANKINGPVP(RankPVP rank) {
+    public static void UPDATE_RANKINGPVP(RankingPVP rank) {
         String consultaSQL = "UPDATE `ranking_pvp` SET `victoire`=?, `defaite` =?, `alvl`=?, `name`=?  WHERE `id`=?;";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -1544,7 +1544,7 @@ public class SQLManager {
         }
     }
 
-    public static void INSERT_RANKINGPVP(RankPVP rank) {
+    public static void INSERT_RANKINGPVP(RankingPVP rank) {
         try {
             String consultaSQL = "INSERT INTO ranking_pvp(`id`,`name`,`victoire`,`defaite`,`alvl`) VALUES(?,?,0,0,?);";
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -1666,7 +1666,7 @@ public class SQLManager {
         }
     }
 
-    public static boolean UPDATE_MAPA_POSPELEA_NROGRUPO(Maps mapa) {
+    public static boolean UPDATE_MAPA_POSPELEA_NROGRUPO(Mapa mapa) {
         String consultaSQL = "UPDATE `maps` SET `places` = ?, `numgroup` = ? WHERE id = ?;";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_STATIC);
@@ -1753,7 +1753,7 @@ public class SQLManager {
         }
     }
 
-    public static void REPLACE_RECAUDADOR(Coletor recaudador) {
+    public static void REPLACE_RECAUDADOR(Recaudador recaudador) {
         String consultaSQL = "REPLACE INTO `percepteurs` VALUES (?,?,?,?,?,?,?,?,?,?);";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -1817,7 +1817,7 @@ public class SQLManager {
         }
     }
 
-    public static void INSERT_GREMIO(Guild gremio) {
+    public static void INSERT_GREMIO(Gremio gremio) {
         String consultaSQL = "INSERT INTO `guilds` VALUES (?,?,?,1,0,0,0,?,?);";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -1835,7 +1835,7 @@ public class SQLManager {
         }
     }
 
-    public static void REPLACE_GREMIO(Guild gremio) {
+    public static void REPLACE_GREMIO(Gremio gremio) {
         String consultaSQL = "UPDATE `guilds` SET `lvl` = ?,`xp` = ?,`capital` = ?,`nbrmax` = ?,`sorts` = ?,`stats` = ? WHERE id = ?;";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -1869,7 +1869,7 @@ public class SQLManager {
         }
     }
 
-    public static void REPLACE_MIEMBRO_GREMIO(Guild.MiembroGremio miembro) {
+    public static void REPLACE_MIEMBRO_GREMIO(Gremio.MiembroGremio miembro) {
         String consultaSQL = "REPLACE INTO `guild_members` VALUES(?,?,?,?,?,?,?,?,?,?);";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -2023,7 +2023,7 @@ public class SQLManager {
                 int posicion = resultado.getInt("pos");
                 String stats = resultado.getString("stats");
                 int objevivo = resultado.getInt("obvijevan");
-                World.addObjeto(new Objeto(id, modeloID, cantidad, posicion, stats, objevivo), false);
+                Mundo.addObjeto(new Objeto(id, modeloID, cantidad, posicion, stats, objevivo), false);
             }
         }
         catch (SQLException e) {
@@ -2041,7 +2041,7 @@ public class SQLManager {
                 int victorias = resultado.getInt("victoire");
                 int derrotas = resultado.getInt("defaite");
                 int nivelAlin = resultado.getInt("alvl");
-                World.addRankingPVP(new RankPVP(id, nombre, victorias, derrotas, nivelAlin));
+                Mundo.addRankingPVP(new RankingPVP(id, nombre, victorias, derrotas, nivelAlin));
             }
         }
         catch (SQLException e) {
@@ -2050,7 +2050,7 @@ public class SQLManager {
         }
     }
 
-    public static void COMPRAR_CASA(Personagens perso, Casa casa) {
+    public static void COMPRAR_CASA(Personaje perso, Casa casa) {
         String consultaSQL = "UPDATE `houses` SET `sale`='0', `owner_id`='" + perso.getCuentaID() + "', `guild_id`='0', `access`='0', `key`='-', `guild_rights`='0' WHERE `id`='" + casa.getID() + "';";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -2098,7 +2098,7 @@ public class SQLManager {
         }
     }
 
-    public static void CODIGO_CASA(Personagens perso, Casa casa, String clave) {
+    public static void CODIGO_CASA(Personaje perso, Casa casa, String clave) {
         String consultaSQL = "UPDATE `houses` SET `key`='" + clave + "' WHERE `id`='" + casa.getID() + "' AND owner_id='" + perso.getCuentaID() + "';";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -2244,7 +2244,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * FROM `hdvs` ORDER BY id ASC", LesGuardians.BDD_OTHER);
             while (resultado.next()) {
-                World.addPuestoMercadillo(new Mercador(resultado.getInt("map"), resultado.getFloat("sellTaxe"), resultado.getShort("sellTime"), resultado.getShort("accountItem"), resultado.getShort("lvlMax"), resultado.getString("categories")));
+                Mundo.addPuestoMercadillo(new Mercadillo(resultado.getInt("map"), resultado.getFloat("sellTaxe"), resultado.getShort("sellTime"), resultado.getShort("accountItem"), resultado.getShort("lvlMax"), resultado.getString("categories")));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -2264,13 +2264,13 @@ public class SQLManager {
                 int posicion = resultado.getInt("pos");
                 String stats = resultado.getString("stats");
                 int idOdjevivo = resultado.getInt("obvijevan");
-                World.addObjeto(World.objetoIniciarServer(id, modeloID, cantidad, posicion, stats, idOdjevivo), false);
+                Mundo.addObjeto(Mundo.objetoIniciarServer(id, modeloID, cantidad, posicion, stats, idOdjevivo), false);
             }
             resultado = SQLManager.ejecutarConsultaSQL("SELECT * FROM `hdvs_items`", LesGuardians.BDD_OTHER);
             while (resultado.next()) {
-                Mercador puesto = World.getPuestoMerca(resultado.getInt("map"));
+                Mercadillo puesto = Mundo.getPuestoMerca(resultado.getInt("map"));
                 if (puesto == null) continue;
-                puesto.addObjMercaAlPuesto(new Mercador.ObjetoMercadillo(resultado.getInt("price"), resultado.getByte("count"), resultado.getInt("ownerid"), World.getObjeto(resultado.getInt("itemID"))));
+                puesto.addObjMercaAlPuesto(new Mercadillo.ObjetoMercadillo(resultado.getInt("price"), resultado.getByte("count"), resultado.getInt("ownerid"), Mundo.getObjeto(resultado.getInt("itemID"))));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -2280,7 +2280,7 @@ public class SQLManager {
         }
     }
 
-    public static void VACIA_Y_ACTUALIZA_OBJ_MERCADILLOS(ArrayList<Mercador.ObjetoMercadillo> lista) {
+    public static void VACIA_Y_ACTUALIZA_OBJ_MERCADILLOS(ArrayList<Mercadillo.ObjetoMercadillo> lista) {
         PreparedStatement declaracion = null;
         try {
             String vaciarTabla = "TRUNCATE TABLE `hdvs_items`";
@@ -2288,7 +2288,7 @@ public class SQLManager {
             tablaVacia.executeUpdate();
             String consultaSQL = "INSERT INTO `hdvs_items` (`map`,`ownerid`,`price`,`count`,`itemID`) VALUES(?,?,?,?,?);";
             declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
-            for (Mercador.ObjetoMercadillo objMerca : lista) {
+            for (Mercadillo.ObjetoMercadillo objMerca : lista) {
                 if (objMerca.getDue\u00f1o() == -1) continue;
                 declaracion.setInt(1, objMerca.getIDDelPuesto());
                 declaracion.setInt(2, objMerca.getDue\u00f1o());
@@ -2311,7 +2311,7 @@ public class SQLManager {
         PreparedStatement declaracion = null;
         try {
             declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_STATIC);
-            for (Objeto.ObjetoModelo curTemp : World.getObjModelos()) {
+            for (Objeto.ObjetoModelo curTemp : Mundo.getObjModelos()) {
                 if (curTemp.getVendidos() == 0L) continue;
                 declaracion.setLong(1, curTemp.getVendidos());
                 declaracion.setInt(2, curTemp.getPrecioPromedio());
@@ -2330,7 +2330,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from animations;", LesGuardians.BDD_STATIC);
             while (resultado.next()) {
-                World.addAnimation(new Animacao(resultado.getInt("id"), resultado.getInt("id"), resultado.getString("nom"), resultado.getInt("area"), resultado.getInt("action"), resultado.getInt("size")));
+                Mundo.addAnimation(new Animación(resultado.getInt("id"), resultado.getInt("id"), resultado.getString("nom"), resultado.getInt("area"), resultado.getInt("action"), resultado.getInt("size")));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -2344,7 +2344,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from obvijevans;", LesGuardians.BDD_OTHER);
             while (resultado.next()) {
-                World.addObjevivo(new Set_Vivo(resultado.getInt("id"), resultado.getInt("lastyearmeal"), resultado.getInt("lastmealdate"), resultado.getInt("lastmealhour"), resultado.getInt("humor"), resultado.getInt("masque"), resultado.getInt("type"), resultado.getInt("objetAssocier"), resultado.getLong("xp"), resultado.getInt("anneeEntre"), resultado.getInt("dateEntre"), resultado.getInt("heureEntre"), resultado.getInt("anneeObtenu"), resultado.getInt("dateObtenu"), resultado.getInt("heureObtenu"), resultado.getInt("associer"), resultado.getInt("modeleReel"), resultado.getInt("obvijevan"), resultado.getString("stats")));
+                Mundo.addObjevivo(new Objevivo(resultado.getInt("id"), resultado.getInt("lastyearmeal"), resultado.getInt("lastmealdate"), resultado.getInt("lastmealhour"), resultado.getInt("humor"), resultado.getInt("masque"), resultado.getInt("type"), resultado.getInt("objetAssocier"), resultado.getLong("xp"), resultado.getInt("anneeEntre"), resultado.getInt("dateEntre"), resultado.getInt("heureEntre"), resultado.getInt("anneeObtenu"), resultado.getInt("dateObtenu"), resultado.getInt("heureObtenu"), resultado.getInt("associer"), resultado.getInt("modeleReel"), resultado.getInt("obvijevan"), resultado.getString("stats")));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -2354,7 +2354,7 @@ public class SQLManager {
         }
     }
 
-    public static boolean INSERT_OBJEVIVOS(Set_Vivo objevivo) {
+    public static boolean INSERT_OBJEVIVOS(Objevivo objevivo) {
         String consultaSQL = "INSERT INTO `obvijevans` VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -2388,7 +2388,7 @@ public class SQLManager {
         return true;
     }
 
-    public static void SALVAR_OBJEVIVO(Set_Vivo obvi) {
+    public static void SALVAR_OBJEVIVO(Objevivo obvi) {
         String consultaSQL = "UPDATE `obvijevans` SET `xp` = ?,`masque` = ?,`stats` = ?,`objetAssocier` = ?,`humor` = ?,`associer` = ? WHERE id = ?;";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -2426,7 +2426,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from challenge;", LesGuardians.BDD_STATIC);
             while (resultado.next()) {
-                World.addReto(new Desafios(resultado.getByte("id"), resultado.getString("bonus")));
+                Mundo.addReto(new Reto(resultado.getByte("id"), resultado.getString("bonus")));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -2442,7 +2442,7 @@ public class SQLManager {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from marchant_maps;", LesGuardians.BDD_OTHER);
             while (resultado.next()) {
                 String personajes;
-                Maps mapa = World.getMapa(resultado.getShort("mapid"));
+                Mapa mapa = Mundo.getMapa(resultado.getShort("mapid"));
                 if (mapa == null || (personajes = resultado.getString("personnages")).isEmpty() || personajes == "|") continue;
                 mapa.addMercantesMapa(personajes);
                 ++numero;
@@ -2456,7 +2456,7 @@ public class SQLManager {
         return numero;
     }
 
-    public static void SALVAR_MERCANTES(Maps mapa) {
+    public static void SALVAR_MERCANTES(Mapa mapa) {
         String consultaSQL = "UPDATE `marchant_maps` SET `personnages` = ? WHERE mapid = ?;";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -2472,7 +2472,7 @@ public class SQLManager {
         }
     }
 
-    public static void ACTUALIZAR_IA_MOB(MOB_tmpl mob) {
+    public static void ACTUALIZAR_IA_MOB(MobModelo mob) {
         String consultaSQL = "UPDATE `monsters` SET `AI_Type` = ? WHERE id = ?;";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_STATIC);
@@ -2540,7 +2540,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from marchant_objets;", LesGuardians.BDD_OTHER);
             while (resultado.next()) {
-                World.agregarTienda(new Stockage(resultado.getInt("objet"), resultado.getLong("prix"), resultado.getInt("quantite")), false);
+                Mundo.agregarTienda(new Tienda(resultado.getInt("objet"), resultado.getLong("prix"), resultado.getInt("quantite")), false);
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -2550,7 +2550,7 @@ public class SQLManager {
         }
     }
 
-    public static void REPLACE_MERCANTE_OBJETOS(Stockage tienda) {
+    public static void REPLACE_MERCANTE_OBJETOS(Tienda tienda) {
         String consultaSQL = "REPLACE INTO `marchant_objets` VALUES(?,?,?);";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -2581,7 +2581,7 @@ public class SQLManager {
         }
     }
 
-    public static void REPLACE_MASCOTA(Pets mascota) {
+    public static void REPLACE_MASCOTA(Mascota mascota) {
         String consultaSQL = "REPLACE INTO `familiers` VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -2627,7 +2627,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from familiers;", LesGuardians.BDD_OTHER);
             while (resultado.next()) {
-                World.addMascota(new Pets(resultado.getInt("objet"), resultado.getInt("pdv"), resultado.getString("stats"), resultado.getInt("repas"), resultado.getInt("annee"), resultado.getInt("mois"), resultado.getInt("semaine"), resultado.getInt("heure"), resultado.getInt("minute"), resultado.getInt("dernierepas"), resultado.getString("devoreurame"), resultado.getInt("obese"), resultado.getInt("maigre"), resultado.getInt("template")));
+                Mundo.addMascota(new Mascota(resultado.getInt("objet"), resultado.getInt("pdv"), resultado.getString("stats"), resultado.getInt("repas"), resultado.getInt("annee"), resultado.getInt("mois"), resultado.getInt("semaine"), resultado.getInt("heure"), resultado.getInt("minute"), resultado.getInt("dernierepas"), resultado.getString("devoreurame"), resultado.getInt("obese"), resultado.getInt("maigre"), resultado.getInt("template")));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -2642,7 +2642,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from familiers_nourriture;", LesGuardians.BDD_STATIC);
             while (resultado.next()) {
-                World.agregarMascotaModelo(resultado.getInt("familier"), new Pets.MascotaModelo(resultado.getInt("maxRepas"), resultado.getString("statsParEffect"), resultado.getString("nourriture"), resultado.getInt("devore")));
+                Mundo.agregarMascotaModelo(resultado.getInt("familier"), new Mascota.MascotaModelo(resultado.getInt("maxRepas"), resultado.getString("statsParEffect"), resultado.getString("nourriture"), resultado.getInt("devore")));
                 ++numero;
             }
             SQLManager.cerrarResultado(resultado);
@@ -2752,7 +2752,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from prismes;", LesGuardians.BDD_OTHER);
             while (resultado.next()) {
-                World.addPrisma(new Prisma(resultado.getInt("id"), resultado.getByte("alignement"), resultado.getByte("niveau"), resultado.getShort("mapid"), resultado.getShort("cellid"), resultado.getInt("honor"), resultado.getShort("area")));
+                Mundo.addPrisma(new Prisma(resultado.getInt("id"), resultado.getByte("alignement"), resultado.getByte("niveau"), resultado.getShort("mapid"), resultado.getShort("cellid"), resultado.getInt("honor"), resultado.getShort("area")));
                 ++numero;
             }
             SQLManager.cerrarResultado(resultado);
@@ -2800,7 +2800,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from incarnations;", LesGuardians.BDD_OTHER);
             while (resultado.next()) {
-                World.addEncarnacion(new Incarnacao(resultado.getInt("id"), resultado.getInt("class"), resultado.getInt("niveau"), resultado.getLong("experience"), resultado.getInt("seconde"), resultado.getString("spells")));
+                Mundo.addEncarnacion(new Encarnación(resultado.getInt("id"), resultado.getInt("class"), resultado.getInt("niveau"), resultado.getLong("experience"), resultado.getInt("seconde"), resultado.getString("spells")));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -2830,7 +2830,7 @@ public class SQLManager {
         }
     }
 
-    public static void REPLACE_ENCARNACION(Incarnacao encarnacion) {
+    public static void REPLACE_ENCARNACION(Encarnación encarnacion) {
         String consultaSQL = "REPLACE INTO `incarnations` VALUES(?,?,?,?,?,?);";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
@@ -2867,7 +2867,7 @@ public class SQLManager {
         try {
             ResultSet resultado = SQLManager.ejecutarConsultaSQL("SELECT * from coffres;", LesGuardians.BDD_OTHER);
             while (resultado.next()) {
-                World.addCofre(new Cofre(resultado.getInt("id"), resultado.getInt("id_house"), resultado.getShort("mapid"), resultado.getInt("cellid"), resultado.getString("object"), resultado.getInt("kamas"), resultado.getString("key"), resultado.getInt("owner_id")));
+                Mundo.addCofre(new Cofre(resultado.getInt("id"), resultado.getInt("id_house"), resultado.getShort("mapid"), resultado.getInt("cellid"), resultado.getString("object"), resultado.getInt("kamas"), resultado.getString("key"), resultado.getInt("owner_id")));
             }
             SQLManager.cerrarResultado(resultado);
         }
@@ -2877,7 +2877,7 @@ public class SQLManager {
         }
     }
 
-    public static void CODIFICAR_COFRE(Personagens perso, Cofre cofre, String packet) {
+    public static void CODIFICAR_COFRE(Personaje perso, Cofre cofre, String packet) {
         String consultaSQL = "UPDATE `coffres` SET `key`=? WHERE `id`=? AND owner_id=?;";
         try {
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);

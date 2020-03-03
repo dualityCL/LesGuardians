@@ -1,11 +1,11 @@
 package realm;
 
 import common.SocketManager;
-import objects.Conta;
+import objects.Cuenta;
 import realm.RealmServer;
 
 public class Pending {
-    public static void EnEspera(Conta C) {
+    public static void EnEspera(Cuenta C) {
         if (C == null) {
             return;
         }

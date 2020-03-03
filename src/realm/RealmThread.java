@@ -4,13 +4,13 @@ import common.Constantes;
 import common.LesGuardians;
 import common.SQLManager;
 import common.SocketManager;
-import common.World;
+import common.Mundo;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import objects.Conta;
+import objects.Cuenta;
 import realm.Pending;
 import realm.RealmServer;
 
@@ -24,7 +24,7 @@ implements Runnable {
     private int _packetNum = 0;
     private String _nombreCuenta;
     private String _claveEscrita;
-    private Conta _cuenta;
+    private Cuenta _cuenta;
 
     public RealmThread(Socket socket) {
         try {
@@ -180,8 +180,8 @@ implements Runnable {
                         }
                     }
                     this._claveEscrita = packet;
-                    if (Conta.cuentaLogin(this._nombreCuenta, this._claveEscrita, this._codigoLlave)) {
-                        this._cuenta = World.getCuentaPorNombre(this._nombreCuenta);
+                    if (Cuenta.cuentaLogin(this._nombreCuenta, this._claveEscrita, this._codigoLlave)) {
+                        this._cuenta = Mundo.getCuentaPorNombre(this._nombreCuenta);
                         if (this._cuenta.enLinea() && this._cuenta.getEntradaPersonaje() != null) {
                             this._cuenta.getEntradaPersonaje().salir();
                         } else if (this._cuenta.enLinea() && this._cuenta.getEntradaPersonaje() == null) {
@@ -208,7 +208,7 @@ implements Runnable {
                             }
                             return;
                         }
-                        if (World.getGmAcceso() > this._cuenta.getRango()) {
+                        if (Mundo.getGmAcceso() > this._cuenta.getRango()) {
                             SocketManager.ENVIAR_AlEw_MUCHOS_JUG_ONLINE(this._out);
                             return;
                         }
@@ -217,7 +217,7 @@ implements Runnable {
                             SocketManager.ENVIAR_AlEb_CUENTA_BANEADA(this._out);
                             return;
                         }
-                        if (!LesGuardians.PERMITIR_MULTI_CONTA && World.usandoIP(ip)) {
+                        if (!LesGuardians.PERMITIR_MULTI_CONTA && Mundo.usandoIP(ip)) {
                             SocketManager.ENVIAR_AlEw_MUCHOS_JUG_ONLINE(this._out);
                             try {
                                 this._socketCuenta.close();
@@ -227,7 +227,7 @@ implements Runnable {
                             }
                             return;
                         }
-                        if (World.cuentasIP(ip) >= LesGuardians.MAX_MULTI_CONTAS) {
+                        if (Mundo.cuentasIP(ip) >= LesGuardians.MAX_MULTI_CONTAS) {
                             SocketManager.ENVIAR_AlEw_MUCHOS_JUG_ONLINE(this._out);
                             try {
                                 this._socketCuenta.close();
@@ -244,8 +244,8 @@ implements Runnable {
                         break;
                     }
                     SQLManager.CARGAR_CUENTA_POR_NOMBRE(this._nombreCuenta);
-                    if (Conta.cuentaLogin(this._nombreCuenta, this._claveEscrita, this._codigoLlave)) {
-                        this._cuenta = World.getCuentaPorNombre(this._nombreCuenta);
+                    if (Cuenta.cuentaLogin(this._nombreCuenta, this._claveEscrita, this._codigoLlave)) {
+                        this._cuenta = Mundo.getCuentaPorNombre(this._nombreCuenta);
                         if (this._cuenta.enLinea() && this._cuenta.getEntradaPersonaje() != null) {
                             this._cuenta.getEntradaPersonaje().salir();
                         } else if (this._cuenta.enLinea() && this._cuenta.getEntradaPersonaje() == null) {
@@ -273,7 +273,7 @@ implements Runnable {
                             }
                             return;
                         }
-                        if (World.getGmAcceso() > this._cuenta.getRango()) {
+                        if (Mundo.getGmAcceso() > this._cuenta.getRango()) {
                             SocketManager.ENVIAR_AlEw_MUCHOS_JUG_ONLINE(this._out);
                             return;
                         }
@@ -282,7 +282,7 @@ implements Runnable {
                             SocketManager.ENVIAR_AlEb_CUENTA_BANEADA(this._out);
                             return;
                         }
-                        if (!LesGuardians.PERMITIR_MULTI_CONTA && World.usandoIP(ip)) {
+                        if (!LesGuardians.PERMITIR_MULTI_CONTA && Mundo.usandoIP(ip)) {
                             SocketManager.ENVIAR_AlEw_MUCHOS_JUG_ONLINE(this._out);
                             try {
                                 this._socketCuenta.close();
@@ -292,7 +292,7 @@ implements Runnable {
                             }
                             return;
                         }
-                        if (World.cuentasIP(ip) >= LesGuardians.MAX_MULTI_CONTAS) {
+                        if (Mundo.cuentasIP(ip) >= LesGuardians.MAX_MULTI_CONTAS) {
                             SocketManager.ENVIAR_AlEw_MUCHOS_JUG_ONLINE(this._out);
                             try {
                                 this._socketCuenta.close();

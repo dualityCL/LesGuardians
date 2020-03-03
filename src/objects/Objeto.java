@@ -3,25 +3,25 @@ package objects;
 import common.Constantes;
 import common.Fórmulas;
 import common.LesGuardians;
-import common.World;
+import common.Mundo;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
-import objects.Acao;
-import objects.Almas;
-import objects.Incarnacao;
-import objects.Personagens;
-import objects.Pets;
-import objects.Set_Vivo;
-import objects.SpellEffect;
+import objects.Acción;
+import objects.PiedraAlma;
+import objects.Encarnación;
+import objects.Personaje;
+import objects.Mascota;
+import objects.Objevivo;
+import objects.EfectoHechizo;
 
 public class Objeto {
     protected ObjetoModelo _modelo;
     protected int _cantidad = 1;
     protected int _posicion = -1;
     protected int _id;
-    private Personagens.Stats _stats = new Personagens.Stats();
-    private ArrayList<SpellEffect> _efectos = new ArrayList();
+    private Personaje.Stats _stats = new Personaje.Stats();
+    private ArrayList<EfectoHechizo> _efectos = new ArrayList();
     private Map<Integer, String> _textoStats = new TreeMap<Integer, String>();
     private ArrayList<String> _hechizoStats = new ArrayList();
     protected int _objevivoID;
@@ -30,7 +30,7 @@ public class Objeto {
     public Objeto() {
         this._cantidad = 1;
         this._posicion = -1;
-        this._stats = new Personagens.Stats();
+        this._stats = new Personaje.Stats();
         this._efectos = new ArrayList();
         this._textoStats = new TreeMap<Integer, String>();
         this._hechizoStats = new ArrayList();
@@ -38,10 +38,10 @@ public class Objeto {
 
     public Objeto(int id, int modeloBD, int cant, int pos, String strStats, int idObjevi) {
         this._id = id;
-        this._modelo = World.getObjModelo(modeloBD);
+        this._modelo = Mundo.getObjModelo(modeloBD);
         this._cantidad = cant;
         this._posicion = pos;
-        this._stats = new Personagens.Stats();
+        this._stats = new Personaje.Stats();
         this._textoStats = new TreeMap<Integer, String>();
         this._hechizoStats = new ArrayList();
         this._objevivoID = idObjevi;
@@ -49,12 +49,12 @@ public class Objeto {
         this.convertirStringAStats(strStats);
     }
 
-    public Objeto(int id, int modeloBD, int cant, int pos, String strStats, ArrayList<SpellEffect> efectos, int idObjevi) {
+    public Objeto(int id, int modeloBD, int cant, int pos, String strStats, ArrayList<EfectoHechizo> efectos, int idObjevi) {
         this._id = id;
-        this._modelo = World.getObjModelo(modeloBD);
+        this._modelo = Mundo.getObjModelo(modeloBD);
         this._cantidad = cant;
         this._posicion = pos;
-        this._stats = new Personagens.Stats();
+        this._stats = new Personaje.Stats();
         this._textoStats = new TreeMap<Integer, String>();
         this._hechizoStats = new ArrayList();
         this._efectos = efectos;
@@ -77,12 +77,12 @@ public class Objeto {
 
     public void setIDModelo(int idModelo) {
         this._idObjModelo = idModelo;
-        this._modelo = World.getObjModelo(idModelo);
+        this._modelo = Mundo.getObjModelo(idModelo);
     }
 
     public void convertirStringAStats(String strStats) {
         String[] split;
-        this._stats = new Personagens.Stats();
+        this._stats = new Personaje.Stats();
         this._textoStats = new TreeMap<Integer, String>();
         this._hechizoStats = new ArrayList();
         this._efectos = new ArrayList();
@@ -113,7 +113,7 @@ public class Objeto {
                     int a = arrn[j];
                     if (a != statID) continue;
                     String args = String.valueOf(stats[1]) + ";" + stats[2] + ";-1;-1;0;" + stats[4];
-                    this._efectos.add(new SpellEffect(statID, args, 0, -1));
+                    this._efectos.add(new EfectoHechizo(statID, args, 0, -1));
                     siguiente = false;
                 }
                 if (!siguiente) continue;
@@ -126,7 +126,7 @@ public class Objeto {
             }
         }
         if (LesGuardians.ARMAS_ENCARNACAO.contains(this._idObjModelo)) {
-            Incarnacao encarnacion = World.getEncarnacion(this._id);
+            Encarnación encarnacion = Mundo.getEncarnacion(this._id);
             if (encarnacion == null) {
                 this._stats.addStat(118, 1);
                 this._stats.addStat(119, 1);
@@ -152,8 +152,8 @@ public class Objeto {
         if (LesGuardians.ARMAS_ENCARNACAO.contains(this._idObjModelo)) {
             return this._modelo._statsModelo;
         }
-        if ((tipoModelo == 18 || tipoModelo == 90) && World.getIdTodasMascotas().contains(this._id)) {
-            Pets mascota = World.getMascota(this._id);
+        if ((tipoModelo == 18 || tipoModelo == 90) && Mundo.getIdTodasMascotas().contains(this._id)) {
+            Mascota mascota = Mundo.getMascota(this._id);
             if (tipoModelo == 18) {
                 return mascota.analizarStatsMascota();
             }
@@ -174,7 +174,7 @@ public class Objeto {
                 return "3cc#0#0#" + Integer.toHexString(1) + "," + "3cb#0#0#1," + "3cd#0#0#" + Integer.toHexString(tipo) + "," + "3ca#0#0#0," + "3ce#0#0#0";
             }
             if (this._objevivoID != 0) {
-                Set_Vivo objevi = World.getObjevivos(this._objevivoID);
+                Objevivo objevi = Mundo.getObjevivos(this._objevivoID);
                 if (objevi != null) {
                     return objevi.convertirAString();
                 }
@@ -204,7 +204,7 @@ public class Objeto {
                 primero = true;
             }
         }
-        for (SpellEffect spellEffect : this._efectos) {
+        for (EfectoHechizo spellEffect : this._efectos) {
             if (primero) {
                 stats = String.valueOf(stats) + ",";
             }
@@ -236,7 +236,7 @@ public class Objeto {
             primero = true;
         }
         if (this._objevivoID != 0) {
-            Set_Vivo set_Vivo = World.getObjevivos(this._objevivoID);
+            Objevivo set_Vivo = Mundo.getObjevivos(this._objevivoID);
             if (set_Vivo == null) {
                 this._objevivoID = 0;
             } else {
@@ -274,7 +274,7 @@ public class Objeto {
         return 0;
     }
 
-    public Personagens.Stats getStats() {
+    public Personaje.Stats getStats() {
         return this._stats;
     }
 
@@ -309,7 +309,7 @@ public class Objeto {
     public String stringObjetoConGui\u00f1o() {
         String str = String.valueOf(Integer.toHexString(this._id)) + "~" + Integer.toHexString(this._idObjModelo) + "~" + Integer.toHexString(this._cantidad) + "~" + (this._posicion == -1 ? "" : Integer.toHexString(this._posicion)) + "~" + this.convertirStatsAString();
         if (LesGuardians.ARMAS_ENCARNACAO.contains(this._idObjModelo)) {
-            Incarnacao encarnacion = World.getEncarnacion(this._id);
+            Encarnación encarnacion = Mundo.getEncarnacion(this._id);
             if (encarnacion == null) {
                 str = String.valueOf(str) + ",76#1#0#0#0d0+1,77#1#0#0#0d0+1,7b#1#0#0#0d0+1,7e#1#0#0#0d0+1,29d#0#0#1";
             } else {
@@ -323,7 +323,7 @@ public class Objeto {
     public String stringObjetoConPalo(int cantidad) {
         String str = String.valueOf(this._id) + "|" + cantidad + "|" + this._idObjModelo + "|" + this.convertirStatsAString();
         if (LesGuardians.ARMAS_ENCARNACAO.contains(this._idObjModelo)) {
-            Incarnacao encarnacion = World.getEncarnacion(this._id);
+            Encarnación encarnacion = Mundo.getEncarnacion(this._id);
             if (encarnacion == null) {
                 str = String.valueOf(str) + ",76#1#0#0#0d0+1,77#1#0#0#0d0+1,7b#1#0#0#0d0+1,7e#1#0#0#0d0+1,29d#0#0#1";
             } else {
@@ -338,7 +338,7 @@ public class Objeto {
         int statID;
         String stats = "";
         boolean primero = false;
-        for (SpellEffect spellEffect : obj._efectos) {
+        for (EfectoHechizo spellEffect : obj._efectos) {
             if (primero) {
                 stats = String.valueOf(stats) + ",";
             }
@@ -422,7 +422,7 @@ public class Objeto {
     public String stringStatsFCForja(Objeto obj, double runa) {
         String stats = "";
         boolean primero = false;
-        for (SpellEffect spellEffect : obj._efectos) {
+        for (EfectoHechizo spellEffect : obj._efectos) {
             if (primero) {
                 stats = String.valueOf(stats) + ",";
             }
@@ -472,13 +472,13 @@ public class Objeto {
         return stats;
     }
 
-    public ArrayList<SpellEffect> getEfectos() {
+    public ArrayList<EfectoHechizo> getEfectos() {
         return this._efectos;
     }
 
-    public ArrayList<SpellEffect> getEfectosCriticos() {
-        ArrayList<SpellEffect> efectos = new ArrayList<SpellEffect>();
-        for (SpellEffect SE : this._efectos) {
+    public ArrayList<EfectoHechizo> getEfectosCriticos() {
+        ArrayList<EfectoHechizo> efectos = new ArrayList<EfectoHechizo>();
+        for (EfectoHechizo SE : this._efectos) {
             try {
                 int max;
                 boolean boost = false;
@@ -496,7 +496,7 @@ public class Objeto {
                 }
                 String jet = "0d0+" + (max + this._modelo.getBonusGC());
                 String newArgs = String.valueOf(infos[0]) + ";" + infos[1] + ";0;-1;0;" + jet;
-                efectos.add(new SpellEffect(SE.getEfectoID(), newArgs, 0, -1));
+                efectos.add(new EfectoHechizo(SE.getEfectoID(), newArgs, 0, -1));
             }
             catch (Exception exception) {
                 // empty catch block
@@ -510,7 +510,7 @@ public class Objeto {
             cantidad = 1;
         }
         int tipo = obj.getModelo().getTipo();
-        Objeto objeto = obj.getModelo().getTipo() == 18 ? new Objeto(0, obj.getIDModelo(), cantidad, -1, "320#0#0#a,326#0#0#0", 0) : (tipo == 33 || tipo == 42 || tipo == 49 || tipo == 69 || tipo == 12 ? new Objeto(0, obj._idObjModelo, cantidad, -1, obj._modelo._statsModelo, 0) : (tipo == 85 ? new Almas(0, cantidad, obj._idObjModelo, -1, obj._modelo._statsModelo) : (LesGuardians.ARMAS_ENCARNACAO.contains(obj._idObjModelo) ? new Objeto(0, obj._idObjModelo, cantidad, -1, obj._modelo._statsModelo, 0) : new Objeto(0, obj._idObjModelo, cantidad, -1, obj.convertirStatsAString(), obj.getEfectos(), 0))));
+        Objeto objeto = obj.getModelo().getTipo() == 18 ? new Objeto(0, obj.getIDModelo(), cantidad, -1, "320#0#0#a,326#0#0#0", 0) : (tipo == 33 || tipo == 42 || tipo == 49 || tipo == 69 || tipo == 12 ? new Objeto(0, obj._idObjModelo, cantidad, -1, obj._modelo._statsModelo, 0) : (tipo == 85 ? new PiedraAlma(0, cantidad, obj._idObjModelo, -1, obj._modelo._statsModelo) : (LesGuardians.ARMAS_ENCARNACAO.contains(obj._idObjModelo) ? new Objeto(0, obj._idObjModelo, cantidad, -1, obj._modelo._statsModelo, 0) : new Objeto(0, obj._idObjModelo, cantidad, -1, obj.convertirStatsAString(), obj.getEfectos(), 0))));
         return objeto;
     }
 
@@ -555,14 +555,14 @@ public class Objeto {
     }
 
     public void clearTodo() {
-        this._stats = new Personagens.Stats();
+        this._stats = new Personaje.Stats();
         this._efectos.clear();
         this._textoStats.clear();
         this._hechizoStats.clear();
     }
 
     public void clearStats() {
-        this._stats = new Personagens.Stats();
+        this._stats = new Personaje.Stats();
         this._textoStats.clear();
         this._hechizoStats.clear();
     }
@@ -585,7 +585,7 @@ public class Objeto {
         private int _porcentajeFC;
         private int _bonusGC;
         private boolean _esDosManos;
-        private ArrayList<Acao> _accionesDeUso = new ArrayList();
+        private ArrayList<Acción> _accionesDeUso = new ArrayList();
         private long _vendidos;
         private int _precioMedio;
 
@@ -623,7 +623,7 @@ public class Objeto {
             }
         }
 
-        public void addAccion(Acao A) {
+        public void addAccion(Acción A) {
             this._accionesDeUso.add(A);
         }
 
@@ -699,7 +699,7 @@ public class Objeto {
             if (cantidad < 1) {
                 cantidad = 1;
             }
-            Objeto objeto = this._tipo == 18 ? new Objeto(0, this._idModelo, cantidad, -1, "320#0#0#a,326#0#0#0", 0) : (this._tipo == 33 || this._tipo == 42 || this._tipo == 49 || this._tipo == 69 || this._tipo == 12 ? new Objeto(0, this._idModelo, cantidad, -1, this._statsModelo, 0) : (this._tipo == 85 ? new Almas(0, cantidad, this._idModelo, -1, this._statsModelo) : (LesGuardians.ARMAS_ENCARNACAO.contains(this._idModelo) ? new Objeto(0, this._idModelo, cantidad, -1, this._statsModelo, 0) : new Objeto(0, this._idModelo, cantidad, -1, ObjetoModelo.generarStatsModeloDB(this._statsModelo, maxStats), this.generarEfectoModelo(this._statsModelo), 0))));
+            Objeto objeto = this._tipo == 18 ? new Objeto(0, this._idModelo, cantidad, -1, "320#0#0#a,326#0#0#0", 0) : (this._tipo == 33 || this._tipo == 42 || this._tipo == 49 || this._tipo == 69 || this._tipo == 12 ? new Objeto(0, this._idModelo, cantidad, -1, this._statsModelo, 0) : (this._tipo == 85 ? new PiedraAlma(0, cantidad, this._idModelo, -1, this._statsModelo) : (LesGuardians.ARMAS_ENCARNACAO.contains(this._idModelo) ? new Objeto(0, this._idModelo, cantidad, -1, this._statsModelo, 0) : new Objeto(0, this._idModelo, cantidad, -1, ObjetoModelo.generarStatsModeloDB(this._statsModelo, maxStats), this.generarEfectoModelo(this._statsModelo), 0))));
             return objeto;
         }
 
@@ -775,9 +775,9 @@ public class Objeto {
             return statsObjeto;
         }
 
-        private ArrayList<SpellEffect> generarEfectoModelo(String statsModelo) {
+        private ArrayList<EfectoHechizo> generarEfectoModelo(String statsModelo) {
             String[] splitted;
-            ArrayList<SpellEffect> efectos = new ArrayList<SpellEffect>();
+            ArrayList<EfectoHechizo> efectos = new ArrayList<EfectoHechizo>();
             if (statsModelo.equals("") || statsModelo == null) {
                 return efectos;
             }
@@ -793,7 +793,7 @@ public class Objeto {
                     int a = arrn[j];
                     if (a != statID) continue;
                     String args = String.valueOf(stats[1]) + ";" + stats[2] + ";-1;-1;0;" + stats[4];
-                    efectos.add(new SpellEffect(statID, args, 0, -1));
+                    efectos.add(new EfectoHechizo(statID, args, 0, -1));
                 }
             }
             return efectos;
@@ -806,8 +806,8 @@ public class Objeto {
             return str;
         }
 
-        public void aplicarAccion(Personagens pj, Personagens objetivo, int objID, short celda) {
-            for (Acao a : this._accionesDeUso) {
+        public void aplicarAccion(Personaje pj, Personaje objetivo, int objID, short celda) {
+            for (Acción a : this._accionesDeUso) {
                 a.aplicar(pj, objetivo, objID, celda);
             }
         }

@@ -1,9 +1,9 @@
 package common;
 
 import common.Consola;
-import common.ConsolePersonalizado;
+import common.ConsolaPersonalización;
 import common.SQLManager;
-import common.World;
+import common.Mundo;
 import game.GameServer;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -236,7 +236,7 @@ public class LesGuardians {
         }
         System.out.println(" Conexao OK");
         System.out.println("Criacao do servidor.");
-        World.crearServer();
+        Mundo.crearServer();
         _corriendo = true;
         LesGuardians.DofemuStarted();
     }
@@ -282,7 +282,7 @@ public class LesGuardians {
         LesGuardians.setTitle("Les Guardians, Conectados : " + _servidorPersonaje.nroJugadoresLinea());
         Consola.println("Les Guardians ON ! A espera de conexoes...", Consola.ConsoleColorEnum.GREEN);
         Consola.println("Use (HELP ou ? para lista de comandos).", Consola.ConsoleColorEnum.YELLOW);
-        new ConsolePersonalizado();
+        new ConsolaPersonalización();
         try {
             Thread.sleep(21600000L);
         }
@@ -306,7 +306,7 @@ public class LesGuardians {
         System.out.println(". Ok");
         Consola.println("Les Guardians ON ! A espera de conexoes...", Consola.ConsoleColorEnum.GREEN);
         Consola.println("Use (HELP ou ? para lista de comandos).", Consola.ConsoleColorEnum.YELLOW);
-        new ConsolePersonalizado();
+        new ConsolaPersonalización();
     }
 
     private static void cargarConfiguracion() {
@@ -645,7 +645,7 @@ public class LesGuardians {
         System.out.println("Fechando servidor ...");
         if (_corriendo) {
             _corriendo = false;
-            World.salvarServidor();
+            Mundo.salvarServidor();
             _servidorPersonaje.cerrarServidor();
             SQLManager.cerrarConexion();
         }

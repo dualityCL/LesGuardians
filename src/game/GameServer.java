@@ -5,7 +5,7 @@ import common.CryptManager;
 import common.LesGuardians;
 import common.SQLManager;
 import common.SocketManager;
-import common.World;
+import common.Mundo;
 import game.GameThread;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
-import objects.Conta;
-import objects.Maps;
-import objects.Personagens;
+import objects.Cuenta;
+import objects.Mapa;
+import objects.Personaje;
 import org.fusesource.jansi.AnsiConsole;
 
 public class GameServer
@@ -24,7 +24,7 @@ implements Runnable {
     private ServerSocket _serverSocket;
     private Thread _thread;
     private ArrayList<GameThread> _clientes = new ArrayList();
-    private ArrayList<Conta> _esperando = new ArrayList();
+    private ArrayList<Cuenta> _esperando = new ArrayList();
     private Timer _tiempoSalvada;
     private Timer _subirEstrellas;
     private Timer _rankingPVP;
@@ -62,7 +62,7 @@ implements Runnable {
 
                 @Override
                 public void run() {
-                    World.subirEstrellasMobs();
+                    Mundo.subirEstrellasMobs();
                 }
             }, LesGuardians.RELOGAR_ESTRELAS_MOBS, (long)LesGuardians.RELOGAR_ESTRELAS_MOBS);
             this._moverPavos = new Timer();
@@ -70,7 +70,7 @@ implements Runnable {
 
                 @Override
                 public void run() {
-                    for (Maps.Cercado cercado : World.todosCercados()) {
+                    for (Mapa.Cercado cercado : Mundo.todosCercados()) {
                         cercado.startMoverDrago();
                     }
                 }
@@ -93,19 +93,19 @@ implements Runnable {
 
                 @Override
                 public void run() {
-                    String antiguoLider = World.liderRanking;
-                    Personagens liderViejo = World.getPjPorNombre(antiguoLider);
+                    String antiguoLider = Mundo.liderRanking;
+                    Personaje liderViejo = Mundo.getPjPorNombre(antiguoLider);
                     if (liderViejo != null) {
                         liderViejo.setTitulo(0);
                     }
                     SQLManager.ACTUALIZAR_TITULO_POR_NOMBRE(antiguoLider);
-                    int idPerso = World.idLiderRankingPVP();
-                    Personagens perso = World.getPersonaje(idPerso);
+                    int idPerso = Mundo.idLiderRankingPVP();
+                    Personaje perso = Mundo.getPersonaje(idPerso);
                     if (perso != null) {
                         perso.setTitulo(8);
-                        World.getNPCModelo(1350).configurarNPC(perso.getGfxID(), perso.getSexo(), perso.getColor1(), perso.getColor2(), perso.getColor3(), perso.getStringAccesorios());
+                        Mundo.getNPCModelo(1350).configurarNPC(perso.getGfxID(), perso.getSexo(), perso.getColor1(), perso.getColor2(), perso.getColor3(), perso.getStringAccesorios());
                     }
-                    World.liderRanking = World.nombreLiderRankingPVP();
+                    Mundo.liderRanking = Mundo.nombreLiderRankingPVP();
                 }
             }, 3600000L, 3600000L);
             this._serverSocket = new ServerSocket(LesGuardians.PORTA_JOGO);
@@ -242,7 +242,7 @@ implements Runnable {
         this._clientes.remove(entradaPersonaje);
     }
 
-    public synchronized Conta getEsperandoCuenta(int id) {
+    public synchronized Cuenta getEsperandoCuenta(int id) {
         for (int i = 0; i < this._esperando.size(); ++i) {
             if (this._esperando.get(i).getID() != id) continue;
             return this._esperando.get(i);
@@ -250,11 +250,11 @@ implements Runnable {
         return null;
     }
 
-    public synchronized void delEsperandoCuenta(Conta cuenta) {
+    public synchronized void delEsperandoCuenta(Cuenta cuenta) {
         this._esperando.remove(cuenta);
     }
 
-    public synchronized void addEsperandoCuenta(Conta cuenta) {
+    public synchronized void addEsperandoCuenta(Cuenta cuenta) {
         this._esperando.add(cuenta);
     }
 
@@ -290,7 +290,7 @@ implements Runnable {
         public synchronized void run() {
             if (!LesGuardians._salvando) {
                 SocketManager.ENVIAR_Im_INFORMACION_A_TODOS("1164");
-                World.salvarServidor();
+                Mundo.salvarServidor();
                 SocketManager.ENVIAR_Im_INFORMACION_A_TODOS("1165");
             }
         }

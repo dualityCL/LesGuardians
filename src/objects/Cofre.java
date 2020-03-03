@@ -4,14 +4,14 @@ import common.Constantes;
 import common.LesGuardians;
 import common.SQLManager;
 import common.SocketManager;
-import common.World;
+import common.Mundo;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 import objects.Casa;
-import objects.Conta;
+import objects.Cuenta;
 import objects.Objeto;
-import objects.Personagens;
+import objects.Personaje;
 
 public class Cofre {
     private int _id;
@@ -32,7 +32,7 @@ public class Cofre {
             String[] infos;
             int idObjeto;
             Objeto obj;
-            if (objeto.equals("") || (obj = World.getObjeto(idObjeto = Integer.parseInt((infos = objeto.split(":"))[0]))) == null) continue;
+            if (objeto.equals("") || (obj = Mundo.getObjeto(idObjeto = Integer.parseInt((infos = objeto.split(":"))[0]))) == null) continue;
             this._objetos.put(obj.getID(), obj);
         }
         this._kamas = kamas;
@@ -84,12 +84,12 @@ public class Cofre {
         this._due\u00f1oID = due\u00f1oID;
     }
 
-    public void bloquear(Personagens perso) {
+    public void bloquear(Personaje perso) {
         SocketManager.ENVIAR_K_CLAVE(perso, "CK1|8");
     }
 
     public static Cofre getCofrePorUbicacion(int mapaID, int celdaID) {
-        for (Map.Entry<Integer, Cofre> cofres : World.getCofres().entrySet()) {
+        for (Map.Entry<Integer, Cofre> cofres : Mundo.getCofres().entrySet()) {
             Cofre cofre = cofres.getValue();
             if (cofre.getMapaID() != mapaID || cofre.getCeldaID() != celdaID) continue;
             return cofre;
@@ -97,7 +97,7 @@ public class Cofre {
         return null;
     }
 
-    public static void codificarCofre(Personagens perso, String packet) {
+    public static void codificarCofre(Personaje perso, String packet) {
         Cofre cofre = perso.getCofre();
         if (cofre == null) {
             return;
@@ -112,12 +112,12 @@ public class Cofre {
         perso.setCofre(null);
     }
 
-    public void chekeadoPor(Personagens perso) {
+    public void chekeadoPor(Personaje perso) {
         if (perso.getPelea() != null || perso.getConversandoCon() != 0 || perso.getIntercambiandoCon() != 0 || perso.getHaciendoTrabajo() != null || perso.getIntercambio() != null) {
             return;
         }
         Cofre cofre = perso.getCofre();
-        Casa casa = World.getCasa(this._casaID);
+        Casa casa = Mundo.getCasa(this._casaID);
         if (cofre == null) {
             return;
         }
@@ -136,7 +136,7 @@ public class Cofre {
         }
     }
 
-    public static void abrirCofre(Personagens perso, String packet, boolean esSuCofre) {
+    public static void abrirCofre(Personaje perso, String packet, boolean esSuCofre) {
         Cofre cofre = perso.getCofre();
         if (cofre == null) {
             return;
@@ -152,17 +152,17 @@ public class Cofre {
         }
     }
 
-    public static void cerrarVentanaCofre(Personagens perso) {
+    public static void cerrarVentanaCofre(Personaje perso) {
         SocketManager.ENVIAR_K_CLAVE(perso, "V");
     }
 
-    public boolean esSuCofre(Personagens perso, Cofre cofre) {
+    public boolean esSuCofre(Personaje perso, Cofre cofre) {
         return cofre.getDue\u00f1oID() == perso.getCuentaID();
     }
 
     public static ArrayList<Cofre> getCofresPorCasa(Casa casa) {
         ArrayList<Cofre> cofres = new ArrayList<Cofre>();
-        for (Map.Entry<Integer, Cofre> cofre : World.getCofres().entrySet()) {
+        for (Map.Entry<Integer, Cofre> cofre : Mundo.getCofres().entrySet()) {
             if (cofre.getValue().getCasaPorID() != casa.getID()) continue;
             cofres.add(cofre.getValue());
         }
@@ -180,12 +180,12 @@ public class Cofre {
         return packet;
     }
 
-    public void agregarAlCofre(int idObj, int cantidad, Personagens perso) {
+    public void agregarAlCofre(int idObj, int cantidad, Personaje perso) {
         if (this._objetos.size() >= 80) {
             SocketManager.ENVIAR_cs_CHAT_MENSAJE(perso, "Llegaste al m\u00e1ximo de objetos que puede soportar este cofre", LesGuardians.COR_MSG);
             return;
         }
-        Objeto persoObj = World.getObjeto(idObj);
+        Objeto persoObj = Mundo.getObjeto(idObj);
         if (persoObj == null) {
             return;
         }
@@ -207,14 +207,14 @@ public class Cofre {
             } else {
                 persoObj.setCantidad(nuevaCant);
                 cofreObj = Objeto.clonarObjeto(persoObj, cantidad);
-                World.addObjeto(cofreObj, true);
+                Mundo.addObjeto(cofreObj, true);
                 this._objetos.put(cofreObj.getID(), cofreObj);
                 str = "O+" + cofreObj.getID() + "|" + cofreObj.getCantidad() + "|" + cofreObj.getModelo().getID() + "|" + cofreObj.convertirStatsAString();
                 SocketManager.ENVIAR_OQ_CAMBIA_CANTIDAD_DEL_OBJETO(perso, persoObj);
             }
         } else if (nuevaCant <= 0) {
             perso.borrarObjetoSinEliminar(idObj);
-            World.eliminarObjeto(idObj);
+            Mundo.eliminarObjeto(idObj);
             cofreObj.setCantidad(cofreObj.getCantidad() + persoObj.getCantidad());
             str = "O+" + cofreObj.getID() + "|" + cofreObj.getCantidad() + "|" + cofreObj.getModelo().getID() + "|" + cofreObj.convertirStatsAString();
             SocketManager.ENVIAR_OR_ELIMINAR_OBJETO(perso, idObj);
@@ -224,18 +224,18 @@ public class Cofre {
             str = "O+" + cofreObj.getID() + "|" + cofreObj.getCantidad() + "|" + cofreObj.getModelo().getID() + "|" + cofreObj.convertirStatsAString();
             SocketManager.ENVIAR_OQ_CAMBIA_CANTIDAD_DEL_OBJETO(perso, persoObj);
         }
-        for (Personagens pj : perso.getMapa().getPersos()) {
+        for (Personaje pj : perso.getMapa().getPersos()) {
             if (pj.getCofre() == null || this._id != pj.getCofre().getID()) continue;
             SocketManager.ENVIAR_EsK_MOVER_A_TIENDA_COFRE_BANCO(pj, str);
         }
         SocketManager.ENVIAR_Ow_PODS_DEL_PJ(perso);
     }
 
-    public void retirarDelCofre(int idObj, int cant, Personagens perso) {
+    public void retirarDelCofre(int idObj, int cant, Personaje perso) {
         if (perso.getCofre().getID() != this._id) {
             return;
         }
-        Objeto cofreObj = World.getObjeto(idObj);
+        Objeto cofreObj = Mundo.getObjeto(idObj);
         if (cofreObj == null) {
             return;
         }
@@ -254,7 +254,7 @@ public class Cofre {
                 str = "O-" + idObj;
             } else {
                 persoObj = Objeto.clonarObjeto(cofreObj, cant);
-                World.addObjeto(persoObj, true);
+                Mundo.addObjeto(persoObj, true);
                 cofreObj.setCantidad(nuevaCant);
                 perso.getObjetos().put(persoObj.getID(), persoObj);
                 SocketManager.ENVIAR_OAKO_APARECER_OBJETO(perso, persoObj);
@@ -262,7 +262,7 @@ public class Cofre {
             }
         } else if (nuevaCant <= 0) {
             this._objetos.remove(cofreObj.getID());
-            World.eliminarObjeto(cofreObj.getID());
+            Mundo.eliminarObjeto(cofreObj.getID());
             persoObj.setCantidad(persoObj.getCantidad() + cofreObj.getCantidad());
             SocketManager.ENVIAR_OQ_CAMBIA_CANTIDAD_DEL_OBJETO(perso, persoObj);
             str = "O-" + idObj;
@@ -272,7 +272,7 @@ public class Cofre {
             SocketManager.ENVIAR_OQ_CAMBIA_CANTIDAD_DEL_OBJETO(perso, persoObj);
             str = "O+" + cofreObj.getID() + "|" + cofreObj.getCantidad() + "|" + cofreObj.getModelo().getID() + "|" + cofreObj.convertirStatsAString();
         }
-        for (Personagens pj : perso.getMapa().getPersos()) {
+        for (Personaje pj : perso.getMapa().getPersos()) {
             if (pj.getCofre() == null || this._id != pj.getCofre().getID()) continue;
             SocketManager.ENVIAR_EsK_MOVER_A_TIENDA_COFRE_BANCO(pj, str);
         }
@@ -297,12 +297,12 @@ public class Cofre {
 
     public void limpiarCofre() {
         for (Map.Entry<Integer, Objeto> obj : this.getObjetos().entrySet()) {
-            World.eliminarObjeto(obj.getKey());
+            Mundo.eliminarObjeto(obj.getKey());
         }
         this.getObjetos().clear();
     }
 
-    public void moverCofreABanco(Conta cuenta) {
+    public void moverCofreABanco(Cuenta cuenta) {
         for (Map.Entry<Integer, Objeto> obj : this.getObjetos().entrySet()) {
             cuenta.getObjetosBanco().put(obj.getKey(), obj.getValue());
         }

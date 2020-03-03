@@ -3,7 +3,7 @@ package common;
 import common.CryptManager;
 import common.Fórmulas;
 import common.Pathfinding;
-import common.World;
+import common.Mundo;
 import game.GameThread;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,23 +11,23 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
-import objects.Fight;
-import objects.Fight.Luchador;
-import objects.Maps;
-import objects.Spell;
-import objects.SpellEffect;
+import objects.Combate;
+import objects.Combate.Luchador;
+import objects.Mapa;
+import objects.Hechizo;
+import objects.EfectoHechizo;
 
 
 public class IA {
 
     public static class MotorIA
     implements Runnable {
-        private Fight _pelea;
-        private Fight.Luchador _atacante;
+        private Combate _pelea;
+        private Combate.Luchador _atacante;
         private static boolean stop = false;
         private Thread _t;
 
-        public MotorIA(Fight.Luchador atacante, Fight pelea) {
+        public MotorIA(Combate.Luchador atacante, Combate pelea) {
             this._atacante = atacante;
             this._pelea = pelea;
             this._t = new Thread(this);
@@ -159,11 +159,11 @@ public class IA {
             }
         }
 
-        private static void tipo_0(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_0(Combate.Luchador lanzador, Combate pelea) {
             stop = true;
         }
 
-        private static void tipo_1(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_1(Combate.Luchador lanzador, Combate pelea) {
             int veces = 0;
             while (!stop && lanzador.puedeJugar()) {
                 int ataque;
@@ -174,8 +174,8 @@ public class IA {
                     return;
                 }
                 int porcPDV = lanzador.getPDVConBuff() * 100 / lanzador.getPDVMaxConBuff();
-                Fight.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
-                Fight.Luchador amigo = MotorIA.amigoMasCercano(pelea, lanzador);
+                Combate.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
+                Combate.Luchador amigo = MotorIA.amigoMasCercano(pelea, lanzador);
                 if (enemigo == null) {
                     MotorIA.mueveLoMasLejosPosible(pelea, lanzador);
                     return;
@@ -227,7 +227,7 @@ public class IA {
             }
         }
 
-        private static void tipo_2(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_2(Combate.Luchador lanzador, Combate pelea) {
             int veces = 0;
             while (!stop && lanzador.puedeJugar()) {
                 if (++veces >= 8) {
@@ -236,7 +236,7 @@ public class IA {
                 if (veces > 15) {
                     return;
                 }
-                Fight.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
+                Combate.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
                 if (enemigo == null) {
                     return;
                 }
@@ -251,7 +251,7 @@ public class IA {
             }
         }
 
-        private static void tipo_3(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_3(Combate.Luchador lanzador, Combate pelea) {
             int veces = 0;
             while (!stop && lanzador.puedeJugar()) {
                 if (++veces >= 8) {
@@ -260,7 +260,7 @@ public class IA {
                 if (veces > 15) {
                     return;
                 }
-                Fight.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
+                Combate.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
                 if (enemigo == null) {
                     MotorIA.mueveLoMasLejosPosible(pelea, lanzador);
                     return;
@@ -282,7 +282,7 @@ public class IA {
             }
         }
 
-        private static void tipo_4(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_4(Combate.Luchador lanzador, Combate pelea) {
             int veces = 0;
             while (!stop && lanzador.puedeJugar()) {
                 if (++veces >= 8) {
@@ -291,7 +291,7 @@ public class IA {
                 if (veces > 15) {
                     return;
                 }
-                Fight.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
+                Combate.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
                 if (enemigo == null) {
                     MotorIA.mueveLoMasLejosPosible(pelea, lanzador);
                     return;
@@ -335,7 +335,7 @@ public class IA {
             }
         }
 
-        private static void tipo_5(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_5(Combate.Luchador lanzador, Combate pelea) {
             int veces = 0;
             while (!stop && lanzador.puedeJugar()) {
                 if (++veces >= 8) {
@@ -344,7 +344,7 @@ public class IA {
                 if (veces > 15) {
                     return;
                 }
-                Fight.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
+                Combate.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
                 if (enemigo == null) {
                     MotorIA.mueveLoMasLejosPosible(pelea, lanzador);
                     return;
@@ -354,7 +354,7 @@ public class IA {
             }
         }
 
-        private static void tipo_6(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_6(Combate.Luchador lanzador, Combate pelea) {
             int veces = 0;
             while (!stop && lanzador.puedeJugar()) {
                 if (++veces >= 8) {
@@ -363,7 +363,7 @@ public class IA {
                 if (veces > 15) {
                     return;
                 }
-                Fight.Luchador amigo = MotorIA.amigoMasCercano(pelea, lanzador);
+                Combate.Luchador amigo = MotorIA.amigoMasCercano(pelea, lanzador);
                 if (MotorIA.acercarseA(pelea, lanzador, amigo)) continue;
                 while (MotorIA.buffeaSiEsPosible2(pelea, lanzador, amigo)) {
                 }
@@ -373,7 +373,7 @@ public class IA {
             }
         }
 
-        private static void tipo_7(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_7(Combate.Luchador lanzador, Combate pelea) {
             int veces = 0;
             while (!stop && lanzador.puedeJugar()) {
                 if (++veces >= 8) {
@@ -382,7 +382,7 @@ public class IA {
                 if (veces > 15) {
                     return;
                 }
-                Fight.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
+                Combate.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
                 if (enemigo == null) {
                     MotorIA.mueveLoMasLejosPosible(pelea, lanzador);
                     return;
@@ -404,7 +404,7 @@ public class IA {
             }
         }
 
-        private static void tipo_8(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_8(Combate.Luchador lanzador, Combate pelea) {
             int veces = 0;
             while (!stop && lanzador.puedeJugar()) {
                 if (++veces >= 8) {
@@ -413,7 +413,7 @@ public class IA {
                 if (veces > 15) {
                     return;
                 }
-                Fight.Luchador amigo = MotorIA.amigoMasCercano(pelea, lanzador);
+                Combate.Luchador amigo = MotorIA.amigoMasCercano(pelea, lanzador);
                 if (amigo == null) {
                     return;
                 }
@@ -424,7 +424,7 @@ public class IA {
             }
         }
 
-        private static void tipo_9(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_9(Combate.Luchador lanzador, Combate pelea) {
             int veces = 0;
             while (!stop && lanzador.puedeJugar()) {
                 if (++veces >= 8) {
@@ -439,7 +439,7 @@ public class IA {
             }
         }
 
-        private static void tipo_10(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_10(Combate.Luchador lanzador, Combate pelea) {
             int veces = 0;
             while (!stop && lanzador.puedeJugar()) {
                 if (++veces >= 8) {
@@ -461,7 +461,7 @@ public class IA {
             }
         }
 
-        private static void tipo_11(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_11(Combate.Luchador lanzador, Combate pelea) {
             int veces = 0;
             while (!stop && lanzador.puedeJugar()) {
                 if (++veces >= 8) {
@@ -470,7 +470,7 @@ public class IA {
                 if (veces > 15) {
                     return;
                 }
-                Fight.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
+                Combate.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
                 if (enemigo == null) {
                     MotorIA.mueveLoMasLejosPosible(pelea, lanzador);
                     return;
@@ -494,7 +494,7 @@ public class IA {
             }
         }
 
-        private static void tipo_12(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_12(Combate.Luchador lanzador, Combate pelea) {
             int veces = 0;
             while (!stop && lanzador.puedeJugar()) {
                 if (++veces >= 8) {
@@ -527,7 +527,7 @@ public class IA {
             }
         }
 
-        private static void tipo_13(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_13(Combate.Luchador lanzador, Combate pelea) {
             int veces = 0;
             while (!stop && lanzador.puedeJugar()) {
                 if (++veces >= 8) {
@@ -548,7 +548,7 @@ public class IA {
             }
         }
 
-        private static void tipo_14(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_14(Combate.Luchador lanzador, Combate pelea) {
             int veces = 0;
             while (!stop && lanzador.puedeJugar()) {
                 int ataque;
@@ -559,8 +559,8 @@ public class IA {
                     return;
                 }
                 int porcPDV = lanzador.getPDVConBuff() * 100 / lanzador.getPDVMaxConBuff();
-                Fight.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
-                Fight.Luchador amigo = MotorIA.amigoMasCercano(pelea, lanzador);
+                Combate.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
+                Combate.Luchador amigo = MotorIA.amigoMasCercano(pelea, lanzador);
                 if (enemigo == null) {
                     MotorIA.mueveLoMasLejosPosible(pelea, lanzador);
                     return;
@@ -612,7 +612,7 @@ public class IA {
             }
         }
 
-        private static void tipo_15(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_15(Combate.Luchador lanzador, Combate pelea) {
             int veces = 0;
             while (!stop && lanzador.puedeJugar()) {
                 int ataque;
@@ -623,7 +623,7 @@ public class IA {
                     return;
                 }
                 int porcPDV = lanzador.getPDVConBuff() * 100 / lanzador.getPDVMaxConBuff();
-                Fight.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
+                Combate.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
                 if (enemigo == null) {
                     MotorIA.mueveLoMasLejosPosible(pelea, lanzador);
                     return;
@@ -675,7 +675,7 @@ public class IA {
             }
         }
 
-        private static void tipo_16(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_16(Combate.Luchador lanzador, Combate pelea) {
             int veces = 0;
             while (!stop && lanzador.puedeJugar()) {
                 if (++veces >= 8) {
@@ -684,8 +684,8 @@ public class IA {
                 if (veces > 15) {
                     return;
                 }
-                Fight.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
-                Fight.Luchador amigo = MotorIA.amigoMasCercano(pelea, lanzador);
+                Combate.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
+                Combate.Luchador amigo = MotorIA.amigoMasCercano(pelea, lanzador);
                 if (enemigo == null) {
                     MotorIA.mueveLoMasLejosPosible(pelea, lanzador);
                     return;
@@ -718,7 +718,7 @@ public class IA {
             }
         }
 
-        private static void tipo_Prisma(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_Prisma(Combate.Luchador lanzador, Combate pelea) {
             int veces = 0;
             while (!stop && lanzador.puedeJugar()) {
                 int ataque;
@@ -728,7 +728,7 @@ public class IA {
                 if (veces > 15) {
                     return;
                 }
-                Fight.Luchador amigo = MotorIA.amigoMasCercano(pelea, lanzador);
+                Combate.Luchador amigo = MotorIA.amigoMasCercano(pelea, lanzador);
                 if (amigo != null) {
                     if (MotorIA.curaSiEsPosiblePrisma(pelea, lanzador, false) || MotorIA.buffeaSiEsPosiblePrisma(pelea, lanzador, amigo) || MotorIA.buffeaSiEsPosiblePrisma(pelea, lanzador, lanzador)) continue;
                     ataque = MotorIA.atacaSiEsPosiblePrisma(pelea, lanzador);
@@ -752,7 +752,7 @@ public class IA {
             }
         }
 
-        private static void tipo_Recaudador(Fight.Luchador lanzador, Fight pelea) {
+        private static void tipo_Recaudador(Combate.Luchador lanzador, Combate pelea) {
             int veces = 0;
             while (!stop && lanzador.puedeJugar()) {
                 int ataque;
@@ -763,8 +763,8 @@ public class IA {
                     return;
                 }
                 int porcPDV = lanzador.getPDVConBuff() * 100 / lanzador.getPDVMaxConBuff();
-                Fight.Luchador amigo = MotorIA.amigoMasCercano(pelea, lanzador);
-                Fight.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
+                Combate.Luchador amigo = MotorIA.amigoMasCercano(pelea, lanzador);
+                Combate.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
                 if (porcPDV > 15) {
                     ataque = MotorIA.atacaSiEsPosibleRecau(pelea, lanzador);
                     while (ataque == 0 && !stop) {
@@ -801,17 +801,17 @@ public class IA {
          * Enabled unnecessary exception pruning
          * Enabled aggressive exception aggregation
          */
-        private static boolean mueveLoMasLejosPosible(Fight pelea, Fight.Luchador lanzador) {
+        private static boolean mueveLoMasLejosPosible(Combate pelea, Combate.Luchador lanzador) {
             int[] movidas;
             if (lanzador.getTempPM(pelea) <= 0) {
                 return false;
             }
             short celdaIDLanzador = lanzador.getCeldaPelea().getID();
-            Maps mapa = pelea.getMapaCopia();
+            Mapa mapa = pelea.getMapaCopia();
             short[] dist = new short[]{1000, 11000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000};
             short[] celda = new short[10];
             for (int i = 0; i < 10; ++i) {
-                for (Fight.Luchador blanco : pelea.luchadoresDeEquipo(3)) {
+                for (Combate.Luchador blanco : pelea.luchadoresDeEquipo(3)) {
                     short celdaEnemigo;
                     if (blanco.estaMuerto() || blanco == lanzador || blanco.getParamEquipoAliado() == lanzador.getParamEquipoAliado() || (celdaEnemigo = blanco.getCeldaPelea().getID()) == celda[0] || celdaEnemigo == celda[1] || celdaEnemigo == celda[2] || celdaEnemigo == celda[3] || celdaEnemigo == celda[4] || celdaEnemigo == celda[5] || celdaEnemigo == celda[6] || celdaEnemigo == celda[7] || celdaEnemigo == celda[8] || celdaEnemigo == celda[9]) continue;
                     short d = 0;
@@ -908,11 +908,11 @@ public class IA {
             if (!mapa.getCelda(celdaDestino).esCaminable(false)) {
                 return false;
             }
-            ArrayList<Maps.Celda> path = Pathfinding.pathMasCortoEntreDosCeldas(mapa, celdaIDLanzador, celdaDestino, 0);
+            ArrayList<Mapa.Celda> path = Pathfinding.pathMasCortoEntreDosCeldas(mapa, celdaIDLanzador, celdaDestino, 0);
             if (path == null) {
                 return false;
             }
-            ArrayList<Maps.Celda> finalPath = new ArrayList<Maps.Celda>();
+            ArrayList<Mapa.Celda> finalPath = new ArrayList<Mapa.Celda>();
             for (int a = 0; a < lanzador.getTempPM(pelea); ++a) {
                 if (path.size() == a) break;
                 finalPath.add(path.get(a));
@@ -929,7 +929,7 @@ public class IA {
                         }
                         break;
                     }
-                    Maps.Celda c = (Maps.Celda)iterator.next();
+                    Mapa.Celda c = (Mapa.Celda)iterator.next();
                     char d = Pathfinding.getDirEntreDosCeldas(tempCeldaID, c.getID(), mapa, true);
                     if (d == '\u0000') {
                         return false;
@@ -956,9 +956,9 @@ public class IA {
          * Enabled unnecessary exception pruning
          * Enabled aggressive exception aggregation
          */
-        private static boolean acercarseA(Fight pelea, Fight.Luchador lanzador, Fight.Luchador objetivo) {
-            ArrayList<Maps.Celda> path;
-            Maps mapa = pelea.getMapaCopia();
+        private static boolean acercarseA(Combate pelea, Combate.Luchador lanzador, Combate.Luchador objetivo) {
+            ArrayList<Mapa.Celda> path;
+            Mapa mapa = pelea.getMapaCopia();
             if (lanzador.getTempPM(pelea) <= 0) {
                 return false;
             }
@@ -979,8 +979,8 @@ public class IA {
                 return false;
             }
             if (celdaID == -1) {
-                ArrayList<Fight.Luchador> enemigos = MotorIA.listaEnemigosMenosPDV(pelea, lanzador);
-                for (Fight.Luchador enemigo : enemigos) {
+                ArrayList<Combate.Luchador> enemigos = MotorIA.listaEnemigosMenosPDV(pelea, lanzador);
+                for (Combate.Luchador enemigo : enemigos) {
                     short celdaID2 = Pathfinding.getCeldaMasCercanaAlrededor(mapa, enemigo.getCeldaPelea().getID(), lanzador.getCeldaPelea().getID(), null);
                     if (celdaID2 == -1) continue;
                     celdaID = celdaID2;
@@ -991,7 +991,7 @@ public class IA {
             if (path.isEmpty()) {
                 return false;
             }
-            ArrayList<Maps.Celda> finalPath = new ArrayList<Maps.Celda>();
+            ArrayList<Mapa.Celda> finalPath = new ArrayList<Mapa.Celda>();
             for (int a = 0; a < lanzador.getTempPM(pelea); ++a) {
                 if (path.size() == a) break;
                 finalPath.add(path.get(a));
@@ -1008,7 +1008,7 @@ public class IA {
                         }
                         break;
                     }
-                    Maps.Celda c = (Maps.Celda)iterator.next();
+                    Mapa.Celda c = (Mapa.Celda)iterator.next();
                     char d = Pathfinding.getDirEntreDosCeldas(tempCeldaID, c.getID(), mapa, true);
                     if (d == '\u0000') {
                         return false;
@@ -1030,11 +1030,11 @@ public class IA {
             return pelea.puedeMoverseLuchador(lanzador, GA);
         }
 
-        private static boolean invocarSiEsPosible1(Fight pelea, Fight.Luchador invocador) {
+        private static boolean invocarSiEsPosible1(Combate pelea, Combate.Luchador invocador) {
             if (invocador.getNroInvocaciones() >= invocador.getTotalStatsConBuff().getEfecto(182)) {
                 return false;
             }
-            Fight.Luchador enemigoCercano = MotorIA.enemigoMasCercano(pelea, invocador);
+            Combate.Luchador enemigoCercano = MotorIA.enemigoMasCercano(pelea, invocador);
             if (enemigoCercano == null) {
                 return false;
             }
@@ -1042,7 +1042,7 @@ public class IA {
             if (celdaMasCercana == -1) {
                 return false;
             }
-            Spell.StatsHechizos hechizo = MotorIA.hechizoInvocacion(pelea, invocador, celdaMasCercana);
+            Hechizo.StatsHechizos hechizo = MotorIA.hechizoInvocacion(pelea, invocador, celdaMasCercana);
             if (hechizo == null) {
                 return false;
             }
@@ -1050,11 +1050,11 @@ public class IA {
             return invoc == 0;
         }
 
-        private static boolean invocarSiEsPosible2(Fight pelea, Fight.Luchador invocador) {
+        private static boolean invocarSiEsPosible2(Combate pelea, Combate.Luchador invocador) {
             if (invocador.getNroInvocaciones() >= invocador.getTotalStatsConBuff().getEfecto(182)) {
                 return false;
             }
-            Fight.Luchador enemigoCercano = MotorIA.enemigoMasCercano(pelea, invocador);
+            Combate.Luchador enemigoCercano = MotorIA.enemigoMasCercano(pelea, invocador);
             if (enemigoCercano == null) {
                 return false;
             }
@@ -1062,13 +1062,13 @@ public class IA {
             return invoc == 0;
         }
 
-        private static Spell.StatsHechizos hechizoInvocacion(Fight pelea, Fight.Luchador invocador, short celdaCercana) {
+        private static Hechizo.StatsHechizos hechizoInvocacion(Combate pelea, Combate.Luchador invocador, short celdaCercana) {
             if (invocador.getMob() == null) {
                 return null;
             }
-            for (Map.Entry<Integer, Spell.StatsHechizos> SH : invocador.getMob().getHechizos().entrySet()) {
+            for (Map.Entry<Integer, Hechizo.StatsHechizos> SH : invocador.getMob().getHechizos().entrySet()) {
                 if (!pelea.puedeLanzarHechizo(invocador, SH.getValue(), pelea.getMapaCopia().getCelda(celdaCercana), (short)-1)) continue;
-                for (SpellEffect EH : SH.getValue().getEfectos()) {
+                for (EfectoHechizo EH : SH.getValue().getEfectos()) {
                     if (EH.getEfectoID() != 181 && EH.getEfectoID() != 185) continue;
                     return SH.getValue();
                 }
@@ -1076,18 +1076,18 @@ public class IA {
             return null;
         }
 
-        private static int hechizoInvocacion2(Fight pelea, Fight.Luchador invocador, Fight.Luchador enemigoCercano) {
+        private static int hechizoInvocacion2(Combate pelea, Combate.Luchador invocador, Combate.Luchador enemigoCercano) {
             if (invocador.getMob() == null) {
                 return 5;
             }
-            ArrayList<Spell.StatsHechizos> hechizos = new ArrayList<Spell.StatsHechizos>();
-            Spell.StatsHechizos SH = null;
+            ArrayList<Hechizo.StatsHechizos> hechizos = new ArrayList<Hechizo.StatsHechizos>();
+            Hechizo.StatsHechizos SH = null;
             short celdaMasCercana = -1;
             try {
-                for (Map.Entry<Integer, Spell.StatsHechizos> SS : invocador.getMob().getHechizos().entrySet()) {
-                    Spell.StatsHechizos hechi = SS.getValue();
+                for (Map.Entry<Integer, Hechizo.StatsHechizos> SS : invocador.getMob().getHechizos().entrySet()) {
+                    Hechizo.StatsHechizos hechi = SS.getValue();
                     boolean paso = false;
-                    for (SpellEffect EH : hechi.getEfectos()) {
+                    for (EfectoHechizo EH : hechi.getEfectos()) {
                         if (paso || EH.getEfectoID() != 181 && EH.getEfectoID() != 185 || (celdaMasCercana = Pathfinding.getCeldaMasCercanaAlrededor2(pelea.getMapaCopia(), invocador.getCeldaPelea().getID(), enemigoCercano.getCeldaPelea().getID(), hechi.getMinAlc(), hechi.getMaxAlc())) == -1 || !pelea.puedeLanzarHechizo(invocador, hechi, pelea.getMapaCopia().getCelda(celdaMasCercana), (short)-1)) continue;
                         hechizos.add(hechi);
                         paso = true;
@@ -1100,32 +1100,32 @@ public class IA {
             if (hechizos.size() <= 0) {
                 return 5;
             }
-            SH = hechizos.size() == 1 ? (Spell.StatsHechizos)hechizos.get(0) : (Spell.StatsHechizos)hechizos.get(Fórmulas.getRandomValor(0, hechizos.size() - 1));
+            SH = hechizos.size() == 1 ? (Hechizo.StatsHechizos)hechizos.get(0) : (Hechizo.StatsHechizos)hechizos.get(Fórmulas.getRandomValor(0, hechizos.size() - 1));
             int invoca = pelea.intentarLanzarHechizo(invocador, SH, celdaMasCercana);
             return invoca;
         }
 
-        private static boolean curaSiEsPosible(Fight pelea, Fight.Luchador lanzador, boolean autoCura) {
+        private static boolean curaSiEsPosible(Combate pelea, Combate.Luchador lanzador, boolean autoCura) {
             if (autoCura && lanzador.getPDVConBuff() * 100 / lanzador.getPDVMaxConBuff() > 95) {
                 return false;
             }
-            Fight.Luchador objetivo = null;
-            Spell.StatsHechizos SH = null;
+            Combate.Luchador objetivo = null;
+            Hechizo.StatsHechizos SH = null;
             if (autoCura) {
                 objetivo = lanzador;
                 SH = MotorIA.mejorHechizoCuracion(pelea, lanzador, objetivo);
             } else {
-                Fight.Luchador tempObjetivo = null;
+                Combate.Luchador tempObjetivo = null;
                 int porcPDVmin = 100;
-                Spell.StatsHechizos tempSH = null;
-                for (Fight.Luchador blanco : pelea.luchadoresDeEquipo(3)) {
+                Hechizo.StatsHechizos tempSH = null;
+                for (Combate.Luchador blanco : pelea.luchadoresDeEquipo(3)) {
                     if (blanco.estaMuerto() || blanco == lanzador || blanco.getParamEquipoAliado() != lanzador.getParamEquipoAliado()) continue;
                     int porcPDV = 0;
                     int PDVMAX = blanco.getPDVMaxConBuff();
                     porcPDV = PDVMAX == 0 ? 0 : blanco.getPDVConBuff() * 100 / PDVMAX;
                     if (porcPDV >= porcPDVmin || porcPDV >= 95) continue;
                     int infl = 0;
-                    for (Map.Entry<Integer, Spell.StatsHechizos> sh : lanzador.getMob().getHechizos().entrySet()) {
+                    for (Map.Entry<Integer, Hechizo.StatsHechizos> sh : lanzador.getMob().getHechizos().entrySet()) {
                         int infCura = MotorIA.calculaInfluenciaCura(sh.getValue());
                         if (infl >= infCura || infCura == 0 || !pelea.puedeLanzarHechizo(lanzador, sh.getValue(), blanco.getCeldaPelea(), (short)-1)) continue;
                         infl = infCura;
@@ -1148,19 +1148,19 @@ public class IA {
             return cura == 0;
         }
 
-        private static boolean curaSiEsPosiblePrisma(Fight pelea, Fight.Luchador prisma, boolean autoCura) {
+        private static boolean curaSiEsPosiblePrisma(Combate pelea, Combate.Luchador prisma, boolean autoCura) {
             if (autoCura && prisma.getPDVConBuff() * 100 / prisma.getPDVMaxConBuff() > 95) {
                 return false;
             }
-            Fight.Luchador objetivo = null;
-            Spell hechizo = World.getHechizo(124);
-            Spell.StatsHechizos SH = hechizo.getStatsPorNivel(6);
+            Combate.Luchador objetivo = null;
+            Hechizo hechizo = Mundo.getHechizo(124);
+            Hechizo.StatsHechizos SH = hechizo.getStatsPorNivel(6);
             if (autoCura) {
                 objetivo = prisma;
             } else {
-                Fight.Luchador curado = null;
+                Combate.Luchador curado = null;
                 int porcPDVmin = 100;
-                for (Fight.Luchador blanco : pelea.luchadoresDeEquipo(3)) {
+                for (Combate.Luchador blanco : pelea.luchadoresDeEquipo(3)) {
                     int porcPDV;
                     if (blanco.estaMuerto() || blanco == prisma || blanco.getParamEquipoAliado() != prisma.getParamEquipoAliado() || (porcPDV = blanco.getPDVConBuff() * 100 / blanco.getPDVMaxConBuff()) >= porcPDVmin || porcPDV >= 95) continue;
                     curado = blanco;
@@ -1178,27 +1178,27 @@ public class IA {
             return cura == 0;
         }
 
-        private static boolean curaSiEsPosibleRecau(Fight pelea, Fight.Luchador recaudador, boolean autoCura) {
+        private static boolean curaSiEsPosibleRecau(Combate pelea, Combate.Luchador recaudador, boolean autoCura) {
             if (autoCura && recaudador.getPDVConBuff() * 100 / recaudador.getPDVMaxConBuff() > 95) {
                 return false;
             }
-            Fight.Luchador objetivo = null;
-            Spell.StatsHechizos SH = null;
+            Combate.Luchador objetivo = null;
+            Hechizo.StatsHechizos SH = null;
             if (autoCura) {
                 objetivo = recaudador;
                 SH = MotorIA.mejorHechizoCuracionRecaudador(pelea, recaudador, objetivo);
             } else {
-                Fight.Luchador tempObjetivo = null;
+                Combate.Luchador tempObjetivo = null;
                 int porcPDVmin = 100;
-                Spell.StatsHechizos tempSH = null;
+                Hechizo.StatsHechizos tempSH = null;
                 if (pelea.luchadoresDeEquipo(recaudador.getParamEquipoAliado()).size() <= 1) {
                     return false;
                 }
-                for (Fight.Luchador blanco : pelea.luchadoresDeEquipo(3)) {
+                for (Combate.Luchador blanco : pelea.luchadoresDeEquipo(3)) {
                     int porcPDV;
                     if (blanco.estaMuerto() || blanco == recaudador || blanco.getParamEquipoAliado() != recaudador.getParamEquipoAliado() || (porcPDV = blanco.getPDVConBuff() * 100 / blanco.getPDVMaxConBuff()) >= porcPDVmin || porcPDV >= 95) continue;
                     int infl = 0;
-                    for (Map.Entry<Integer, Spell.StatsHechizos> sh : World.getGremio(recaudador.getRecau().getGremioID()).getHechizos().entrySet()) {
+                    for (Map.Entry<Integer, Hechizo.StatsHechizos> sh : Mundo.getGremio(recaudador.getRecau().getGremioID()).getHechizos().entrySet()) {
                         int infCura;
                         if (sh.getValue() == null || infl >= (infCura = MotorIA.calculaInfluenciaCura(sh.getValue())) || infCura == 0 || !pelea.puedeLanzarHechizo(recaudador, sh.getValue(), blanco.getCeldaPelea(), (short)-1)) continue;
                         infl = infCura;
@@ -1221,8 +1221,8 @@ public class IA {
             return cura == 0;
         }
 
-        private static boolean buffeaSiEsPosible1(Fight pelea, Fight.Luchador lanzador, Fight.Luchador objetivo) {
-            Spell.StatsHechizos SH;
+        private static boolean buffeaSiEsPosible1(Combate pelea, Combate.Luchador lanzador, Combate.Luchador objetivo) {
+            Hechizo.StatsHechizos SH;
             block4: {
                 if (objetivo == null) {
                     return false;
@@ -1240,8 +1240,8 @@ public class IA {
             return buff == 0;
         }
 
-        private static boolean buffeaSiEsPosible2(Fight pelea, Fight.Luchador lanzador, Fight.Luchador objetivo) {
-            Spell.StatsHechizos SH;
+        private static boolean buffeaSiEsPosible2(Combate pelea, Combate.Luchador lanzador, Combate.Luchador objetivo) {
+            Hechizo.StatsHechizos SH;
             block4: {
                 if (objetivo == null) {
                     return false;
@@ -1259,12 +1259,12 @@ public class IA {
             return buff == 0;
         }
 
-        private static boolean buffeaKralamar(Fight pelea, Fight.Luchador lanzador, Fight.Luchador objetivo) {
+        private static boolean buffeaKralamar(Combate pelea, Combate.Luchador lanzador, Combate.Luchador objetivo) {
             if (objetivo == null) {
                 return false;
             }
-            Spell hechizo = World.getHechizo(1106);
-            Spell.StatsHechizos SH = hechizo.getStatsPorNivel(1);
+            Hechizo hechizo = Mundo.getHechizo(1106);
+            Hechizo.StatsHechizos SH = hechizo.getStatsPorNivel(1);
             if (SH == null) {
                 return false;
             }
@@ -1278,11 +1278,11 @@ public class IA {
             return buff == 0;
         }
 
-        private static boolean buffeaSiEsPosiblePrisma(Fight pelea, Fight.Luchador lanzador, Fight.Luchador objetivo) {
+        private static boolean buffeaSiEsPosiblePrisma(Combate pelea, Combate.Luchador lanzador, Combate.Luchador objetivo) {
             if (objetivo == null) {
                 return false;
             }
-            Spell.StatsHechizos SH = MotorIA.mejorBuffPrisma(pelea, lanzador);
+            Hechizo.StatsHechizos SH = MotorIA.mejorBuffPrisma(pelea, lanzador);
             if (SH == null) {
                 return false;
             }
@@ -1296,8 +1296,8 @@ public class IA {
             return buff == 0;
         }
 
-        private static boolean buffeaSiEsPosibleRecau(Fight pelea, Fight.Luchador recaudador, Fight.Luchador objetivo) {
-            Spell.StatsHechizos SH;
+        private static boolean buffeaSiEsPosibleRecau(Combate pelea, Combate.Luchador recaudador, Combate.Luchador objetivo) {
+            Hechizo.StatsHechizos SH;
             block4: {
                 if (objetivo == null) {
                     return false;
@@ -1315,20 +1315,20 @@ public class IA {
             return buff == 0;
         }
 
-        private static Spell.StatsHechizos mejorBuffPrisma(Fight pelea, Fight.Luchador lanzador) {
-            Spell hechizo = World.getHechizo(153);
-            Spell.StatsHechizos hechizoStats = hechizo.getStatsPorNivel(6);
+        private static Hechizo.StatsHechizos mejorBuffPrisma(Combate pelea, Combate.Luchador lanzador) {
+            Hechizo hechizo = Mundo.getHechizo(153);
+            Hechizo.StatsHechizos hechizoStats = hechizo.getStatsPorNivel(6);
             return hechizoStats;
         }
 
-        private static Spell.StatsHechizos mejorBuff1(Fight pelea, Fight.Luchador lanzador, Fight.Luchador objetivo) {
+        private static Hechizo.StatsHechizos mejorBuff1(Combate pelea, Combate.Luchador lanzador, Combate.Luchador objetivo) {
             int infl = 0;
-            Spell.StatsHechizos sh = null;
+            Hechizo.StatsHechizos sh = null;
             if (objetivo == null) {
                 return null;
             }
             try {
-                for (Map.Entry<Integer, Spell.StatsHechizos> SH : lanzador.getMob().getHechizos().entrySet()) {
+                for (Map.Entry<Integer, Hechizo.StatsHechizos> SH : lanzador.getMob().getHechizos().entrySet()) {
                     int infDa\u00f1o = MotorIA.calculaInfluenciaDa\u00f1o(SH.getValue(), lanzador, objetivo);
                     if (infl >= infDa\u00f1o || infDa\u00f1o <= 0 || !pelea.puedeLanzarHechizo(lanzador, SH.getValue(), objetivo.getCeldaPelea(), (short)-1)) continue;
                     infl = infDa\u00f1o;
@@ -1341,18 +1341,18 @@ public class IA {
             return sh;
         }
 
-        private static Spell.StatsHechizos mejorBuff2(Fight pelea, Fight.Luchador lanzador, Fight.Luchador objetivo) {
-            Spell.StatsHechizos sh;
-            ArrayList<Spell.StatsHechizos> hechizos;
+        private static Hechizo.StatsHechizos mejorBuff2(Combate pelea, Combate.Luchador lanzador, Combate.Luchador objetivo) {
+            Hechizo.StatsHechizos sh;
+            ArrayList<Hechizo.StatsHechizos> hechizos;
             block6: {
-                hechizos = new ArrayList<Spell.StatsHechizos>();
+                hechizos = new ArrayList<Hechizo.StatsHechizos>();
                 sh = null;
                 if (objetivo == null) {
                     return null;
                 }
                 try {
-                    Maps.Celda celdaObj = objetivo.getCeldaPelea();
-                    for (Map.Entry<Integer, Spell.StatsHechizos> SH : lanzador.getMob().getHechizos().entrySet()) {
+                    Mapa.Celda celdaObj = objetivo.getCeldaPelea();
+                    for (Map.Entry<Integer, Hechizo.StatsHechizos> SH : lanzador.getMob().getHechizos().entrySet()) {
                         if (!pelea.puedeLanzarHechizo(lanzador, SH.getValue(), celdaObj, (short)-1)) continue;
                         hechizos.add(SH.getValue());
                     }
@@ -1364,20 +1364,20 @@ public class IA {
                 }
             }
             if (hechizos.size() == 1) {
-                return (Spell.StatsHechizos)hechizos.get(0);
+                return (Hechizo.StatsHechizos)hechizos.get(0);
             }
-            sh = (Spell.StatsHechizos)hechizos.get(Fórmulas.getRandomValor(0, hechizos.size() - 1));
+            sh = (Hechizo.StatsHechizos)hechizos.get(Fórmulas.getRandomValor(0, hechizos.size() - 1));
             return sh;
         }
 
-        private static Spell.StatsHechizos mejorBuffRecaudador(Fight pelea, Fight.Luchador lanzador, Fight.Luchador objetivo) {
+        private static Hechizo.StatsHechizos mejorBuffRecaudador(Combate pelea, Combate.Luchador lanzador, Combate.Luchador objetivo) {
             int infl = 0;
-            Spell.StatsHechizos sh = null;
+            Hechizo.StatsHechizos sh = null;
             if (objetivo == null) {
                 return null;
             }
             try {
-                for (Map.Entry<Integer, Spell.StatsHechizos> SH : World.getGremio(lanzador.getRecau().getGremioID()).getHechizos().entrySet()) {
+                for (Map.Entry<Integer, Hechizo.StatsHechizos> SH : Mundo.getGremio(lanzador.getRecau().getGremioID()).getHechizos().entrySet()) {
                     int infDa\u00f1os;
                     if (SH.getValue() == null || infl >= (infDa\u00f1os = MotorIA.calculaInfluenciaDa\u00f1o(SH.getValue(), lanzador, objetivo)) || infDa\u00f1os <= 0 || !pelea.puedeLanzarHechizo(lanzador, SH.getValue(), objetivo.getCeldaPelea(), (short)-1)) continue;
                     infl = infDa\u00f1os;
@@ -1390,14 +1390,14 @@ public class IA {
             return sh;
         }
 
-        private static Spell.StatsHechizos mejorHechizoCuracion(Fight pelea, Fight.Luchador lanzador, Fight.Luchador objetivo) {
+        private static Hechizo.StatsHechizos mejorHechizoCuracion(Combate pelea, Combate.Luchador lanzador, Combate.Luchador objetivo) {
             int infl = 0;
-            Spell.StatsHechizos sh = null;
+            Hechizo.StatsHechizos sh = null;
             if (objetivo == null) {
                 return null;
             }
             try {
-                for (Map.Entry<Integer, Spell.StatsHechizos> SH : lanzador.getMob().getHechizos().entrySet()) {
+                for (Map.Entry<Integer, Hechizo.StatsHechizos> SH : lanzador.getMob().getHechizos().entrySet()) {
                     int infCura = MotorIA.calculaInfluenciaCura(SH.getValue());
                     if (infl >= infCura || infCura == 0 || !pelea.puedeLanzarHechizo(lanzador, SH.getValue(), objetivo.getCeldaPelea(), (short)-1)) continue;
                     infl = infCura;
@@ -1410,14 +1410,14 @@ public class IA {
             return sh;
         }
 
-        private static Spell.StatsHechizos mejorHechizoCuracionRecaudador(Fight pelea, Fight.Luchador lanzador, Fight.Luchador objetivo) {
+        private static Hechizo.StatsHechizos mejorHechizoCuracionRecaudador(Combate pelea, Combate.Luchador lanzador, Combate.Luchador objetivo) {
             int infl = 0;
-            Spell.StatsHechizos sh = null;
+            Hechizo.StatsHechizos sh = null;
             if (objetivo == null) {
                 return null;
             }
             try {
-                for (Map.Entry<Integer, Spell.StatsHechizos> SH : World.getGremio(lanzador.getRecau().getGremioID()).getHechizos().entrySet()) {
+                for (Map.Entry<Integer, Hechizo.StatsHechizos> SH : Mundo.getGremio(lanzador.getRecau().getGremioID()).getHechizos().entrySet()) {
                     int infCura;
                     if (SH.getValue() == null || infl >= (infCura = MotorIA.calculaInfluenciaCura(SH.getValue())) || infCura == 0 || !pelea.puedeLanzarHechizo(lanzador, SH.getValue(), objetivo.getCeldaPelea(), (short)-1)) continue;
                     infl = infCura;
@@ -1430,10 +1430,10 @@ public class IA {
             return sh;
         }
 
-        private static Fight.Luchador amigoMasCercano(Fight pelea, Fight.Luchador lanzador) {
+        private static Combate.Luchador amigoMasCercano(Combate pelea, Combate.Luchador lanzador) {
             short dist = 1000;
-            Fight.Luchador tempObjetivo = null;
-            for (Fight.Luchador objetivo : pelea.luchadoresDeEquipo(lanzador.getParamEquipoAliado())) {
+            Combate.Luchador tempObjetivo = null;
+            for (Combate.Luchador objetivo : pelea.luchadoresDeEquipo(lanzador.getParamEquipoAliado())) {
                 short d;
                 if (objetivo.estaMuerto() || objetivo == lanzador || (d = Pathfinding.distanciaEntreDosCeldas(pelea.getMapaCopia(), lanzador.getCeldaPelea().getID(), objetivo.getCeldaPelea().getID())) >= dist) continue;
                 dist = d;
@@ -1442,10 +1442,10 @@ public class IA {
             return tempObjetivo;
         }
 
-        private static Fight.Luchador enemigoMasCercano(Fight pelea, Fight.Luchador lanzador) {
+        private static Combate.Luchador enemigoMasCercano(Combate pelea, Combate.Luchador lanzador) {
             short dist = 1000;
-            Fight.Luchador tempObjetivo = null;
-            for (Fight.Luchador objetivo : pelea.luchadoresDeEquipo(lanzador.getParamEquipoEnemigo())) {
+            Combate.Luchador tempObjetivo = null;
+            for (Combate.Luchador objetivo : pelea.luchadoresDeEquipo(lanzador.getParamEquipoEnemigo())) {
                 short d;
                 if (objetivo.estaMuerto() || objetivo.esInvisible() || (d = Pathfinding.distanciaEntreDosCeldas(pelea.getMapaCopia(), lanzador.getCeldaPelea().getID(), objetivo.getCeldaPelea().getID())) >= dist) continue;
                 dist = d;
@@ -1454,10 +1454,10 @@ public class IA {
             return tempObjetivo;
         }
 
-        private static Fight.Luchador luchadorMasCercano(Fight pelea, Fight.Luchador lanzador) {
+        private static Combate.Luchador luchadorMasCercano(Combate pelea, Combate.Luchador lanzador) {
             short dist = 1000;
-            Fight.Luchador tempObjetivo = null;
-            for (Fight.Luchador objetivo : pelea.luchadoresDeEquipo(3)) {
+            Combate.Luchador tempObjetivo = null;
+            for (Combate.Luchador objetivo : pelea.luchadoresDeEquipo(3)) {
                 short d;
                 if (objetivo.estaMuerto() || objetivo == lanzador || (d = Pathfinding.distanciaEntreDosCeldas(pelea.getMapaCopia(), lanzador.getCeldaPelea().getID(), objetivo.getCeldaPelea().getID())) >= dist) continue;
                 dist = d;
@@ -1466,11 +1466,11 @@ public class IA {
             return tempObjetivo;
         }
 
-        private static ArrayList<Fight.Luchador> listaTodoEnemigos(Fight pelea, Fight.Luchador lanzador) {
-            ArrayList<Fight.Luchador> listaEnemigos = new ArrayList<Fight.Luchador>();
-            ArrayList<Fight.Luchador> enemigosNoInvo = new ArrayList<Fight.Luchador>();
-            ArrayList<Fight.Luchador> enemigosInvo = new ArrayList<Fight.Luchador>();
-            for (Fight.Luchador objetivo : pelea.luchadoresDeEquipo(lanzador.getParamEquipoEnemigo())) {
+        private static ArrayList<Combate.Luchador> listaTodoEnemigos(Combate pelea, Combate.Luchador lanzador) {
+            ArrayList<Combate.Luchador> listaEnemigos = new ArrayList<Combate.Luchador>();
+            ArrayList<Combate.Luchador> enemigosNoInvo = new ArrayList<Combate.Luchador>();
+            ArrayList<Combate.Luchador> enemigosInvo = new ArrayList<Combate.Luchador>();
+            for (Combate.Luchador objetivo : pelea.luchadoresDeEquipo(lanzador.getParamEquipoEnemigo())) {
                 if (objetivo.estaMuerto() || objetivo.esInvisible()) continue;
                 if (objetivo.esInvocacion()) {
                     enemigosInvo.add(objetivo);
@@ -1489,7 +1489,7 @@ public class IA {
             return listaEnemigos;
         }
 
-        private static ArrayList<Luchador> listaEnemigosMenosPDV(Fight pelea, Luchador lanzador) {
+        private static ArrayList<Luchador> listaEnemigosMenosPDV(Combate pelea, Luchador lanzador) {
 			ArrayList<Luchador> listaEnemigos = new ArrayList<Luchador>();
 			ArrayList<Luchador> enemigosNoInvo = new ArrayList<Luchador>();
 			ArrayList<Luchador> enemigosInvo = new ArrayList<Luchador>();
@@ -1581,7 +1581,7 @@ public class IA {
 			return listaEnemigos;
 		}
 
-        private static ArrayList<Luchador> listaTodoLuchadores(Fight pelea, Luchador lanzador) {
+        private static ArrayList<Luchador> listaTodoLuchadores(Combate pelea, Luchador lanzador) {
 			Luchador enemigoMasCercano = luchadorMasCercano(pelea, lanzador);
 			ArrayList<Luchador> listaEnemigos = new ArrayList<Luchador>();
 			ArrayList<Luchador> enemigosNoInvo = new ArrayList<Luchador>();
@@ -1674,11 +1674,11 @@ public class IA {
 			return listaEnemigos;
 		}
 
-        private static int atacaSiEsPosibleRecau(Fight pelea, Fight.Luchador recaudador) {
-            ArrayList<Fight.Luchador> listaEnemigos = MotorIA.objetivosMasCercanos(pelea, recaudador);
-            Spell.StatsHechizos SH = null;
-            Fight.Luchador objetivo = null;
-            for (Fight.Luchador blanco : listaEnemigos) {
+        private static int atacaSiEsPosibleRecau(Combate pelea, Combate.Luchador recaudador) {
+            ArrayList<Combate.Luchador> listaEnemigos = MotorIA.objetivosMasCercanos(pelea, recaudador);
+            Hechizo.StatsHechizos SH = null;
+            Combate.Luchador objetivo = null;
+            for (Combate.Luchador blanco : listaEnemigos) {
                 SH = MotorIA.mejorHechizoRecau(pelea, recaudador, blanco);
                 if (SH == null) continue;
                 objetivo = blanco;
@@ -1694,11 +1694,11 @@ public class IA {
             return 0;
         }
 
-        private static int atacaSiEsPosiblePrisma(Fight pelea, Fight.Luchador lanzador) {
-            ArrayList<Fight.Luchador> listaEnemigos = MotorIA.listaEnemigosMenosPDV(pelea, lanzador);
-            Spell.StatsHechizos SH = null;
-            Fight.Luchador objetivo = null;
-            for (Fight.Luchador blanco : listaEnemigos) {
+        private static int atacaSiEsPosiblePrisma(Combate pelea, Combate.Luchador lanzador) {
+            ArrayList<Combate.Luchador> listaEnemigos = MotorIA.listaEnemigosMenosPDV(pelea, lanzador);
+            Hechizo.StatsHechizos SH = null;
+            Combate.Luchador objetivo = null;
+            for (Combate.Luchador blanco : listaEnemigos) {
                 SH = MotorIA.mejorHechizoPrisma(pelea, lanzador, blanco);
                 if (SH == null) continue;
                 objetivo = blanco;
@@ -1714,11 +1714,11 @@ public class IA {
             return 0;
         }
 
-        private static int atacaSiEsPosible1(Fight pelea, Fight.Luchador lanzador) {
-            ArrayList<Fight.Luchador> listaEnemigos = MotorIA.objetivosMasCercanos(pelea, lanzador);
-            Spell.StatsHechizos SH = null;
-            Fight.Luchador objetivo = null;
-            for (Fight.Luchador blanco : listaEnemigos) {
+        private static int atacaSiEsPosible1(Combate pelea, Combate.Luchador lanzador) {
+            ArrayList<Combate.Luchador> listaEnemigos = MotorIA.objetivosMasCercanos(pelea, lanzador);
+            Hechizo.StatsHechizos SH = null;
+            Combate.Luchador objetivo = null;
+            for (Combate.Luchador blanco : listaEnemigos) {
                 SH = MotorIA.mejorHechizo1(pelea, lanzador, blanco);
                 if (SH == null) continue;
                 objetivo = blanco;
@@ -1734,11 +1734,11 @@ public class IA {
             return 0;
         }
 
-        private static int atacaSiEsPosible2(Fight pelea, Fight.Luchador lanzador) {
-            ArrayList<Fight.Luchador> listaEnemigos = MotorIA.objetivosMasCercanos(pelea, lanzador);
-            Spell.StatsHechizos SH = null;
-            Fight.Luchador objetivo = null;
-            for (Fight.Luchador blanco : listaEnemigos) {
+        private static int atacaSiEsPosible2(Combate pelea, Combate.Luchador lanzador) {
+            ArrayList<Combate.Luchador> listaEnemigos = MotorIA.objetivosMasCercanos(pelea, lanzador);
+            Hechizo.StatsHechizos SH = null;
+            Combate.Luchador objetivo = null;
+            for (Combate.Luchador blanco : listaEnemigos) {
                 SH = MotorIA.mejorHechizo2(pelea, lanzador, blanco);
                 if (SH == null) continue;
                 objetivo = blanco;
@@ -1754,11 +1754,11 @@ public class IA {
             return 0;
         }
 
-        private static int atacaSiEsPosible3(Fight pelea, Fight.Luchador lanzador) {
-            ArrayList<Fight.Luchador> listaEnemigos = MotorIA.listaTodoLuchadores(pelea, lanzador);
-            Spell.StatsHechizos SH = null;
-            Fight.Luchador objetivo = null;
-            for (Fight.Luchador blanco : listaEnemigos) {
+        private static int atacaSiEsPosible3(Combate pelea, Combate.Luchador lanzador) {
+            ArrayList<Combate.Luchador> listaEnemigos = MotorIA.listaTodoLuchadores(pelea, lanzador);
+            Hechizo.StatsHechizos SH = null;
+            Combate.Luchador objetivo = null;
+            for (Combate.Luchador blanco : listaEnemigos) {
                 SH = MotorIA.mejorHechizo2(pelea, lanzador, blanco);
                 if (SH == null) continue;
                 objetivo = blanco;
@@ -1779,30 +1779,30 @@ public class IA {
          * Enabled unnecessary exception pruning
          * Enabled aggressive exception aggregation
          */
-        private static boolean moverYAtacarSiEsPosible(Fight pelea, Fight.Luchador lanzador) {
+        private static boolean moverYAtacarSiEsPosible(Combate pelea, Combate.Luchador lanzador) {
             ArrayList<Short> celdas = Pathfinding.listaCeldasDesdeLuchador(pelea, lanzador);
             if (celdas == null) {
                 return false;
             }
-            Fight.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
+            Combate.Luchador enemigo = MotorIA.enemigoMasCercano(pelea, lanzador);
             if (enemigo == null) {
                 return false;
             }
             short distMin = Pathfinding.distanciaEntreDosCeldas(pelea.getMapaCopia(), lanzador.getCeldaPelea().getID(), enemigo.getCeldaPelea().getID());
-            ArrayList<Spell.StatsHechizos> hechizos = MotorIA.hechizosLanzables(lanzador, pelea, distMin);
+            ArrayList<Hechizo.StatsHechizos> hechizos = MotorIA.hechizosLanzables(lanzador, pelea, distMin);
             if (hechizos == null || hechizos.isEmpty()) {
                 return false;
             }
-            Spell.StatsHechizos hechizo = hechizos.size() == 1 ? hechizos.get(0) : hechizos.get(Fórmulas.getRandomValor(0, hechizos.size() - 1));
-            ArrayList<Fight.Luchador> objetivos = MotorIA.objetivosMasCercanosAlHechizo(pelea, lanzador, hechizo);
+            Hechizo.StatsHechizos hechizo = hechizos.size() == 1 ? hechizos.get(0) : hechizos.get(Fórmulas.getRandomValor(0, hechizos.size() - 1));
+            ArrayList<Combate.Luchador> objetivos = MotorIA.objetivosMasCercanosAlHechizo(pelea, lanzador, hechizo);
             if (objetivos == null) {
                 return false;
             }
             short celdaDestino = 0;
-            Fight.Luchador objetivo = null;
+            Combate.Luchador objetivo = null;
             boolean encontrado = false;
             for (short celda : celdas) {
-                for (Fight.Luchador O : objetivos) {
+                for (Combate.Luchador O : objetivos) {
                     if (pelea.puedeLanzarHechizo(lanzador, hechizo, O.getCeldaPelea(), celda)) {
                         celdaDestino = celda;
                         objetivo = O;
@@ -1815,7 +1815,7 @@ public class IA {
             if (celdaDestino == 0) {
                 return false;
             }
-            ArrayList<Maps.Celda> path = Pathfinding.pathMasCortoEntreDosCeldas(pelea.getMapaCopia(), lanzador.getCeldaPelea().getID(), celdaDestino, 0);
+            ArrayList<Mapa.Celda> path = Pathfinding.pathMasCortoEntreDosCeldas(pelea.getMapaCopia(), lanzador.getCeldaPelea().getID(), celdaDestino, 0);
             if (path == null) {
                 return false;
             }
@@ -1823,7 +1823,7 @@ public class IA {
             try {
                 short tempCeldaID = lanzador.getCeldaPelea().getID();
                 char tempDir = '\u0000';
-                Iterator<Maps.Celda> iterator = path.iterator();
+                Iterator<Mapa.Celda> iterator = path.iterator();
                 do {
                     if (!iterator.hasNext()) {
                         if (tempCeldaID != lanzador.getCeldaPelea().getID()) {
@@ -1831,7 +1831,7 @@ public class IA {
                         }
                         break;
                     }
-                    Maps.Celda c = iterator.next();
+                    Mapa.Celda c = iterator.next();
                     char dir = Pathfinding.getDirEntreDosCeldas(tempCeldaID, c.getID(), pelea.getMapaCopia(), true);
                     if (dir == '\u0000') {
                         return false;
@@ -1857,27 +1857,27 @@ public class IA {
             return resultado;
         }
 
-        private static ArrayList<Spell.StatsHechizos> hechizosLanzables(Fight.Luchador lanzador, Fight pelea, int distMin) {
-            ArrayList<Spell.StatsHechizos> hechizos = new ArrayList<Spell.StatsHechizos>();
+        private static ArrayList<Hechizo.StatsHechizos> hechizosLanzables(Combate.Luchador lanzador, Combate pelea, int distMin) {
+            ArrayList<Hechizo.StatsHechizos> hechizos = new ArrayList<Hechizo.StatsHechizos>();
             if (lanzador.getMob() == null) {
                 return null;
             }
-            for (Map.Entry<Integer, Spell.StatsHechizos> SH : lanzador.getMob().getHechizos().entrySet()) {
-                Spell.StatsHechizos hechizo = SH.getValue();
-                if (hechizo.getCostePA() > lanzador.getTempPA(pelea) || !Fight.HechizoLanzado.poderSigLanzamiento(lanzador, hechizo.getHechizoID()) || hechizo.getMaxLanzPorTurno() - Fight.HechizoLanzado.getNroLanzamientos(lanzador, hechizo.getHechizoID()) <= 0 && hechizo.getMaxLanzPorTurno() > 0 || MotorIA.calculaInfluenciaDa\u00f1o(hechizo, lanzador, lanzador) >= 0) continue;
+            for (Map.Entry<Integer, Hechizo.StatsHechizos> SH : lanzador.getMob().getHechizos().entrySet()) {
+                Hechizo.StatsHechizos hechizo = SH.getValue();
+                if (hechizo.getCostePA() > lanzador.getTempPA(pelea) || !Combate.HechizoLanzado.poderSigLanzamiento(lanzador, hechizo.getHechizoID()) || hechizo.getMaxLanzPorTurno() - Combate.HechizoLanzado.getNroLanzamientos(lanzador, hechizo.getHechizoID()) <= 0 && hechizo.getMaxLanzPorTurno() > 0 || MotorIA.calculaInfluenciaDa\u00f1o(hechizo, lanzador, lanzador) >= 0) continue;
                 hechizos.add(hechizo);
             }
-            ArrayList<Spell.StatsHechizos> hechizosFinales = MotorIA.hechizosMasAMenosDa\u00f1os(lanzador, hechizos);
+            ArrayList<Hechizo.StatsHechizos> hechizosFinales = MotorIA.hechizosMasAMenosDa\u00f1os(lanzador, hechizos);
             return hechizosFinales;
         }
 
-        private static ArrayList<Spell.StatsHechizos> hechizosMasAMenosDa\u00f1os(Fight.Luchador lanzador, ArrayList<Spell.StatsHechizos> hechizos) {
+        private static ArrayList<Hechizo.StatsHechizos> hechizosMasAMenosDa\u00f1os(Combate.Luchador lanzador, ArrayList<Hechizo.StatsHechizos> hechizos) {
             if (hechizos == null) {
                 return null;
             }
-            ArrayList<Spell.StatsHechizos> hechizosFinales = new ArrayList<Spell.StatsHechizos>();
-            TreeMap<Integer, Spell.StatsHechizos> copia = new TreeMap<Integer, Spell.StatsHechizos>();
-            for (Spell.StatsHechizos SH : hechizos) {
+            ArrayList<Hechizo.StatsHechizos> hechizosFinales = new ArrayList<Hechizo.StatsHechizos>();
+            TreeMap<Integer, Hechizo.StatsHechizos> copia = new TreeMap<Integer, Hechizo.StatsHechizos>();
+            for (Hechizo.StatsHechizos SH : hechizos) {
                 copia.put(SH.getHechizoID(), SH);
             }
             int tempInfluencia = 0;
@@ -1886,28 +1886,28 @@ public class IA {
                 tempInfluencia = 0;
                 tempID = 0;
                 for (Entry SH : copia.entrySet()) {
-                    int influencia = -MotorIA.calculaInfluenciaDa\u00f1o((Spell.StatsHechizos)SH.getValue(), lanzador, lanzador);
+                    int influencia = -MotorIA.calculaInfluenciaDa\u00f1o((Hechizo.StatsHechizos)SH.getValue(), lanzador, lanzador);
                     if (influencia <= tempInfluencia) continue;
-                    tempID = ((Spell.StatsHechizos)SH.getValue()).getHechizoID();
+                    tempID = ((Hechizo.StatsHechizos)SH.getValue()).getHechizoID();
                     tempInfluencia = influencia;
                 }
                 if (tempID == 0 || tempInfluencia == 0) break;
-                hechizosFinales.add((Spell.StatsHechizos)copia.get(tempID));
+                hechizosFinales.add((Hechizo.StatsHechizos)copia.get(tempID));
                 copia.remove(tempID);
             }
             return hechizosFinales;
         }
 
-        private static ArrayList<Fight.Luchador> objetivosMasCercanosAlHechizo(Fight pelea, Fight.Luchador lanzador, Spell.StatsHechizos hechizo) {
-            ArrayList<Fight.Luchador> objetivos = new ArrayList<Fight.Luchador>();
-            ArrayList<Fight.Luchador> objetivos1 = new ArrayList<Fight.Luchador>();
+        private static ArrayList<Combate.Luchador> objetivosMasCercanosAlHechizo(Combate pelea, Combate.Luchador lanzador, Hechizo.StatsHechizos hechizo) {
+            ArrayList<Combate.Luchador> objetivos = new ArrayList<Combate.Luchador>();
+            ArrayList<Combate.Luchador> objetivos1 = new ArrayList<Combate.Luchador>();
             int distMax = hechizo.getMaxAlc();
             distMax += lanzador.getTempPM(pelea);
-            ArrayList<Fight.Luchador> objetivosP = MotorIA.listaTodoEnemigos(pelea, lanzador);
-            Iterator<Fight.Luchador> iterator = objetivosP.iterator();
+            ArrayList<Combate.Luchador> objetivosP = MotorIA.listaTodoEnemigos(pelea, lanzador);
+            Iterator<Combate.Luchador> iterator = objetivosP.iterator();
             while (iterator.hasNext()) {
-                Fight.Luchador entry;
-                Fight.Luchador objetivo = entry = iterator.next();
+                Combate.Luchador entry;
+                Combate.Luchador objetivo = entry = iterator.next();
                 short dist = Pathfinding.distanciaEntreDosCeldas(pelea.getMapaCopia(), lanzador.getCeldaPelea().getID(), objetivo.getCeldaPelea().getID());
                 if (dist >= distMax) continue;
                 objetivos.add(objetivo);
@@ -1915,19 +1915,19 @@ public class IA {
             while (objetivos.size() > 0) {
                 int index = 0;
                 short dista = 1000;
-                for (Fight.Luchador objetivo : objetivos) {
+                for (Combate.Luchador objetivo : objetivos) {
                     short dist = Pathfinding.distanciaEntreDosCeldas(pelea.getMapaCopia(), lanzador.getCeldaPelea().getID(), objetivo.getCeldaPelea().getID());
                     if (dist >= dista) continue;
                     dista = dist;
                     index = objetivos.indexOf(objetivo);
                 }
-                objetivos1.add((Fight.Luchador)objetivos.get(index));
+                objetivos1.add((Combate.Luchador)objetivos.get(index));
                 objetivos.remove(index);
             }
             return objetivos1;
         }
 
-        private static ArrayList<Luchador> objetivosMasCercanos(Fight pelea, Luchador lanzador) {
+        private static ArrayList<Luchador> objetivosMasCercanos(Combate pelea, Luchador lanzador) {
             ArrayList<Luchador> objetivos = new ArrayList<Luchador>();
             ArrayList<Luchador> objetivos1 = listaTodoEnemigos(pelea, lanzador);
             while (objetivos.size() > 0) {
@@ -1947,15 +1947,15 @@ public class IA {
             return objetivos1;
           }
 
-        private static Spell.StatsHechizos mejorHechizoRecau(Fight pelea, Fight.Luchador recaudador, Fight.Luchador objetivo) {
+        private static Hechizo.StatsHechizos mejorHechizoRecau(Combate pelea, Combate.Luchador recaudador, Combate.Luchador objetivo) {
             int influenciaMax = 0;
-            Spell.StatsHechizos sh = null;
-            Map<Integer, Spell.StatsHechizos> hechiRecau = World.getGremio(recaudador.getRecau().getGremioID()).getHechizos();
+            Hechizo.StatsHechizos sh = null;
+            Map<Integer, Hechizo.StatsHechizos> hechiRecau = Mundo.getGremio(recaudador.getRecau().getGremioID()).getHechizos();
             if (objetivo == null) {
                 return null;
             }
-            for (Map.Entry<Integer, Spell.StatsHechizos> SH1 : hechiRecau.entrySet()) {
-                Spell.StatsHechizos hechizo1 = SH1.getValue();
+            for (Map.Entry<Integer, Hechizo.StatsHechizos> SH1 : hechiRecau.entrySet()) {
+                Hechizo.StatsHechizos hechizo1 = SH1.getValue();
                 if (hechizo1 == null) continue;
                 int tempInfluencia = 0;
                 int influencia1 = 0;
@@ -1968,8 +1968,8 @@ public class IA {
                     costePA[0] = sh.getCostePA();
                     influenciaMax = influencia1 = tempInfluencia;
                 }
-                for (Map.Entry<Integer, Spell.StatsHechizos> SH2 : hechiRecau.entrySet()) {
-                    Spell.StatsHechizos hechizo2 = SH2.getValue();
+                for (Map.Entry<Integer, Hechizo.StatsHechizos> SH2 : hechiRecau.entrySet()) {
+                    Hechizo.StatsHechizos hechizo2 = SH2.getValue();
                     if (hechizo2 == null || PA - costePA[0] < hechizo2.getCostePA() || !pelea.puedeLanzarHechizo(recaudador, hechizo2, objetivo.getCeldaPelea(), (short)-1) || (tempInfluencia = MotorIA.calculaInfluenciaDa\u00f1o(hechizo2, recaudador, objetivo)) == 0) continue;
                     if (influencia1 + tempInfluencia > influenciaMax) {
                         sh = hechizo2;
@@ -1977,8 +1977,8 @@ public class IA {
                         influencia2 = tempInfluencia;
                         influenciaMax = influencia1 + influencia2;
                     }
-                    for (Map.Entry<Integer, Spell.StatsHechizos> SH3 : hechiRecau.entrySet()) {
-                        Spell.StatsHechizos hechizo3 = SH3.getValue();
+                    for (Map.Entry<Integer, Hechizo.StatsHechizos> SH3 : hechiRecau.entrySet()) {
+                        Hechizo.StatsHechizos hechizo3 = SH3.getValue();
                         if (hechizo3 == null || PA - costePA[0] - costePA[1] < hechizo3.getCostePA() || !pelea.puedeLanzarHechizo(recaudador, hechizo3, objetivo.getCeldaPelea(), (short)-1) || (tempInfluencia = MotorIA.calculaInfluenciaDa\u00f1o(hechizo3, recaudador, objetivo)) == 0 || tempInfluencia + influencia1 + influencia2 <= influenciaMax) continue;
                         sh = hechizo3;
                         influenciaMax = tempInfluencia + influencia1 + influencia2;
@@ -1988,15 +1988,15 @@ public class IA {
             return sh;
         }
 
-        private static Spell.StatsHechizos mejorHechizoPrisma(Fight pelea, Fight.Luchador lanzador, Fight.Luchador objetivo) {
-            Spell.StatsHechizos sh = null;
-            ArrayList<Spell.StatsHechizos> posibles = new ArrayList<Spell.StatsHechizos>();
+        private static Hechizo.StatsHechizos mejorHechizoPrisma(Combate pelea, Combate.Luchador lanzador, Combate.Luchador objetivo) {
+            Hechizo.StatsHechizos sh = null;
+            ArrayList<Hechizo.StatsHechizos> posibles = new ArrayList<Hechizo.StatsHechizos>();
             if (objetivo == null) {
                 return null;
             }
             try {
-                for (Map.Entry<Integer, Spell.StatsHechizos> SH : lanzador.getPrisma().getHechizos().entrySet()) {
-                    Spell.StatsHechizos statsH = SH.getValue();
+                for (Map.Entry<Integer, Hechizo.StatsHechizos> SH : lanzador.getPrisma().getHechizos().entrySet()) {
+                    Hechizo.StatsHechizos statsH = SH.getValue();
                     if (!pelea.puedeLanzarHechizo(lanzador, statsH, objetivo.getCeldaPelea(), (short)-1)) continue;
                     posibles.add(statsH);
                 }
@@ -2008,34 +2008,34 @@ public class IA {
                 return sh;
             }
             if (posibles.size() == 1) {
-                return (Spell.StatsHechizos)posibles.get(0);
+                return (Hechizo.StatsHechizos)posibles.get(0);
             }
-            sh = (Spell.StatsHechizos)posibles.get(Fórmulas.getRandomValor(0, posibles.size() - 1));
+            sh = (Hechizo.StatsHechizos)posibles.get(Fórmulas.getRandomValor(0, posibles.size() - 1));
             return sh;
         }
 
-        private static Spell.StatsHechizos mejorHechizo1(Fight pelea, Fight.Luchador lanzador, Fight.Luchador objetivo) {
+        private static Hechizo.StatsHechizos mejorHechizo1(Combate pelea, Combate.Luchador lanzador, Combate.Luchador objetivo) {
             int influenciaMax = 0;
-            Spell.StatsHechizos sh = null;
-            Map<Integer, Spell.StatsHechizos> hechiMob = lanzador.getMob().getHechizos();
+            Hechizo.StatsHechizos sh = null;
+            Map<Integer, Hechizo.StatsHechizos> hechiMob = lanzador.getMob().getHechizos();
             if (objetivo == null) {
                 return null;
             }
-            for (Map.Entry<Integer, Spell.StatsHechizos> SH : hechiMob.entrySet()) {
+            for (Map.Entry<Integer, Hechizo.StatsHechizos> SH : hechiMob.entrySet()) {
                 int tempInfluencia = 0;
                 int influencia1 = 0;
                 int influencia2 = 0;
                 int PA = lanzador.getTempPA(pelea);
                 int[] costePA = new int[2];
-                Spell.StatsHechizos hechizo1 = SH.getValue();
+                Hechizo.StatsHechizos hechizo1 = SH.getValue();
                 if (!pelea.puedeLanzarHechizo(lanzador, hechizo1, objetivo.getCeldaPelea(), (short)-1) || (tempInfluencia = MotorIA.calculaInfluenciaDa\u00f1o(hechizo1, lanzador, objetivo)) == 0) continue;
                 if (tempInfluencia > influenciaMax) {
                     sh = hechizo1;
                     costePA[0] = sh.getCostePA();
                     influenciaMax = influencia1 = tempInfluencia;
                 }
-                for (Map.Entry<Integer, Spell.StatsHechizos> SH2 : hechiMob.entrySet()) {
-                    Spell.StatsHechizos hechizo2 = SH2.getValue();
+                for (Map.Entry<Integer, Hechizo.StatsHechizos> SH2 : hechiMob.entrySet()) {
+                    Hechizo.StatsHechizos hechizo2 = SH2.getValue();
                     if (PA - costePA[0] < hechizo2.getCostePA() || !pelea.puedeLanzarHechizo(lanzador, hechizo2, objetivo.getCeldaPelea(), (short)-1) || (tempInfluencia = MotorIA.calculaInfluenciaDa\u00f1o(hechizo2, lanzador, objetivo)) == 0) continue;
                     if (influencia1 + tempInfluencia > influenciaMax) {
                         sh = hechizo2;
@@ -2043,8 +2043,8 @@ public class IA {
                         influencia2 = tempInfluencia;
                         influenciaMax = influencia1 + influencia2;
                     }
-                    for (Map.Entry<Integer, Spell.StatsHechizos> SH3 : hechiMob.entrySet()) {
-                        Spell.StatsHechizos hechizo3 = SH3.getValue();
+                    for (Map.Entry<Integer, Hechizo.StatsHechizos> SH3 : hechiMob.entrySet()) {
+                        Hechizo.StatsHechizos hechizo3 = SH3.getValue();
                         if (PA - costePA[0] - costePA[1] < hechizo3.getCostePA() || !pelea.puedeLanzarHechizo(lanzador, hechizo3, objetivo.getCeldaPelea(), (short)-1) || (tempInfluencia = MotorIA.calculaInfluenciaDa\u00f1o(hechizo3, lanzador, objetivo)) == 0 || tempInfluencia + influencia1 + influencia2 <= influenciaMax) continue;
                         sh = hechizo3;
                         influenciaMax = tempInfluencia + influencia1 + influencia2;
@@ -2054,15 +2054,15 @@ public class IA {
             return sh;
         }
 
-        private static Spell.StatsHechizos mejorHechizo2(Fight pelea, Fight.Luchador lanzador, Fight.Luchador objetivo) {
-            Spell.StatsHechizos sh = null;
-            ArrayList<Spell.StatsHechizos> posibles = new ArrayList<Spell.StatsHechizos>();
+        private static Hechizo.StatsHechizos mejorHechizo2(Combate pelea, Combate.Luchador lanzador, Combate.Luchador objetivo) {
+            Hechizo.StatsHechizos sh = null;
+            ArrayList<Hechizo.StatsHechizos> posibles = new ArrayList<Hechizo.StatsHechizos>();
             if (objetivo == null) {
                 return null;
             }
             try {
-                for (Map.Entry<Integer, Spell.StatsHechizos> SH : lanzador.getMob().getHechizos().entrySet()) {
-                    Spell.StatsHechizos hechizo = SH.getValue();
+                for (Map.Entry<Integer, Hechizo.StatsHechizos> SH : lanzador.getMob().getHechizos().entrySet()) {
+                    Hechizo.StatsHechizos hechizo = SH.getValue();
                     if (!pelea.puedeLanzarHechizo(lanzador, hechizo, objetivo.getCeldaPelea(), (short)-1)) continue;
                     posibles.add(hechizo);
                 }
@@ -2074,15 +2074,15 @@ public class IA {
                 return sh;
             }
             if (posibles.size() == 1) {
-                return (Spell.StatsHechizos)posibles.get(0);
+                return (Hechizo.StatsHechizos)posibles.get(0);
             }
-            sh = (Spell.StatsHechizos)posibles.get(Fórmulas.getRandomValor(0, posibles.size() - 1));
+            sh = (Hechizo.StatsHechizos)posibles.get(Fórmulas.getRandomValor(0, posibles.size() - 1));
             return sh;
         }
 
-        private static int calculaInfluenciaCura(Spell.StatsHechizos SH) {
+        private static int calculaInfluenciaCura(Hechizo.StatsHechizos SH) {
             int inf = 0;
-            for (SpellEffect SE : SH.getEfectos()) {
+            for (EfectoHechizo SE : SH.getEfectos()) {
                 int efectoID = SE.getEfectoID();
                 if (efectoID != 108 && efectoID != 81) continue;
                 inf += 100 * Fórmulas.getMaxValor(SE.getValores());
@@ -2090,9 +2090,9 @@ public class IA {
             return inf;
         }
 
-        private static int calculaInfluenciaDa\u00f1o(Spell.StatsHechizos SH, Fight.Luchador lanzador, Fight.Luchador objetivo) {
+        private static int calculaInfluenciaDa\u00f1o(Hechizo.StatsHechizos SH, Combate.Luchador lanzador, Combate.Luchador objetivo) {
             int influenciaTotal = 0;
-            for (SpellEffect SE : SH.getEfectos()) {
+            for (EfectoHechizo SE : SH.getEfectos()) {
                 int inf = 0;
                 switch (SE.getEfectoID()) {
                     case 5: {

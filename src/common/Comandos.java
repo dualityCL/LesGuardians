@@ -14,34 +14,34 @@ import common.Fórmulas;
 import common.LesGuardians;
 import common.SQLManager;
 import common.SocketManager;
-import common.World;
+import common.Mundo;
 
 import game.GameServer;
 import game.GameThread;
 
-import objects.Acao;
-import objects.Coletor;
-import objects.Conta;
-import objects.Dragossauros;
-import objects.Fight;
-import objects.MOB_tmpl;
-import objects.MOB_tmpl.GrupoMobs;
-import objects.Maps;
-import objects.Mercador;
-import objects.NPC_tmpl;
+import objects.Acción;
+import objects.Recaudador;
+import objects.Cuenta;
+import objects.Dragopavo;
+import objects.Combate;
+import objects.MobModelo;
+import objects.MobModelo.GrupoMobs;
+import objects.Mapa;
+import objects.Mercadillo;
+import objects.NPCModelo;
 import objects.Objeto;
 import objects.Objeto.ObjetoModelo;
-import objects.Personagens;
+import objects.Personaje;
 import objects.Prisma;
-import objects.Profissao;
-import objects.Spell;
+import objects.Oficio;
+import objects.Hechizo;
 
 public class Comandos {
 	Timer _Timer;
-	Conta _cuenta;
+	Cuenta _cuenta;
 	PrintWriter _out;
 	Timer _resetRates;
-	Personagens _perso;
+	Personaje _perso;
 	private boolean _tiempoIniciado = false;
 
 	private Timer tiempoResetRates(int tiempo) {
@@ -74,7 +74,7 @@ public class Comandos {
 		return new Timer(60000, action);
 	}
 
-	public Comandos(Personagens pj) {
+	public Comandos(Personaje pj) {
 		try {
 			_cuenta = pj.getCuenta();
 			_perso = pj;
@@ -154,7 +154,7 @@ public class Comandos {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Indique o nome do personagem.");
 					return;
 				}
-				Personagens objetivo = World.getPjPorNombre(infos[1]);
+				Personaje objetivo = Mundo.getPjPorNombre(infos[1]);
 				if (objetivo == null || !objetivo.enLinea()) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 							"O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.");
@@ -162,9 +162,9 @@ public class Comandos {
 				}
 				short mapaID = objetivo.getMapa().getID();
 				short s = objetivo.getCelda().getID();
-				Personagens objeto = _perso;
+				Personaje objeto = _perso;
 				if (infos.length > 2) {
-					objeto = World.getPjPorNombre(infos[2]);
+					objeto = Mundo.getPjPorNombre(infos[2]);
 					if (objetivo == null || !objetivo.enLinea()) {
 						String str = "O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.";
 						SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
@@ -182,9 +182,9 @@ public class Comandos {
 				return;
 			}
 			if (comando.equalsIgnoreCase("CRIARGUILDA")) {
-				Personagens pj = _perso;
+				Personaje pj = _perso;
 				if (infos.length > 1) {
-					pj = World.getPjPorNombre(infos[1]);
+					pj = Mundo.getPjPorNombre(infos[1]);
 				}
 				if (pj == null || !pj.enLinea()) {
 					String str = "O personagem " + infos[1] + " n\u00e3o existe, ou n\u00e3o est\u00e1 conectado.";
@@ -213,8 +213,8 @@ public class Comandos {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 					return;
 				}
-				Personagens objetivo = _perso;
-				if (!(infos.length <= 2 || (objetivo = World.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
+				Personaje objetivo = _perso;
+				if (!(infos.length <= 2 || (objetivo = Mundo.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
 					String string = "O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.";
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, string);
 					return;
@@ -237,8 +237,8 @@ public class Comandos {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 					return;
 				}
-				Personagens objetivo = _perso;
-				if (!(infos.length <= 2 || (objetivo = World.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
+				Personaje objetivo = _perso;
+				if (!(infos.length <= 2 || (objetivo = Mundo.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
 					String string = "O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.";
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, string);
 					return;
@@ -380,9 +380,9 @@ public class Comandos {
 			if (comando.equalsIgnoreCase("mapinfo")) {
 				String str = "==========\nLista de NPCs:";
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
-				Maps mapa = _perso.getMapa();
-				for (Map.Entry<Integer, NPC_tmpl.NPC> entry : mapa.getNPCs().entrySet()) {
-					NPC_tmpl.NPC npc = entry.getValue();
+				Mapa mapa = _perso.getMapa();
+				for (Map.Entry<Integer, NPCModelo.NPC> entry : mapa.getNPCs().entrySet()) {
+					NPCModelo.NPC npc = entry.getValue();
 					str = "ID: " + entry.getKey() + " - Template: " + npc.getModeloBD().getID() + " - Nome: "
 							+ npc.getModeloBD().getNombre() + " - Cell: " + npc.getCeldaID() + " - Pergunta: "
 							+ npc.getModeloBD().getPreguntaID();
@@ -392,9 +392,9 @@ public class Comandos {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 				for (Entry<Integer, GrupoMobs> entry : mapa.getMobGroups().entrySet()) {
 					str = "ID: " + entry.getKey() + " - Cell ID: "
-							+ ((MOB_tmpl.GrupoMobs) entry.getValue()).getCeldaID() + " - StringMob: "
-							+ ((MOB_tmpl.GrupoMobs) entry.getValue()).getStrGrupoMob() + " - Quantidade: "
-							+ ((MOB_tmpl.GrupoMobs) entry.getValue()).getCantMobs();
+							+ ((MobModelo.GrupoMobs) entry.getValue()).getCeldaID() + " - StringMob: "
+							+ ((MobModelo.GrupoMobs) entry.getValue()).getStrGrupoMob() + " - Quantidade: "
+							+ ((MobModelo.GrupoMobs) entry.getValue()).getCantMobs();
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 				}
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "===============");
@@ -408,7 +408,7 @@ public class Comandos {
 					if (b == LesGuardians._servidorPersonaje.getClientes().size())
 						break;
 					GameThread EP = (GameThread) LesGuardians._servidorPersonaje.getClientes().get(b);
-					Personagens P = EP.getPersonaje();
+					Personaje P = EP.getPersonaje();
 					if (P == null)
 						continue;
 					str = P.getNombre() + "(" + P.getID() + ") ";
@@ -501,8 +501,8 @@ public class Comandos {
 				return;
 			}
 			if (comando.equalsIgnoreCase("demorph")) {
-				Personagens objetivo = _perso;
-				if (!(infos.length <= 1 || (objetivo = World.getPjPorNombre(infos[1])) != null
+				Personaje objetivo = _perso;
+				if (!(infos.length <= 1 || (objetivo = Mundo.getPjPorNombre(infos[1])) != null
 						&& objetivo.getPelea() == null && objetivo.enLinea())) {
 					String str = "O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.";
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
@@ -516,9 +516,9 @@ public class Comandos {
 				return;
 			}
 			if (comando.equalsIgnoreCase("trazerjog")) {
-				Personagens objetivo = null;
+				Personaje objetivo = null;
 				try {
-					objetivo = World.getPjPorNombre(infos[1]);
+					objetivo = Mundo.getPjPorNombre(infos[1]);
 				} catch (ArrayIndexOutOfBoundsException e) {
 					String string = "Comando invalido.";
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, string);
@@ -534,8 +534,8 @@ public class Comandos {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 					return;
 				}
-				Personagens donde = _perso;
-				if (infos.length > 2 && (donde = World.getPjPorNombre(infos[2])) == null) {
+				Personaje donde = _perso;
+				if (infos.length > 2 && (donde = Mundo.getPjPorNombre(infos[2])) == null) {
 					String string = "Personagem n\u00e3o existe.";
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, string);
 					return;
@@ -574,19 +574,19 @@ public class Comandos {
 					celdaID = Short.parseShort(infos[2]);
 				} catch (Exception localException9) {
 				}
-				if ((mapaID == -1) || (celdaID == -1) || (World.getMapa(mapaID) == null)) {
+				if ((mapaID == -1) || (celdaID == -1) || (Mundo.getMapa(mapaID) == null)) {
 					String str = "MapaID o celdaID inválido";
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 					return;
 				}
-				if (World.getMapa(mapaID).getCelda(celdaID) == null) {
+				if (Mundo.getMapa(mapaID).getCelda(celdaID) == null) {
 					String str = "MapaID o celdaID inválido";
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 					return;
 				}
-				Personagens objetivo = _perso;
+				Personaje objetivo = _perso;
 				if (infos.length > 3) {
-					objetivo = World.getPjPorNombre(infos[3]);
+					objetivo = Mundo.getPjPorNombre(infos[3]);
 					if ((objetivo == null) || (!objetivo.enLinea())) {
 						String str = "El personaje no existe o no esta en línea ";
 						SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
@@ -626,7 +626,7 @@ public class Comandos {
 					contID = Integer.parseInt(infos[4]);
 				} catch (Exception localException10) {
 				}
-				Maps mapa = World.mapaPorCoordXYContinente(mapaX, mapaY, contID);
+				Mapa mapa = Mundo.mapaPorCoordXYContinente(mapaX, mapaY, contID);
 				if (mapa == null) {
 					String str = "Posicion o continente inválido";
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
@@ -637,9 +637,9 @@ public class Comandos {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 					return;
 				}
-				Personagens objetivo = _perso;
+				Personaje objetivo = _perso;
 				if (infos.length > 5) {
-					objetivo = World.getPjPorNombre(infos[5]);
+					objetivo = Mundo.getPjPorNombre(infos[5]);
 					if ((objetivo == null) || (!objetivo.enLinea())) {
 						String str = "El personaje no existe o no esta conectado";
 						SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
@@ -673,8 +673,8 @@ public class Comandos {
 			} catch (Exception exception) {
 				// empty catch block
 			}
-			Personagens objetivo = _perso;
-			if (!(infos.length <= 2 || (objetivo = World.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
+			Personaje objetivo = _perso;
+			if (!(infos.length <= 2 || (objetivo = Mundo.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 						"O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.");
 				return;
@@ -713,7 +713,7 @@ public class Comandos {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Argumento incorreto.");
 				return;
 			}
-			String str = World.mapaPorCoordenadas(x, y);
+			String str = Mundo.mapaPorCoordenadas(x, y);
 			if (str.isEmpty()) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "N\u00e3o possui nenhum MapID, com essas coordenadas.");
 			} else {
@@ -741,10 +741,10 @@ public class Comandos {
 				try {
 					cant = Integer.parseInt(infos[2]);
 				} catch (Exception localException27) {}
-			Personagens objetivo = _perso;
+			Personaje objetivo = _perso;
 			if (infos.length >= 4) {
 				String nombre = infos[3];
-				objetivo = World.getPjPorNombre(nombre);
+				objetivo = Mundo.getPjPorNombre(nombre);
 				if ((objetivo == null) || (!objetivo.enLinea()))
 					objetivo = _perso;
 			}
@@ -752,7 +752,7 @@ public class Comandos {
 			if ((infos.length == 5) && (!esPorConsole) && (infos[4].equalsIgnoreCase("MAX"))) {
 				useMax = true;
 			}
-			ObjetoModelo OM = World.getObjModelo(idModelo);
+			ObjetoModelo OM = Mundo.getObjModelo(idModelo);
 			if (OM == null) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "El modelo " + idModelo + " no existe ");
 				return;
@@ -761,7 +761,7 @@ public class Comandos {
 				cant = 1;
 			Objeto obj = OM.crearObjDesdeModelo(cant, useMax);
 			if (!objetivo.addObjetoSimilar(obj, true, -1)) {
-				World.addObjeto(obj, true);
+				Mundo.addObjeto(obj, true);
 				objetivo.addObjetoPut(obj);
 				SocketManager.ENVIAR_OAKO_APARECER_OBJETO(objetivo, obj);
 			}
@@ -784,8 +784,8 @@ public class Comandos {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Argumento incorreto.");
 				return;
 			}
-			Personagens objetivo = _perso;
-			if (!(infos.length <= 2 || (objetivo = World.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
+			Personaje objetivo = _perso;
+			if (!(infos.length <= 2 || (objetivo = Mundo.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 						"O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.");
 				return;
@@ -806,10 +806,10 @@ public class Comandos {
 			}
 			if (cantidad == 0)
 				return;
-			Personagens objetivo = _perso;
+			Personaje objetivo = _perso;
 			if (infos.length == 3) {
 				String nombre = infos[2];
-				objetivo = World.getPjPorNombre(nombre);
+				objetivo = Mundo.getPjPorNombre(nombre);
 				if (objetivo == null)
 					objetivo = _perso;
 			}
@@ -830,7 +830,7 @@ public class Comandos {
 		if (comando.equalsIgnoreCase("MAPAACIMA")) {
 			byte y;
 			byte x = _perso.getMapa().getX();
-			String str = World.mapaPorCoordenadas(x, y = (byte) (_perso.getMapa().getY() + 1));
+			String str = Mundo.mapaPorCoordenadas(x, y = (byte) (_perso.getMapa().getY() + 1));
 			if (str.isEmpty()) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "N\u00e3o h\u00e1 MapID para essa coordenadas.");
 			} else {
@@ -841,7 +841,7 @@ public class Comandos {
 		if (comando.equalsIgnoreCase("MAPAABAIXO")) {
 			byte y;
 			byte x = _perso.getMapa().getX();
-			String str = World.mapaPorCoordenadas(x, y = (byte) (_perso.getMapa().getY() - 1));
+			String str = Mundo.mapaPorCoordenadas(x, y = (byte) (_perso.getMapa().getY() - 1));
 			if (str.isEmpty()) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "N\u00e3o h\u00e1 MapID para essa coordenadas.");
 			} else {
@@ -852,7 +852,7 @@ public class Comandos {
 		if (comando.equalsIgnoreCase("MAPAESQUERDA")) {
 			byte y;
 			byte x = (byte) (_perso.getMapa().getX() - 1);
-			String str = World.mapaPorCoordenadas(x, y = _perso.getMapa().getY());
+			String str = Mundo.mapaPorCoordenadas(x, y = _perso.getMapa().getY());
 			if (str.isEmpty()) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "N\u00e3o h\u00e1 MapID para essa coordenadas.");
 			} else {
@@ -863,7 +863,7 @@ public class Comandos {
 		if (comando.equalsIgnoreCase("MAPADIREITA")) {
 			byte y;
 			byte x = (byte) (_perso.getMapa().getX() + 1);
-			String str = World.mapaPorCoordenadas(x, y = _perso.getMapa().getY());
+			String str = Mundo.mapaPorCoordenadas(x, y = _perso.getMapa().getY());
 			if (str.isEmpty()) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "N\u00e3o h\u00e1 MapID para essa coordenadas.");
 			} else {
@@ -882,14 +882,14 @@ public class Comandos {
 			} catch (Exception curKamas) {
 				// empty catch block
 			}
-			NPC_tmpl.RespuestaNPC respuesta = World.getRespuestaNPC(respuestaID);
+			NPCModelo.RespuestaNPC respuesta = Mundo.getRespuestaNPC(respuestaID);
 			if (id == -30 || respuesta == null) {
 				String str = "Um dos valores \u00e9 invalido.";
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 				return;
 			}
 			String str = "A action est\u00e1 invalida.";
-			respuesta.addAccion(new Acao(id, args, ""));
+			respuesta.addAccion(new Acción(id, args, ""));
 			boolean ok = SQLManager.ACTUALIZA_NPC_RESPUESTAS(respuestaID, id, args);
 			if (ok) {
 				str = String.valueOf(str) + " e salva na DB.";
@@ -913,7 +913,7 @@ public class Comandos {
 				return;
 			}
 			String str = "A action foi adicionada.";
-			NPC_tmpl npc = World.getNPCModelo(id);
+			NPCModelo npc = Mundo.getNPCModelo(id);
 			npc.setPreguntaID(idPregunta);
 			boolean ok = SQLManager.UPDATE_PREGUNTA_NPC(id, idPregunta);
 			if (ok) {
@@ -934,7 +934,7 @@ public class Comandos {
 				// empty catch block
 			}
 			String respuestas = infos[2];
-			NPC_tmpl.PreguntaNPC pregunta = World.getPreguntaNPC(id);
+			NPCModelo.PreguntaNPC pregunta = Mundo.getPreguntaNPC(id);
 			String str = "";
 			if (id == 0 || pregunta == null) {
 				str = "QuestionID invalido";
@@ -957,7 +957,7 @@ public class Comandos {
 			} catch (Exception respuestas) {
 				// empty catch block
 			}
-			NPC_tmpl.PreguntaNPC pregunta = World.getPreguntaNPC(id);
+			NPCModelo.PreguntaNPC pregunta = Mundo.getPreguntaNPC(id);
 			String str = "";
 			if (id == 0 || pregunta == null) {
 				str = "PerguntaID invalido";
@@ -976,10 +976,10 @@ public class Comandos {
 					cantidad = 0;
 				if (cantidad > 100)
 					cantidad = 100;
-				Personagens objetivo = _perso;
+				Personaje objetivo = _perso;
 				if (infos.length == 3) {
 					String nombre = infos[2];
-					objetivo = World.getPjPorNombre(nombre);
+					objetivo = Mundo.getPjPorNombre(nombre);
 					if ((objetivo == null) || (!objetivo.enLinea()))
 						objetivo = _perso;
 				}
@@ -1021,13 +1021,13 @@ public class Comandos {
 			SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Finalizado com sucesso a reconex\u00e3o SQL.");
 		} else {
 			if (comando.equalsIgnoreCase("SALVAR")) {
-				World.setEstado((byte) 1);
+				Mundo.setEstado((byte) 1);
 				LesGuardians._salvando = false;
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Salvando...");
 				return;
 			}
 			if (comando.equalsIgnoreCase("CHECKTURNO")) {
-				Fight pelea = _perso.getPelea();
+				Combate pelea = _perso.getPelea();
 				if (pelea == null) {
 					return;
 				}
@@ -1036,9 +1036,9 @@ public class Comandos {
 				return;
 			}
 			if (comando.equalsIgnoreCase("QTTIA")) {
-				Maps mapa = _perso.getMapa();
+				Mapa mapa = _perso.getMapa();
 				int objetos = 0;
-				for (Maps.Celda casilla : mapa.getCeldas().values()) {
+				for (Mapa.Celda casilla : mapa.getCeldas().values()) {
 					if (casilla.getObjetoInterac() == null)
 						continue;
 					++objetos;
@@ -1047,17 +1047,17 @@ public class Comandos {
 				return;
 			}
 			if (comando.equalsIgnoreCase("REFRESHIA")) {
-				Maps mapa = _perso.getMapa();
+				Mapa mapa = _perso.getMapa();
 				int objetos = 0;
 				String packet = "";
 				boolean primero = true;
-				for (Maps.Celda casilla : mapa.getCeldas().values()) {
+				for (Mapa.Celda casilla : mapa.getCeldas().values()) {
 					if (casilla.getObjetoInterac() == null)
 						continue;
 					if (!primero) {
 						packet = String.valueOf(packet) + "|";
 					}
-					Maps.ObjetoInteractivo oi = casilla.getObjetoInterac();
+					Mapa.ObjetoInteractivo oi = casilla.getObjetoInterac();
 					oi.setInteractivo(true);
 					oi.setEstado(1);
 					packet = String.valueOf(packet) + casilla.getID() + ";" + 1 + ";" + "1";
@@ -1120,13 +1120,13 @@ public class Comandos {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 					return;
 				}
-				MOB_tmpl mob = World.getMobModelo(idMob);
-				Objeto.ObjetoModelo objModelo = World.getObjModelo(idObjMod);
+				MobModelo mob = Mundo.getMobModelo(idMob);
+				Objeto.ObjetoModelo objModelo = Mundo.getObjModelo(idObjMod);
 				if (mob == null || objModelo == null) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Valor null");
 					return;
 				}
-				mob.addDrop(new World.Drop(idObjMod, prospecc, porcentaje, m\u00e1ximo));
+				mob.addDrop(new Mundo.Drop(idObjMod, prospecc, porcentaje, m\u00e1ximo));
 				SQLManager.INSERT_DROP(idMob, idObjMod, prospecc, m\u00e1ximo, porcentaje);
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 						"O objeto " + objModelo.getNombre() + " foi adicionado para ser dropado em: " + mob.getNombre()
@@ -1142,14 +1142,14 @@ public class Comandos {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 					return;
 				}
-				MOB_tmpl mob = World.getMobModelo(idMob);
+				MobModelo mob = Mundo.getMobModelo(idMob);
 				if (mob == null) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Valor null");
 					return;
 				}
 				String str = "";
-				for (World.Drop drop : mob.getDrops()) {
-					Objeto.ObjetoModelo obj = World.getObjModelo(drop.getObjetoID());
+				for (Mundo.Drop drop : mob.getDrops()) {
+					Objeto.ObjetoModelo obj = Mundo.getObjModelo(drop.getObjetoID());
 					if (obj == null)
 						continue;
 					str = String.valueOf(str) + obj.getNombre() + ", ";
@@ -1165,7 +1165,7 @@ public class Comandos {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Erro monstro.");
 					return;
 				}
-				Objeto.ObjetoModelo objModelo = World.getObjModelo(idObjMod);
+				Objeto.ObjetoModelo objModelo = Mundo.getObjModelo(idObjMod);
 				if (objModelo == null) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Valor null");
 					return;
@@ -1193,7 +1193,7 @@ public class Comandos {
 					return;
 				}
 				String str = "A action foi adicionada.";
-				_perso.getMapa().addAccionFinPelea(tipo, new Acao(acci\u00f3n, args, cond));
+				_perso.getMapa().addAccionFinPelea(tipo, new Acción(acci\u00f3n, args, cond));
 				boolean ok = SQLManager.INSERT_FIN_ACCION_PELEA(_perso.getMapa().getID(), tipo, acci\u00f3n, args,
 						cond);
 				if (ok) {
@@ -1225,11 +1225,11 @@ public class Comandos {
 				} catch (Exception str) {
 					// empty catch block
 				}
-				if (idNPCModelo == 0 || World.getNPCModelo(idNPCModelo) == null) {
+				if (idNPCModelo == 0 || Mundo.getNPCModelo(idNPCModelo) == null) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "NpcID invalido");
 					return;
 				}
-				NPC_tmpl.NPC npc = _perso.getMapa().addNPC(idNPCModelo, _perso.getCelda().getID(),
+				NPCModelo.NPC npc = _perso.getMapa().addNPC(idNPCModelo, _perso.getCelda().getID(),
 						_perso.getOrientacion());
 				SocketManager.ENVIAR_GM_AGREGAR_NPC_AL_MAPA(_perso.getMapa(), npc);
 				String str = "O NPC foi adicionado";
@@ -1238,7 +1238,7 @@ public class Comandos {
 					str = String.valueOf(str) + " mas invisivel (orienta\u00e7\u00e3o diagonal invalido).";
 				}
 				if (SQLManager.INSERT_NPC_AL_MAPA(_perso.getMapa().getID(), idNPCModelo, _perso.getCelda().getID(),
-						_perso.getOrientacion(), World.getNPCModelo(idNPCModelo).getNombre())) {
+						_perso.getOrientacion(), Mundo.getNPCModelo(idNPCModelo).getNombre())) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 				} else {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Erro no momento do save na posi\u00e7\u00e3o.");
@@ -1252,7 +1252,7 @@ public class Comandos {
 				} catch (Exception npc) {
 					// empty catch block
 				}
-				NPC_tmpl.NPC npc = _perso.getMapa().getNPC(id);
+				NPCModelo.NPC npc = _perso.getMapa().getNPC(id);
 				if (id == 0 || npc == null) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Npc GUID invalido");
 					return;
@@ -1269,7 +1269,7 @@ public class Comandos {
 				}
 				if (SQLManager.DELETE_NPC_DEL_MAPA(_perso.getMapa().getID(), exC) && SQLManager.INSERT_NPC_AL_MAPA(
 						_perso.getMapa().getID(), npc.getModeloBD().getID(), _perso.getCelda().getID(),
-						_perso.getOrientacion(), World.getNPCModelo(id).getNombre())) {
+						_perso.getOrientacion(), Mundo.getNPCModelo(id).getNombre())) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 				} else {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Erro no momento de salvar a posi\u00e7\u00e3o.");
@@ -1283,7 +1283,7 @@ public class Comandos {
 				} catch (Exception npc) {
 					// empty catch block
 				}
-				NPC_tmpl.NPC npc = _perso.getMapa().getNPC(id);
+				NPCModelo.NPC npc = _perso.getMapa().getNPC(id);
 				if (id == 0 || npc == null) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Npc GUID invalido");
 					return;
@@ -1305,7 +1305,7 @@ public class Comandos {
 				} catch (Exception npc) {
 					// empty catch block
 				}
-				Maps.Celda celda = _perso.getMapa().getCelda(celdaID);
+				Mapa.Celda celda = _perso.getMapa().getCelda(celdaID);
 				if (celdaID == -1 || celda == null) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "CellID invalido");
 					return;
@@ -1357,12 +1357,12 @@ public class Comandos {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Erro de template.");
 					return;
 				}
-				Objeto.ObjetoModelo objModelo = World.getObjModelo(idObjModelo);
+				Objeto.ObjetoModelo objModelo = Mundo.getObjModelo(idObjModelo);
 				if (args.equals("") || accionID <= -3 || objModelo == null) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Valor incorreto.");
 					return;
 				}
-				Acao acci\u00f3n = new Acao(accionID, args, "");
+				Acción acci\u00f3n = new Acción(accionID, args, "");
 				String nombre = objModelo.getNombre();
 				objModelo.addAccion(acci\u00f3n);
 				SQLManager.INSERT_ACCION_OBJETO(idObjModelo, accionID, args, nombre);
@@ -1396,11 +1396,11 @@ public class Comandos {
 				if (celda == -1) {
 					return;
 				}
-				Maps mapa = _perso.getMapa();
+				Mapa mapa = _perso.getMapa();
 				if (mapa.getCercado() == null) {
 					return;
 				}
-				Maps.Cercado cercado = mapa.getCercado();
+				Mapa.Cercado cercado = mapa.getCercado();
 				cercado.addCeldaMontura(celda);
 				short celdapuerta = (short) (cercado.getCeldaID() + (celda - cercado.getCeldaID()) / 2);
 				cercado.setPuerta(celdapuerta);
@@ -1423,11 +1423,11 @@ public class Comandos {
 				if (tama\u00f1o == -1) {
 					return;
 				}
-				Maps mapa = _perso.getMapa();
+				Mapa mapa = _perso.getMapa();
 				if (mapa.getCercado() == null) {
 					return;
 				}
-				Maps.Cercado cercado = mapa.getCercado();
+				Mapa.Cercado cercado = mapa.getCercado();
 				cercado.setSizeyObjetos(tama\u00f1o, objetos);
 				SQLManager.UPDATE_MONTURAS_Y_OBJETOS(tama\u00f1o, objetos, mapa.getID());
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out,
@@ -1443,8 +1443,8 @@ public class Comandos {
 				} catch (Exception mapa) {
 					// empty catch block
 				}
-				Personagens perso = World.getPjPorNombre(nombre);
-				Maps mapa = World.getMapa(mapaID);
+				Personaje perso = Mundo.getPjPorNombre(nombre);
+				Mapa mapa = Mundo.getMapa(mapaID);
 				if (mapa == null || perso == null) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "El mapa es nulo, el personaje no existe");
 					return;
@@ -1487,22 +1487,22 @@ public class Comandos {
 				if (celda == -1) {
 					return;
 				}
-				Maps mapa = _perso.getMapa();
+				Mapa mapa = _perso.getMapa();
 				if (mapa.getCercado() == null) {
 					return;
 				}
-				Maps.Cercado cercado = mapa.getCercado();
+				Mapa.Cercado cercado = mapa.getCercado();
 				cercado.addCeldaObj(celda);
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 						"A c\u00e9lula " + celda + " a ete ajoute pour les nourritures des dd");
 				return;
 			}
 			if (comando.equalsIgnoreCase("CELULASPADOQUE")) {
-				Maps mapa = _perso.getMapa();
+				Mapa mapa = _perso.getMapa();
 				if (mapa.getCercado() == null) {
 					return;
 				}
-				Maps.Cercado cercado = mapa.getCercado();
+				Mapa.Cercado cercado = mapa.getCercado();
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "C\u00e9lulas do Padoque: " + cercado.getStringCeldasObj());
 				return;
 			}
@@ -1529,10 +1529,10 @@ public class Comandos {
 				short cantidad = 0;
 				try {
 					cantidad = Short.parseShort(infos[1]);
-					Personagens objetivo = _perso;
+					Personaje objetivo = _perso;
 					if (infos.length == 3) {
 						String nombre = infos[2];
-						objetivo = World.getPjPorNombre(nombre);
+						objetivo = Mundo.getPjPorNombre(nombre);
 						if ((objetivo == null) || (!objetivo.enLinea()))
 							objetivo = _perso;
 					}
@@ -1553,7 +1553,7 @@ public class Comandos {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Coloque o nome do jogador.");
 					return;
 				}
-				Personagens objetivo = World.getPjPorNombre(infos[1]);
+				Personaje objetivo = Mundo.getPjPorNombre(infos[1]);
 				if (objetivo == null || !objetivo.enLinea()) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 							"O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.");
@@ -1561,9 +1561,9 @@ public class Comandos {
 				}
 				short mapaID = objetivo.getMapa().getID();
 				short celdaID = objetivo.getCelda().getID();
-				Personagens objeto = _perso;
+				Personaje objeto = _perso;
 				if (infos.length > 2) {
-					objeto = World.getPjPorNombre(infos[2]);
+					objeto = Mundo.getPjPorNombre(infos[2]);
 					if (objetivo == null || !objetivo.enLinea()) {
 						String str = "O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.";
 						SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
@@ -1587,26 +1587,26 @@ public class Comandos {
 				} catch (Exception mapaID) {
 					// empty catch block
 				}
-				if (oficio == -1 || World.getOficio(oficio) == null) {
+				if (oficio == -1 || Mundo.getOficio(oficio) == null) {
 					String str = "Valor invalido.";
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 					return;
 				}
-				Personagens objetivo = _perso;
-				if (!(infos.length <= 2 || (objetivo = World.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
+				Personaje objetivo = _perso;
+				if (!(infos.length <= 2 || (objetivo = Mundo.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
 					String str = "O personagem n\u00e3o est\u00e1 conectado ou em luta.";
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 					return;
 				}
-				objetivo.aprenderOficio(World.getOficio(oficio));
+				objetivo.aprenderOficio(Mundo.getOficio(oficio));
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 						"O personagem " + objetivo.getNombre() + " aprendeu a profiss\u00e3o.");
 				return;
 			}
 			if (comando.equalsIgnoreCase("CRIARGUILDA")) {
-				Personagens pj = _perso;
+				Personaje pj = _perso;
 				if (infos.length > 1) {
-					pj = World.getPjPorNombre(infos[1]);
+					pj = Mundo.getPjPorNombre(infos[1]);
 				}
 				if (pj == null || !pj.enLinea()) {
 					String str = "O personagem " + infos[1] + " n\u00e3o existe ou n\u00e3o est\u00e1 conectado.";
@@ -1647,19 +1647,19 @@ public class Comandos {
 			return;
 		}
 		if (comando.equalsIgnoreCase("itemset")) {
-			Personagens objetivo = null;
+			Personaje objetivo = null;
 			int id = 0;
 			try {
 				id = Integer.parseInt(infos[1]);
 				String nombre = infos[2];
-				objetivo = World.getPjPorNombre(nombre);
+				objetivo = Mundo.getPjPorNombre(nombre);
 			} catch (Exception nombre) {
 				// empty catch block
 			}
 			if (objetivo == null || !objetivo.enLinea()) {
 				objetivo = _perso;
 			}
-			World.ObjetoSet OS = World.getObjetoSet(id);
+			Mundo.ObjetoSet OS = Mundo.getObjetoSet(id);
 			if (id == 0 || OS == null) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "O set " + id + " n\u00e3o existe.");
 				return;
@@ -1672,7 +1672,7 @@ public class Comandos {
 				Objeto obj = OM.crearObjDesdeModelo(1, useMax);
 				if (objetivo.addObjetoSimilar(obj, true, -1))
 					continue;
-				World.addObjeto(obj, true);
+				Mundo.addObjeto(obj, true);
 				objetivo.addObjetoPut(obj);
 				SocketManager.ENVIAR_OAKO_APARECER_OBJETO(objetivo, obj);
 			}
@@ -1690,7 +1690,7 @@ public class Comandos {
 			}
 			int npcID = 0;
 			int objID = -1;
-			NPC_tmpl npcMod = null;
+			NPCModelo npcMod = null;
 			try {
 				npcID = Integer.parseInt(infos[1]);
 				objID = Integer.parseInt(infos[2]);
@@ -1699,7 +1699,7 @@ public class Comandos {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Argumento incorreto.");
 				return;
 			}
-			Objeto.ObjetoModelo item = World.getObjModelo(objID);
+			Objeto.ObjetoModelo item = Mundo.getObjModelo(objID);
 			if (npcID == 0 || objID == -1 || npcMod == null || item == null) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "NPC ou ITEM incorreto.");
 				return;
@@ -1721,8 +1721,8 @@ public class Comandos {
 				// empty catch block
 			}
 			try {
-				NPC_tmpl npc = _perso.getMapa().getNPC(npcID).getModeloBD();
-				Objeto.ObjetoModelo item = World.getObjModelo(objID);
+				NPCModelo npc = _perso.getMapa().getNPC(npcID).getModeloBD();
+				Objeto.ObjetoModelo item = Mundo.getObjModelo(objID);
 				if (npc.addObjetoAVender(item)) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "O item " + item.getNombre() + " foi adicionado.");
 				} else {
@@ -1741,7 +1741,7 @@ public class Comandos {
 			} catch (Exception objID) {
 				// empty catch block
 			}
-			Personagens consultado = World.getPjPorNombre(nombre);
+			Personaje consultado = Mundo.getPjPorNombre(nombre);
 			if (consultado == null) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "O personagem n\u00e3o existe.");
 				return;
@@ -1773,7 +1773,7 @@ public class Comandos {
 			} catch (Exception consultado) {
 				// empty catch block
 			}
-			Conta consultado = World.getCuentaPorNombre(nombre);
+			Cuenta consultado = Mundo.getCuentaPorNombre(nombre);
 			if (consultado == null) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "A conta n\u00e3o existe.");
 				return;
@@ -1804,8 +1804,8 @@ public class Comandos {
 			} catch (Exception consultado) {
 				// empty catch block
 			}
-			Personagens objetivo = _perso;
-			if (infos.length > 2 && (objetivo = World.getPjPorNombre(infos[2])) == null) {
+			Personaje objetivo = _perso;
+			if (infos.length > 2 && (objetivo = Mundo.getPjPorNombre(infos[2])) == null) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "O personagem n\u00e3o existe.");
 				return;
 			}
@@ -1821,7 +1821,7 @@ public class Comandos {
 			} catch (Exception objetivo) {
 				// empty catch block
 			}
-			for (Personagens pj : World.getPJsEnLinea()) {
+			for (Personaje pj : Mundo.getPJsEnLinea()) {
 				pj.getCuenta().setRegalo(regalo);
 			}
 			SocketManager.ENVIAR_BAT2_CONSOLA(_out, "O item " + regalo + " foi entregue para todos jogadores online.");
@@ -1836,7 +1836,7 @@ public class Comandos {
 			} catch (Exception nueva) {
 				// empty catch block
 			}
-			Objeto.ObjetoModelo objMod = World.getObjModelo(regalo);
+			Objeto.ObjetoModelo objMod = Mundo.getObjModelo(regalo);
 			if (objMod == null) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Objeto null");
 				return;
@@ -1844,12 +1844,12 @@ public class Comandos {
 			if (cant2 < 1) {
 				cant2 = 1;
 			}
-			for (Personagens pj : World.getPJsEnLinea()) {
+			for (Personaje pj : Mundo.getPJsEnLinea()) {
 				Objeto obj = objMod.crearObjDesdeModelo(cant2, false);
 				try {
 					if (pj.addObjetoSimilar(obj, true, -1))
 						continue;
-					World.addObjeto(obj, true);
+					Mundo.addObjeto(obj, true);
 					pj.addObjetoPut(obj);
 					SocketManager.ENVIAR_OAKO_APARECER_OBJETO(pj, obj);
 				} catch (Exception exception) {
@@ -1895,13 +1895,13 @@ public class Comandos {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Argumento incorreto.");
 				return;
 			}
-			Personagens objetivo = _perso;
-			if (!(infos.length <= 3 || (objetivo = World.getPjPorNombre(infos[3])) != null && objetivo.enLinea())) {
+			Personaje objetivo = _perso;
+			if (!(infos.length <= 3 || (objetivo = Mundo.getPjPorNombre(infos[3])) != null && objetivo.enLinea())) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 						"O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.");
 				return;
 			}
-			Profissao.StatsOficio statsOficio = objetivo.getOficioPorID(oficio);
+			Oficio.StatsOficio statsOficio = objetivo.getOficioPorID(oficio);
 			if (statsOficio == null) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "O personagem n\u00e3o possui a prof indicada.");
 				return;
@@ -1921,8 +1921,8 @@ public class Comandos {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Argumento incorreto.");
 				return;
 			}
-			Personagens objetivo = _perso;
-			if (!(infos.length <= 2 || (objetivo = World.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
+			Personaje objetivo = _perso;
+			if (!(infos.length <= 2 || (objetivo = Mundo.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 						"O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.");
 				return;
@@ -1944,13 +1944,13 @@ public class Comandos {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Argumento incorreto.");
 				return;
 			}
-			Personagens objetivo = _perso;
-			if (!(infos.length <= 2 || (objetivo = World.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
+			Personaje objetivo = _perso;
+			if (!(infos.length <= 2 || (objetivo = Mundo.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 						"O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.");
 				return;
 			}
-			Spell aprender = World.getHechizo(hechizo);
+			Hechizo aprender = Mundo.getHechizo(hechizo);
 			if (aprender == null) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "O feiti\u00e7o n\u00e3o existe.");
 				return;
@@ -1969,9 +1969,9 @@ public class Comandos {
 			int tipo = -100;
 			String args = "";
 			String cond = "";
-			Personagens objetivo = _perso;
+			Personaje objetivo = _perso;
 			try {
-				objetivo = World.getPjPorNombre(infos[1]);
+				objetivo = Mundo.getPjPorNombre(infos[1]);
 				if (objetivo == null || !objetivo.enLinea()) {
 					objetivo = _perso;
 				}
@@ -1984,7 +1984,7 @@ public class Comandos {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Argumentos incorretos.");
 				return;
 			}
-			new Acao(tipo, args, cond).aplicar(objetivo, null, -1, (short) -1);
+			new Acción(tipo, args, cond).aplicar(objetivo, null, -1, (short) -1);
 			SocketManager.ENVIAR_BAT2_CONSOLA(_out, "O personagem " + objetivo.getNombre() + " fez a a\u00e7\u00e3o "
 					+ tipo + " com os argumentos: " + args);
 			return;
@@ -1993,7 +1993,7 @@ public class Comandos {
 			if (_perso.getMontura() == null) {
 				return;
 			}
-			Dragossauros pavo = _perso.getMontura();
+			Dragopavo pavo = _perso.getMontura();
 			pavo.setAmor(7500);
 			pavo.setResistencia(7500);
 			pavo.setMaxEnergia();
@@ -2002,7 +2002,7 @@ public class Comandos {
 			return;
 		}
 		if (comando.equalsIgnoreCase("BAN")) {
-			Personagens objetivo = World.getPjPorNombre(infos[1]);
+			Personaje objetivo = Mundo.getPjPorNombre(infos[1]);
 			if (objetivo == null) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "O personagem n\u00e3o existe.");
 				return;
@@ -2025,7 +2025,7 @@ public class Comandos {
 			return;
 		}
 		if (comando.equalsIgnoreCase("DESBAN")) {
-			Personagens objetivo = World.getPjPorNombre(infos[1]);
+			Personaje objetivo = Mundo.getPjPorNombre(infos[1]);
 			if (objetivo == null) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "O personagem n\u00e3o existe.");
 				return;
@@ -2244,7 +2244,7 @@ public class Comandos {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Argumento incorreto.");
 					return;
 				}
-				Profissao.AccionTrabajo._tolerVIP = cantidad;
+				Oficio.AccionTrabajo._tolerVIP = cantidad;
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 						"A tolerancia para VIP magiar foi modificada para: " + cantidad);
 				return;
@@ -2257,7 +2257,7 @@ public class Comandos {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Argumento incorreto.");
 					return;
 				}
-				Profissao.AccionTrabajo._tolerNormal = cantidad;
+				Oficio.AccionTrabajo._tolerNormal = cantidad;
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "A tolerancia Normal foi modificada para: " + cantidad);
 				return;
 			}
@@ -2292,7 +2292,7 @@ public class Comandos {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Argumento invalido.");
 					return;
 				}
-				Spell hechizo = World.getHechizo(id);
+				Hechizo hechizo = Mundo.getHechizo(id);
 				if (hechizo == null) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Feiti\u00e7o n\u00e3o existe.");
 					return;
@@ -2318,7 +2318,7 @@ public class Comandos {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Argumento incorreto.");
 					return;
 				}
-				Spell hechizo = World.getHechizo(id);
+				Hechizo hechizo = Mundo.getHechizo(id);
 				if (hechizo == null) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Feiti\u00e7o n\u00e3o existe.");
 					return;
@@ -2337,9 +2337,9 @@ public class Comandos {
 				return;
 			}
 			if (comando.equalsIgnoreCase("VERIFICARIP")) {
-				Personagens objetivo = null;
+				Personaje objetivo = null;
 				try {
-					objetivo = World.getPjPorNombre(infos[1]);
+					objetivo = Mundo.getPjPorNombre(infos[1]);
 				} catch (Exception hechizo) {
 					// empty catch block
 				}
@@ -2353,9 +2353,9 @@ public class Comandos {
 				return;
 			}
 			if (comando.equalsIgnoreCase("BANIP")) {
-				Personagens objetivo = null;
+				Personaje objetivo = null;
 				try {
-					objetivo = World.getPjPorNombre(infos[1]);
+					objetivo = Mundo.getPjPorNombre(infos[1]);
 				} catch (Exception hechizo) {
 					// empty catch block
 				}
@@ -2383,8 +2383,8 @@ public class Comandos {
 				if (_perso.getPelea() != null) {
 					return;
 				}
-				Coletor recaudador = null;
-				for (Coletor perco : World.getTodosRecaudadores().values()) {
+				Recaudador recaudador = null;
+				for (Recaudador perco : Mundo.getTodosRecaudadores().values()) {
 					if (perco.getMapaID() != _perso.getMapa().getID())
 						continue;
 					recaudador = perco;
@@ -2424,18 +2424,18 @@ public class Comandos {
 			} catch (Exception exception) {
 				// empty catch block
 			}
-			if (oficio == -1 || World.getOficio(oficio) == null) {
+			if (oficio == -1 || Mundo.getOficio(oficio) == null) {
 				String str = "Valor invalido.";
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 				return;
 			}
-			Personagens objetivo = _perso;
-			if (!(infos.length <= 2 || (objetivo = World.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
+			Personaje objetivo = _perso;
+			if (!(infos.length <= 2 || (objetivo = Mundo.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
 				String str = "O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.";
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 				return;
 			}
-			objetivo.aprenderOficio(World.getOficio(oficio));
+			objetivo.aprenderOficio(Mundo.getOficio(oficio));
 			SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 					"O personagem " + objetivo.getNombre() + " aprendeu a profiss\u00e3o.");
 			return;
@@ -2452,8 +2452,8 @@ public class Comandos {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 				return;
 			}
-			Personagens objetivo = _perso;
-			if (!(infos.length <= 2 || (objetivo = World.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
+			Personaje objetivo = _perso;
+			if (!(infos.length <= 2 || (objetivo = Mundo.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
 				String str = "O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.";
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
 				return;
@@ -2471,10 +2471,10 @@ public class Comandos {
 					cantidad = 1;
 				if (cantidad > LesGuardians.MAX_NIVEL)
 					cantidad = LesGuardians.MAX_NIVEL;
-				Personagens objetivo = _perso;
+				Personaje objetivo = _perso;
 				if (infos.length == 3) {
 					String nombre = infos[2];
-					objetivo = World.getPjPorNombre(nombre);
+					objetivo = Mundo.getPjPorNombre(nombre);
 					if ((objetivo == null) || (!objetivo.enLinea()))
 						objetivo = _perso;
 				}
@@ -2509,10 +2509,10 @@ public class Comandos {
 			} catch (Exception nombre) {
 				// empty catch block
 			}
-			World.setGmAcceso((byte) accesoGM);
+			Mundo.setGmAcceso((byte) accesoGM);
 			SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Servidor bloqueado para contas GM LVL : " + accesoGM);
 			if (botarRango > 0) {
-				for (Personagens pj : World.getPJsEnLinea()) {
+				for (Personaje pj : Mundo.getPJsEnLinea()) {
 					if (pj.getCuenta().getRango() >= accesoGM)
 						continue;
 					pj.getCuenta().getEntradaPersonaje().salir();
@@ -2523,10 +2523,10 @@ public class Comandos {
 			return;
 		}
 		if (comando.equalsIgnoreCase("TITLE")) {
-			Personagens objetivo = null;
+			Personaje objetivo = null;
 			byte tituloID = 0;
 			try {
-				objetivo = World.getPjPorNombre(infos[1]);
+				objetivo = Mundo.getPjPorNombre(infos[1]);
 				tituloID = Byte.parseByte(infos[2]);
 			} catch (Exception pj) {
 				// empty catch block
@@ -2550,14 +2550,14 @@ public class Comandos {
 			return;
 		}
 		if (comando.equalsIgnoreCase("KICK")) {
-			Personagens objetivo = _perso;
+			Personaje objetivo = _perso;
 			String nombre = null;
 			try {
 				nombre = infos[1];
 			} catch (Exception pj) {
 				// empty catch block
 			}
-			objetivo = World.getPjPorNombre(nombre);
+			objetivo = Mundo.getPjPorNombre(nombre);
 			if (objetivo == null || !objetivo.enLinea()) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 						"O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.");
@@ -2570,7 +2570,7 @@ public class Comandos {
 			return;
 		}
 		if (comando.equalsIgnoreCase("MUTE")) {
-			Personagens objetivo = _perso;
+			Personaje objetivo = _perso;
 			String nombre = null;
 			try {
 				nombre = infos[1];
@@ -2583,7 +2583,7 @@ public class Comandos {
 			} catch (Exception exception) {
 				// empty catch block
 			}
-			objetivo = World.getPjPorNombre(nombre);
+			objetivo = Mundo.getPjPorNombre(nombre);
 			if (objetivo == null || !objetivo.enLinea() || tiempo < 0) {
 				String str = "O personagem n\u00e3o existe, n\u00e3o est\u00e1 conectado ou tempo invalido.";
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
@@ -2596,14 +2596,14 @@ public class Comandos {
 			return;
 		}
 		if (comando.equalsIgnoreCase("DESMUTAR")) {
-			Personagens objetivo = _perso;
+			Personaje objetivo = _perso;
 			String nombre = null;
 			try {
 				nombre = infos[1];
 			} catch (Exception tiempo) {
 				// empty catch block
 			}
-			objetivo = World.getPjPorNombre(nombre);
+			objetivo = Mundo.getPjPorNombre(nombre);
 			if (objetivo == null || !objetivo.enLinea()) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 						"O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.");
@@ -2615,7 +2615,7 @@ public class Comandos {
 			return;
 		}
 		if (comando.equalsIgnoreCase("PM") && (infos = mensaje.split(" ", 3)).length > 1) {
-			Personagens P = World.getPjPorNombre(infos[1]);
+			Personaje P = Mundo.getPjPorNombre(infos[1]);
 			if (P == null || P.getNombre() == _perso.getNombre() || !P.enLinea()) {
 				String msj = "ERRO : Impossivel localizar o jogador.";
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, msj);
@@ -2644,8 +2644,8 @@ public class Comandos {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Argumento invalido.");
 				return;
 			}
-			Personagens objetivo = _perso;
-			if (infos.length > 2 && (objetivo = World.getPjPorNombre(infos[2])) == null) {
+			Personaje objetivo = _perso;
+			if (infos.length > 2 && (objetivo = Mundo.getPjPorNombre(infos[2])) == null) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 						"O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.");
 				return;
@@ -2670,8 +2670,8 @@ public class Comandos {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Argumento incorreto.");
 				return;
 			}
-			Personagens objetivo = _perso;
-			if (!(infos.length <= 2 || (objetivo = World.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
+			Personaje objetivo = _perso;
+			if (!(infos.length <= 2 || (objetivo = Mundo.getPjPorNombre(infos[2])) != null && objetivo.enLinea())) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 						"O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.");
 				return;
@@ -2724,7 +2724,7 @@ public class Comandos {
 			if (estado < 0) {
 				estado = 0;
 			}
-			World.setEstado(estado);
+			Mundo.setEstado(estado);
 			if (estado == 1) {
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Server acessivel.");
 			} else if (estado == 0) {
@@ -2739,7 +2739,7 @@ public class Comandos {
 					return;
 				}
 				System.out.println("Utilizacao do comando SAVE por " + _perso.getNombre());
-				World._salvador = _perso;
+				Mundo._salvador = _perso;
 				Thread t = new Thread(new GameServer.salvarServidorPersonaje());
 				t.start();
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Salvamento iniciado !");
@@ -2774,10 +2774,10 @@ public class Comandos {
 			}
 			if (comando.equalsIgnoreCase("PERSOPORCONTA")) {
 				String nombre = "";
-				Personagens objetivo = _perso;
+				Personaje objetivo = _perso;
 				try {
 					nombre = infos[1];
-					objetivo = World.getPjPorNombre(nombre);
+					objetivo = Mundo.getPjPorNombre(nombre);
 				} catch (Exception e) {
 					return;
 				}
@@ -2788,7 +2788,7 @@ public class Comandos {
 				String nCuenta = objetivo.getCuenta().getNombre();
 				String pjs = "";
 				boolean primero = false;
-				for (Personagens perso : objetivo.getCuenta().getPersonajes().values()) {
+				for (Personaje perso : objetivo.getCuenta().getPersonajes().values()) {
 					if (primero) {
 						pjs = String.valueOf(pjs) + ",";
 					}
@@ -2800,10 +2800,10 @@ public class Comandos {
 			}
 			if (comando.equalsIgnoreCase("REFRESHCONTA")) {
 				String nombre = "";
-				Personagens objetivo = _perso;
+				Personaje objetivo = _perso;
 				try {
 					nombre = infos[1];
-					objetivo = World.getPjPorNombre(nombre);
+					objetivo = Mundo.getPjPorNombre(nombre);
 				} catch (Exception e) {
 					return;
 				}
@@ -2811,12 +2811,12 @@ public class Comandos {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "O personagem " + nombre + " n\u00e3o existe.");
 					return;
 				}
-				Conta cuenta = objetivo.getCuenta();
+				Cuenta cuenta = objetivo.getCuenta();
 				cuenta.getPersonajes().clear();
 				SQLManager.CARGAR_PERSONAJES_POR_CUENTA(cuenta);
 				String pjs = "";
 				boolean primero = false;
-				for (Personagens perso : cuenta.getPersonajes().values()) {
+				for (Personaje perso : cuenta.getPersonajes().values()) {
 					if (primero) {
 						pjs = String.valueOf(pjs) + ",";
 					}
@@ -2883,11 +2883,11 @@ public class Comandos {
 				return;
 			}
 			if (comando.equalsIgnoreCase("MOSTRARA")) {
-				Personagens objetivo = _perso;
+				Personaje objetivo = _perso;
 				String nombre = "";
 				try {
 					nombre = infos[1];
-					objetivo = World.getPjPorNombre(nombre);
+					objetivo = Mundo.getPjPorNombre(nombre);
 				} catch (Exception cuenta) {
 					// empty catch block
 				}
@@ -2896,11 +2896,11 @@ public class Comandos {
 				return;
 			}
 			if (comando.equalsIgnoreCase("MOSTRARB")) {
-				Personagens objetivo = _perso;
+				Personaje objetivo = _perso;
 				String nombre = "";
 				try {
 					nombre = infos[1];
-					objetivo = World.getPjPorNombre(nombre);
+					objetivo = Mundo.getPjPorNombre(nombre);
 				} catch (Exception m) {
 					// empty catch block
 				}
@@ -2928,7 +2928,7 @@ public class Comandos {
 				return;
 			}
 			if (comando.equalsIgnoreCase("RESTRICAO")) {
-				Personagens objetivo = _perso;
+				Personaje objetivo = _perso;
 				int restriccion = -1;
 				try {
 					restriccion = Integer.parseInt(infos[1]);
@@ -2943,7 +2943,7 @@ public class Comandos {
 				String nombre = "";
 				try {
 					nombre = infos[2];
-					objetivo = World.getPjPorNombre(nombre);
+					objetivo = Mundo.getPjPorNombre(nombre);
 				} catch (Exception pjs) {
 					// empty catch block
 				}
@@ -2962,7 +2962,7 @@ public class Comandos {
 				return;
 			}
 			if (comando.equalsIgnoreCase("RESTRICAOB")) {
-				Personagens objetivo = _perso;
+				Personaje objetivo = _perso;
 				int restriccion = -1;
 				try {
 					restriccion = Integer.parseInt(infos[1]);
@@ -2977,7 +2977,7 @@ public class Comandos {
 				String nombre = null;
 				try {
 					nombre = infos[2];
-					objetivo = World.getPjPorNombre(nombre);
+					objetivo = Mundo.getPjPorNombre(nombre);
 				} catch (Exception pjs) {
 					// empty catch block
 				}
@@ -3003,13 +3003,13 @@ public class Comandos {
 				} catch (Exception restriccion) {
 					// empty catch block
 				}
-				Personagens objetivo = World.getPjPorNombre(nombre);
+				Personaje objetivo = Mundo.getPjPorNombre(nombre);
 				if (objetivo == null) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 							"O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.");
 					return;
 				}
-				Conta cuenta = objetivo.getCuenta();
+				Cuenta cuenta = objetivo.getCuenta();
 				if (cuenta == null) {
 					String str = "A conta est\u00e1 null.";
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, str);
@@ -3021,16 +3021,16 @@ public class Comandos {
 				return;
 			}
 			if (comando.equalsIgnoreCase("DELPRISMA")) {
-				Maps mapa = _perso.getMapa();
-				Prisma prisma = World.getPrisma(mapa.getSubArea().getPrismaID());
+				Mapa mapa = _perso.getMapa();
+				Prisma prisma = Mundo.getPrisma(mapa.getSubArea().getPrismaID());
 				if (prisma == null) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Essa \u00e1rea n\u00e3o possui prisma.");
 					return;
 				}
 				String str = String.valueOf(prisma.getMapaID()) + "|" + prisma.getX() + "|" + prisma.getY();
-				mapa = World.getMapa(prisma.getMapaID());
-				World.SubArea subarea = mapa.getSubArea();
-				for (Personagens z : World.getPJsEnLinea()) {
+				mapa = Mundo.getMapa(prisma.getMapaID());
+				Mundo.SubArea subarea = mapa.getSubArea();
+				for (Personaje z : Mundo.getPJsEnLinea()) {
 					if (z == null)
 						continue;
 					if (z.getAlineacion() == 0) {
@@ -3054,20 +3054,20 @@ public class Comandos {
 				subarea.setAlineacion(0);
 				mapa.removeNPC(prismaID);
 				SocketManager.ENVIAR_GM_BORRAR_PJ_A_TODOS(mapa, prismaID);
-				World.borrarPrisma(prismaID);
+				Mundo.borrarPrisma(prismaID);
 				SQLManager.DELETE_PRISMA(prismaID);
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Voc\u00ea deletou o prisma dessa \u00e1rea.");
 				return;
 			}
 			if (comando.equalsIgnoreCase("APAGARMOBS")) {
-				Maps mapa = _perso.getMapa();
+				Mapa mapa = _perso.getMapa();
 				mapa.borrarTodosMobs();
 				SQLManager.UPDATE_BORRAR_MOBS_MAPA(mapa.getID());
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Voc\u00ea apagou os mobs do mapa.");
 				return;
 			}
 			if (comando.equalsIgnoreCase("APAGARMOBSFIXO")) {
-				Maps mapa = _perso.getMapa();
+				Mapa mapa = _perso.getMapa();
 				mapa.borrarTodosMobsFix();
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Voc\u00ea apagou os mobs FIXO do mapa.");
 				return;
@@ -3091,20 +3091,20 @@ public class Comandos {
 				return;
 			}
 			if (comando.equalsIgnoreCase("RANKINgPVP")) {
-				String antiguoLider = World.liderRanking;
-				Personagens liderViejo = World.getPjPorNombre(antiguoLider);
+				String antiguoLider = Mundo.liderRanking;
+				Personaje liderViejo = Mundo.getPjPorNombre(antiguoLider);
 				if (liderViejo != null) {
 					liderViejo.setTitulo(0);
 				}
 				SQLManager.ACTUALIZAR_TITULO_POR_NOMBRE(antiguoLider);
-				int idPerso = World.idLiderRankingPVP();
-				Personagens perso = World.getPersonaje(idPerso);
+				int idPerso = Mundo.idLiderRankingPVP();
+				Personaje perso = Mundo.getPersonaje(idPerso);
 				if (perso != null) {
 					perso.setTitulo(8);
-					World.getNPCModelo(1350).configurarNPC(perso.getGfxID(), perso.getSexo(), perso.getColor1(),
+					Mundo.getNPCModelo(1350).configurarNPC(perso.getGfxID(), perso.getSexo(), perso.getColor1(),
 							perso.getColor2(), perso.getColor3(), perso.getStringAccesorios());
 				}
-				World.liderRanking = World.nombreLiderRankingPVP();
+				Mundo.liderRanking = Mundo.nombreLiderRankingPVP();
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "O rank PVP foi atualizado.");
 				return;
 			}
@@ -3123,7 +3123,7 @@ public class Comandos {
 				return;
 			}
 			if (comando.equalsIgnoreCase("GANHADOREQUIPE")) {
-				Fight pelea = _perso.getPelea();
+				Combate pelea = _perso.getPelea();
 				if (pelea == null) {
 					return;
 				}
@@ -3141,7 +3141,7 @@ public class Comandos {
 				return;
 			}
 			if (comando.equalsIgnoreCase("LUTAEVENTO")) {
-				Fight pelea = _perso.getPelea();
+				Combate pelea = _perso.getPelea();
 				if (pelea == null) {
 					return;
 				}
@@ -3173,7 +3173,7 @@ public class Comandos {
 				return;
 			}
 			if (comando.equalsIgnoreCase("ESTRELASTODOS")) {
-				World.subirEstrellasMobs();
+				Mundo.subirEstrellasMobs();
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Voc\u00ea aumentou em 1 as estrelas dos mobs.");
 				return;
 			}
@@ -3203,7 +3203,7 @@ public class Comandos {
 				} catch (Exception e) {
 					// empty catch block
 				}
-				World.subirEstrellasMobs(puntos);
+				Mundo.subirEstrellasMobs(puntos);
 				SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 						"Voc\u00ea aumentou " + puntos / 25 + " estrelas em todos os mapas.");
 				return;
@@ -3215,8 +3215,8 @@ public class Comandos {
 				} catch (Exception e) {
 					// empty catch block
 				}
-				Personagens objetivo = _perso;
-				if (infos.length > 2 && (objetivo = World.getPjPorNombre(infos[2])) == null) {
+				Personaje objetivo = _perso;
+				if (infos.length > 2 && (objetivo = Mundo.getPjPorNombre(infos[2])) == null) {
 					SocketManager.ENVIAR_BAT2_CONSOLA(_out,
 							"O personagem n\u00e3o existe ou n\u00e3o est\u00e1 conectado.");
 					return;
@@ -3234,12 +3234,12 @@ public class Comandos {
 	private void fullHdv(int deCadaModelo) {
 		SocketManager.ENVIAR_BAT2_CONSOLA(_out, "Iniciando ofertas!");
 		Objeto objeto = null;
-		Mercador.ObjetoMercadillo objMercadillo = null;
+		Mercadillo.ObjetoMercadillo objMercadillo = null;
 		byte cantidad = 0;
 		int hdv = 0;
 		int lastSend = 0;
 		long time1 = System.currentTimeMillis();
-		for (Objeto.ObjetoModelo objModelo : World.getObjModelos()) {
+		for (Objeto.ObjetoModelo objModelo : Mundo.getObjModelos()) {
 			try {
 				if (LesGuardians.NAO_COMERCIALIZADOS_EN.contains(objModelo.getID()))
 					continue;
@@ -3247,11 +3247,11 @@ public class Comandos {
 					if (objModelo.getTipo() != 85 && (hdv = this
 							.getHdv((objeto = objModelo.crearObjDesdeModelo(1, false)).getModelo().getTipo())) >= 0) {
 						cantidad = (byte) Fórmulas.getRandomValor(1, 3);
-						objMercadillo = new Mercador.ObjetoMercadillo(calcularPrecio(objeto, cantidad), cantidad, -1,
+						objMercadillo = new Mercadillo.ObjetoMercadillo(calcularPrecio(objeto, cantidad), cantidad, -1,
 								objeto);
 						objeto.setCantidad(objMercadillo.getTipoCantidad(true));
-						World.getPuestoMerca(hdv).addObjMercaAlPuesto(objMercadillo);
-						World.addObjeto(objeto, false);
+						Mundo.getPuestoMerca(hdv).addObjMercaAlPuesto(objMercadillo);
+						Mundo.addObjeto(objeto, false);
 						continue;
 					}
 					break;

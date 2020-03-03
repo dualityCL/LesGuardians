@@ -2,17 +2,17 @@ package common;
 
 import common.LesGuardians;
 import common.SocketManager;
-import common.World;
+import common.Mundo;
 import java.util.ArrayList;
 import java.util.Random;
-import objects.Coletor;
-import objects.Dragossauros;
-import objects.Fight;
-import objects.Guild;
-import objects.Maps;
+import objects.Recaudador;
+import objects.Dragopavo;
+import objects.Combate;
+import objects.Gremio;
+import objects.Mapa;
 import objects.Objeto;
-import objects.Personagens;
-import objects.SpellEffect;
+import objects.Personaje;
+import objects.EfectoHechizo;
 
 public class Fórmulas {
     public static float ADIC_PJ = 0.95f;
@@ -86,7 +86,7 @@ public class Fórmulas {
         }
     }
 
-    public static int getPorcTacleo(Fight.Luchador tacleador, Fight.Luchador tacleado) {
+    public static int getPorcTacleo(Combate.Luchador tacleador, Combate.Luchador tacleado) {
         int suerte;
         int agiTR = tacleador.getTotalStatsConBuff().getEfecto(119);
         int agiT = tacleado.getTotalStatsConBuff().getEfecto(119);
@@ -104,7 +104,7 @@ public class Fórmulas {
         return suerte;
     }
 
-    public static int calculFinalCura(Fight.Luchador curador, int rango, boolean esCaC) {
+    public static int calculFinalCura(Combate.Luchador curador, int rango, boolean esCaC) {
         int inteligencia = curador.getTotalStatsConBuff().getEfecto(126);
         int curas = curador.getTotalStatsConBuff().getEfecto(178);
         if (inteligencia < 0) {
@@ -117,9 +117,9 @@ public class Fórmulas {
         return (int)((double)rango * ((100.0 + (double)inteligencia) / (double)adic) + (double)(curas / 2));
     }
 
-    public static int calculFinalDa\u00f1o(Fight pelea, Fight.Luchador lanzador, Fight.Luchador objetivo, int statID, int rango, boolean esCaC, int hechizoID, boolean veneno) {
+    public static int calculFinalDa\u00f1o(Combate pelea, Combate.Luchador lanzador, Combate.Luchador objetivo, int statID, int rango, boolean esCaC, int hechizoID, boolean veneno) {
         int armadura;
-        Personagens perso;
+        Personaje perso;
         float adicPj = ADIC_PJ;
         float adicMob = ADIC_MOB;
         float a = 1.0f;
@@ -130,8 +130,8 @@ public class Fórmulas {
         float resMasT = 0.0f;
         float resPorcT = 0.0f;
         int multiplicaDa\u00f1os = 0;
-        Personagens.Stats totalLanzador = lanzador.getTotalStatsConBuff();
-        Personagens.Stats totalObjetivo = objetivo.getTotalStatsConBuff();
+        Personaje.Stats totalLanzador = lanzador.getTotalStatsConBuff();
+        Personaje.Stats totalObjetivo = objetivo.getTotalStatsConBuff();
         masDa\u00f1os = totalLanzador.getEfecto(112);
         porcDa\u00f1os = totalLanzador.getEfecto(138);
         multiplicaDa\u00f1os = totalLanzador.getEfecto(114);
@@ -342,15 +342,15 @@ public class Fórmulas {
         return (int)num;
     }
 
-    public static int calcularCosteZaap(Maps map1, Maps map2) {
+    public static int calcularCosteZaap(Mapa map1, Mapa map2) {
         return 10 * (Math.abs(map2.getX() - map1.getX()) + Math.abs(map2.getY() - map1.getY()) - 1);
     }
 
-    private static int getResisArmadura(Fight.Luchador afectado, int statID) {
+    private static int getResisArmadura(Combate.Luchador afectado, int statID) {
         int defensa = 0;
         int adic = 100;
-        block18: for (SpellEffect EH : afectado.getBuffsPorEfectoID(265)) {
-            Fight.Luchador lanzArmadura;
+        block18: for (EfectoHechizo EH : afectado.getBuffsPorEfectoID(265)) {
+            Combate.Luchador lanzArmadura;
             float div = 2.0f;
             switch (EH.getHechizoID()) {
                 case 1: {
@@ -381,7 +381,7 @@ public class Fórmulas {
                     lanzArmadura = EH.getLanzador();
                 }
             }
-            Personagens.Stats statsLanzArmadura = lanzArmadura.getTotalStatsConBuff();
+            Personaje.Stats statsLanzArmadura = lanzArmadura.getTotalStatsConBuff();
             int inteligencia = statsLanzArmadura.getEfecto(126);
             int carac = 0;
             switch (statID) {
@@ -406,8 +406,8 @@ public class Fórmulas {
             int a = valor * (100 + (int)((float)inteligencia / div) + carac / 2) / adic;
             defensa += a;
         }
-        Personagens.Stats statsAfectado = afectado.getTotalStatsConBuff();
-        for (SpellEffect SE : afectado.getBuffsPorEfectoID(105)) {
+        Personaje.Stats statsAfectado = afectado.getTotalStatsConBuff();
+        for (EfectoHechizo SE : afectado.getBuffsPorEfectoID(105)) {
             int inteligencia = statsAfectado.getEfecto(126);
             int carac = 0;
             switch (statID) {
@@ -435,7 +435,7 @@ public class Fórmulas {
         return defensa;
     }
 
-    public static int getPuntosPerdidos(char z, int valor, Fight.Luchador lanzador, Fight.Luchador objetivo) {
+    public static int getPuntosPerdidos(char z, int valor, Combate.Luchador lanzador, Combate.Luchador objetivo) {
         int esquivaLanzador = z == 'a' ? lanzador.getTotalStatsConBuff().getEfecto(160) : lanzador.getTotalStatsConBuff().getEfecto(161);
         int esquivaObjetivo = z == 'a' ? objetivo.getTotalStatsConBuff().getEfecto(160) : objetivo.getTotalStatsConBuff().getEfecto(161);
         int ptsMax = z == 'a' ? objetivo.getTotalStatsConBuff().getEfecto(111) : objetivo.getTotalStatsConBuff().getEfecto(128);
@@ -458,8 +458,8 @@ public class Fórmulas {
         return resta;
     }
 
-    public static long getXpGanadaRecau(Coletor recaudador, long totalXP) {
-        Guild G = World.getGremio(recaudador.getGremioID());
+    public static long getXpGanadaRecau(Recaudador recaudador, long totalXP) {
+        Gremio G = Mundo.getGremio(recaudador.getGremioID());
         float sabi = G.getStats(124);
         float coef = (sabi + 100.0f) / 100.0f;
         long xpGanada = 0L;
@@ -467,7 +467,7 @@ public class Fórmulas {
         return (long)((float)xpGanada * LesGuardians.RATE_XP_PVM);
     }
 
-    public static long getXpGanadaPVM(Fight.Luchador perso, ArrayList<Fight.Luchador> ganadores, ArrayList<Fight.Luchador> perdedores, long grupoXP) {
+    public static long getXpGanadaPVM(Combate.Luchador perso, ArrayList<Combate.Luchador> ganadores, ArrayList<Combate.Luchador> perdedores, long grupoXP) {
         if (perso.getPersonaje() == null) {
             return 0L;
         }
@@ -476,12 +476,12 @@ public class Fórmulas {
             float coef = (sabiduria + 100.0f) / 100.0f;
             long xpGanada = 0L;
             int nivelMax = 0;
-            for (Fight.Luchador entry : ganadores) {
+            for (Combate.Luchador entry : ganadores) {
                 if (entry.getNivel() <= nivelMax) continue;
                 nivelMax = entry.getNivel();
             }
             int nro = 0;
-            for (Fight.Luchador entry : ganadores) {
+            for (Combate.Luchador entry : ganadores) {
                 if (entry.getNivel() <= nivelMax / 3) continue;
                 ++nro;
             }
@@ -508,11 +508,11 @@ public class Fórmulas {
                 bonus = 3.5f;
             }
             int nivelPerdedores = 0;
-            for (Fight.Luchador entry : perdedores) {
+            for (Combate.Luchador entry : perdedores) {
                 nivelPerdedores += entry.getNivel();
             }
             int nivelGanadores = 0;
-            for (Fight.Luchador entry : ganadores) {
+            for (Combate.Luchador entry : ganadores) {
                 nivelGanadores += entry.getNivel();
             }
             float porcEntreGyP = 1.0f + (float)(nivelPerdedores / nivelGanadores);
@@ -527,14 +527,14 @@ public class Fórmulas {
         return 0L;
     }
 
-    public static long getXPDonadaGremio(Fight.Luchador perso, long xpGanada) {
+    public static long getXPDonadaGremio(Combate.Luchador perso, long xpGanada) {
         if (perso.getPersonaje() == null) {
             return 0L;
         }
         if (perso.getPersonaje().getMiembroGremio() == null) {
             return 0L;
         }
-        Guild.MiembroGremio gm = perso.getPersonaje().getMiembroGremio();
+        Gremio.MiembroGremio gm = perso.getPersonaje().getMiembroGremio();
         float xp = xpGanada;
         float nivel = perso.getNivel();
         float nivelGremio = perso.getPersonaje().getGremio().getNivel();
@@ -545,12 +545,12 @@ public class Fórmulas {
         return Math.round(alGremio);
     }
 
-    public static long getXPDonadaDragopavo(Fight.Luchador luchador, long xpGanada) {
-        Personagens perso = luchador.getPersonaje();
+    public static long getXPDonadaDragopavo(Combate.Luchador luchador, long xpGanada) {
+        Personaje perso = luchador.getPersonaje();
         if (perso == null) {
             return 0L;
         }
-        Dragossauros pavo = perso.getMontura();
+        Dragopavo pavo = perso.getMontura();
         if (pavo == null) {
             return 0L;
         }
@@ -570,7 +570,7 @@ public class Fórmulas {
         return xpdonada;
     }
 
-    public static long getKamasGanadas(Fight.Luchador luchador, long maxkamas, long minkamas) {
+    public static long getKamasGanadas(Combate.Luchador luchador, long maxkamas, long minkamas) {
         int prospeccion = luchador.getTotalStatsConBuff().getEfecto(176);
         float coef = ((float)prospeccion + 100.0f) / 100.0f;
         long kamas = (long)(Math.random() * (double)(++maxkamas - minkamas) + (double)minkamas);
@@ -594,14 +594,14 @@ public class Fórmulas {
         return nivelOficio * 100 / (K + nivelObjeto);
     }
 
-    public static int calcularHonorGanado(ArrayList<Fight.Luchador> ganadores, ArrayList<Fight.Luchador> perdedores, Fight.Luchador luchador) {
+    public static int calcularHonorGanado(ArrayList<Combate.Luchador> ganadores, ArrayList<Combate.Luchador> perdedores, Combate.Luchador luchador) {
         float totalNivAlineacionGanador = 0.0f;
         float totalNivelGanador = 0.0f;
         float totalNivAlineacionPerdedor = 0.0f;
         float totalNivelPerdedor = 0.0f;
         boolean prisma = false;
         int luchadores = 0;
-        for (Fight.Luchador lucha : ganadores) {
+        for (Combate.Luchador lucha : ganadores) {
             if (lucha.getPersonaje() == null && lucha.getPrisma() == null) continue;
             if (lucha.getPersonaje() != null) {
                 totalNivelGanador += (float)lucha.getNivel();
@@ -612,7 +612,7 @@ public class Fórmulas {
             totalNivelGanador += 200.0f;
             totalNivAlineacionGanador += (float)(lucha.getPrisma().getNivel() * 20 + 80);
         }
-        for (Fight.Luchador lucha : perdedores) {
+        for (Combate.Luchador lucha : perdedores) {
             if (lucha.getPersonaje() == null && lucha.getPrisma() == null) continue;
             if (lucha.getPersonaje() != null) {
                 totalNivelPerdedor += (float)lucha.getNivel();
@@ -634,14 +634,14 @@ public class Fórmulas {
         return (int)((float)base * LesGuardians.RATE_HONOR);
     }
 
-    public static World.Duo<Integer, Integer> decompilarPiedraAlma(Objeto objeto) {
+    public static Mundo.Duo<Integer, Integer> decompilarPiedraAlma(Objeto objeto) {
         String[] stats = objeto.convertirStatsAString().split("#");
         int nivelMax = Integer.parseInt(stats[3], 16);
         int suerte = Integer.parseInt(stats[1], 16);
-        return new World.Duo<Integer, Integer>(suerte, nivelMax);
+        return new Mundo.Duo<Integer, Integer>(suerte, nivelMax);
     }
 
-    public static int totalPorcCaptura(int suertePiedra, Personagens perso) {
+    public static int totalPorcCaptura(int suertePiedra, Personaje perso) {
         int suerteHechizo = 0;
         switch (perso.getStatsHechizo(413).getNivel()) {
             case 1: {

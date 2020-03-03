@@ -4,13 +4,13 @@ import common.Constantes;
 import common.LesGuardians;
 import common.SQLManager;
 import common.SocketManager;
-import common.World;
+import common.Mundo;
 import java.util.Map;
 import java.util.TreeMap;
 import objects.Cofre;
-import objects.Conta;
-import objects.Guild;
-import objects.Personagens;
+import objects.Cuenta;
+import objects.Gremio;
+import objects.Personaje;
 
 public class Casa {
     private int _id;
@@ -110,22 +110,22 @@ public class Casa {
     }
 
     public static Casa getCasaPorUbicacion(int mapaID, int celdaID) {
-        for (Map.Entry<Integer, Casa> casa : World.getCasas().entrySet()) {
+        for (Map.Entry<Integer, Casa> casa : Mundo.getCasas().entrySet()) {
             if (casa.getValue().getMapaIDFuera() != mapaID || casa.getValue().getCeldaIDFuera() != celdaID) continue;
             return casa.getValue();
         }
         return null;
     }
 
-    public static void cargarCasa(Personagens perso, int nuevoMapaID) {
-        for (Map.Entry<Integer, Casa> casa : World.getCasas().entrySet()) {
-            Conta cuenta;
+    public static void cargarCasa(Personaje perso, int nuevoMapaID) {
+        for (Map.Entry<Integer, Casa> casa : Mundo.getCasas().entrySet()) {
+            Cuenta cuenta;
             if (casa.getValue().getMapaIDFuera() != nuevoMapaID) continue;
             String packet = "P" + casa.getValue().getID() + "|";
-            packet = casa.getValue().getDue\u00f1oID() > 0 ? ((cuenta = World.getCuenta(casa.getValue().getDue\u00f1oID())) == null ? String.valueOf(packet) + "undefined;" : String.valueOf(packet) + World.getCuenta(casa.getValue().getDue\u00f1oID()).getApodo() + ";") : String.valueOf(packet) + ";";
+            packet = casa.getValue().getDue\u00f1oID() > 0 ? ((cuenta = Mundo.getCuenta(casa.getValue().getDue\u00f1oID())) == null ? String.valueOf(packet) + "undefined;" : String.valueOf(packet) + Mundo.getCuenta(casa.getValue().getDue\u00f1oID()).getApodo() + ";") : String.valueOf(packet) + ";";
             packet = casa.getValue().getPrecioVenta() > 0 ? String.valueOf(packet) + "1" : String.valueOf(packet) + "0";
             if (casa.getValue().getGremioID() > 0) {
-                Guild gremio = World.getGremio(casa.getValue().getGremioID());
+                Gremio gremio = Mundo.getGremio(casa.getValue().getGremioID());
                 String nombreGremio = gremio.getNombre();
                 String emblemaGremio = gremio.getEmblema();
                 if (gremio.getPjMiembros().size() < 10) {
@@ -149,7 +149,7 @@ public class Casa {
         }
     }
 
-    public void respondeA(Personagens perso) {
+    public void respondeA(Personaje perso) {
         if (perso.getPelea() != null || perso.getConversandoCon() != 0 || perso.getIntercambiandoCon() != 0 || perso.getHaciendoTrabajo() != null || perso.getIntercambio() != null) {
             return;
         }
@@ -168,7 +168,7 @@ public class Casa {
         }
     }
 
-    public static void abrirCasa(Personagens perso, String packet, boolean esHogar) {
+    public static void abrirCasa(Personaje perso, String packet, boolean esHogar) {
         Casa casa = perso.getCasa();
         if (!casa.tieneDerecho(Constantes.H_ABRIRGREMIO) && packet.compareTo(casa.getClave()) == 0 || esHogar) {
             perso.teleport(casa.getMapaIDDentro(), casa.getCeldaIDDentro());
@@ -179,7 +179,7 @@ public class Casa {
         }
     }
 
-    public void comprarEstaCasa(Personagens perso) {
+    public void comprarEstaCasa(Personaje perso) {
         Casa casa = perso.getCasa();
         if (casa == null) {
             return;
@@ -188,7 +188,7 @@ public class Casa {
         SocketManager.ENVIAR_h_CASA(perso, str);
     }
 
-    public static void comprarCasa(Personagens perso) {
+    public static void comprarCasa(Personaje perso) {
         Casa casa = perso.getCasa();
         if (Casa.tieneOtraCasa(perso)) {
             SocketManager.ENVIAR_Im_INFORMACION(perso, "132;1");
@@ -202,7 +202,7 @@ public class Casa {
         int kamasCofre = 0;
         for (Cofre cofre : Cofre.getCofresPorCasa(casa)) {
             if (casa.getDue\u00f1oID() > 0) {
-                cofre.moverCofreABanco(World.getCuenta(casa.getDue\u00f1oID()));
+                cofre.moverCofreABanco(Mundo.getCuenta(casa.getDue\u00f1oID()));
             }
             kamasCofre = (int)((long)kamasCofre + cofre.getKamas());
             cofre.setKamas(0L);
@@ -211,10 +211,10 @@ public class Casa {
             SQLManager.ACTUALIZAR_COFRE(cofre);
         }
         if (casa.getDue\u00f1oID() > 0) {
-            Conta cuentaVendedor = World.getCuenta(casa.getDue\u00f1oID());
+            Cuenta cuentaVendedor = Mundo.getCuenta(casa.getDue\u00f1oID());
             long bancoKamas = cuentaVendedor.getKamasBanco() + (long)casa.getPrecioVenta() + (long)kamasCofre;
             cuentaVendedor.setKamasBanco(bancoKamas);
-            Personagens vendedor = cuentaVendedor.getTempPersonaje();
+            Personaje vendedor = cuentaVendedor.getTempPersonaje();
             if (vendedor != null) {
                 SocketManager.ENVIAR_cs_CHAT_MENSAJE(vendedor, "Una casa ha sido vendida a " + casa.getPrecioVenta() + " kamas.", LesGuardians.COR_MSG);
                 SQLManager.SALVAR_PERSONAJE(vendedor, true);
@@ -229,12 +229,12 @@ public class Casa {
         SocketManager.ENVIAR_As_STATS_DEL_PJ(perso);
         SQLManager.COMPRAR_CASA(perso, casa);
         Casa.cerrarVentanaCompra(perso);
-        for (Personagens z : perso.getMapa().getPersos()) {
+        for (Personaje z : perso.getMapa().getPersos()) {
             Casa.cargarCasa(z, z.getMapa().getID());
         }
     }
 
-    public void venderla(Personagens perso) {
+    public void venderla(Personaje perso) {
         Casa casa = perso.getCasa();
         if (this.esSuCasa(perso, casa)) {
             String str = "CK" + casa.getID() + "|" + casa.getPrecioVenta();
@@ -243,37 +243,37 @@ public class Casa {
         }
     }
 
-    public static void precioVenta(Personagens perso, String packet) {
+    public static void precioVenta(Personaje perso, String packet) {
         Casa casa = perso.getCasa();
         int precio = Integer.parseInt(packet);
         if (casa.esSuCasa(perso, casa)) {
             SocketManager.ENVIAR_h_CASA(perso, "V");
             SocketManager.ENVIAR_h_CASA(perso, "SK" + casa.getID() + "|" + precio);
             SQLManager.VENDER_CASA(casa, precio);
-            for (Personagens z : perso.getMapa().getPersos()) {
+            for (Personaje z : perso.getMapa().getPersos()) {
                 Casa.cargarCasa(z, z.getMapa().getID());
             }
             return;
         }
     }
 
-    public boolean esSuCasa(Personagens perso, Casa casa) {
+    public boolean esSuCasa(Personaje perso, Casa casa) {
         return casa.getDue\u00f1oID() == perso.getCuentaID();
     }
 
-    public static void cerrarVentana(Personagens perso) {
+    public static void cerrarVentana(Personaje perso) {
         SocketManager.ENVIAR_K_CLAVE(perso, "V");
     }
 
-    public static void cerrarVentanaCompra(Personagens perso) {
+    public static void cerrarVentanaCompra(Personaje perso) {
         SocketManager.ENVIAR_h_CASA(perso, "V");
     }
 
-    public void bloquear(Personagens perso) {
+    public void bloquear(Personaje perso) {
         SocketManager.ENVIAR_K_CLAVE(perso, "CK1|8");
     }
 
-    public static void codificarCasa(Personagens perso, String packet) {
+    public static void codificarCasa(Personaje perso, String packet) {
         Casa casa = perso.getCasa();
         if (casa.esSuCasa(perso, casa)) {
             SQLManager.CODIGO_CASA(perso, casa, packet);
@@ -283,16 +283,16 @@ public class Casa {
         Casa.cerrarVentana(perso);
     }
 
-    public static String analizarCasaGremio(Personagens perso) {
+    public static String analizarCasaGremio(Personaje perso) {
         boolean primero = true;
         String packet = "+";
-        for (Map.Entry<Integer, Casa> entry : World.getCasas().entrySet()) {
+        for (Map.Entry<Integer, Casa> entry : Mundo.getCasas().entrySet()) {
             Casa casa = entry.getValue();
             if (casa.getGremioID() != perso.getGremio().getID() || casa.getDerechosGremio() <= 0) continue;
             if (primero) {
                 packet = String.valueOf(packet) + entry.getKey() + ";";
-                packet = World.getPersonaje(casa.getDue\u00f1oID()) == null ? String.valueOf(packet) + "DUE\u00d1O BUGEADO;" : String.valueOf(packet) + World.getPersonaje(casa.getDue\u00f1oID()).getCuenta().getApodo() + ";";
-                packet = String.valueOf(packet) + World.getMapa(casa.getMapaIDDentro()).getX() + "," + World.getMapa(casa.getMapaIDDentro()).getY() + ";";
+                packet = Mundo.getPersonaje(casa.getDue\u00f1oID()) == null ? String.valueOf(packet) + "DUE\u00d1O BUGEADO;" : String.valueOf(packet) + Mundo.getPersonaje(casa.getDue\u00f1oID()).getCuenta().getApodo() + ";";
+                packet = String.valueOf(packet) + Mundo.getMapa(casa.getMapaIDDentro()).getX() + "," + Mundo.getMapa(casa.getMapaIDDentro()).getY() + ";";
                 packet = String.valueOf(packet) + "0;";
                 packet = String.valueOf(packet) + casa.getDerechosGremio();
                 primero = false;
@@ -300,23 +300,23 @@ public class Casa {
             }
             packet = String.valueOf(packet) + "|";
             packet = String.valueOf(packet) + entry.getKey() + ";";
-            packet = World.getPersonaje(casa.getDue\u00f1oID()) == null ? String.valueOf(packet) + "DUE\u00d1O BUGEADO;" : String.valueOf(packet) + World.getPersonaje(casa.getDue\u00f1oID()).getCuenta().getApodo() + ";";
-            packet = String.valueOf(packet) + World.getMapa(casa.getMapaIDDentro()).getX() + "," + World.getMapa(casa.getMapaIDDentro()).getY() + ";";
+            packet = Mundo.getPersonaje(casa.getDue\u00f1oID()) == null ? String.valueOf(packet) + "DUE\u00d1O BUGEADO;" : String.valueOf(packet) + Mundo.getPersonaje(casa.getDue\u00f1oID()).getCuenta().getApodo() + ";";
+            packet = String.valueOf(packet) + Mundo.getMapa(casa.getMapaIDDentro()).getX() + "," + Mundo.getMapa(casa.getMapaIDDentro()).getY() + ";";
             packet = String.valueOf(packet) + "0;";
             packet = String.valueOf(packet) + casa.getDerechosGremio();
         }
         return packet;
     }
 
-    public static boolean tieneOtraCasa(Personagens perso) {
-        for (Map.Entry<Integer, Casa> casa : World.getCasas().entrySet()) {
+    public static boolean tieneOtraCasa(Personaje perso) {
+        for (Map.Entry<Integer, Casa> casa : Mundo.getCasas().entrySet()) {
             if (casa.getValue().getDue\u00f1oID() != perso.getCuentaID()) continue;
             return true;
         }
         return false;
     }
 
-    public static void analizarCasaGremio(Personagens perso, String packet) {
+    public static void analizarCasaGremio(Personaje perso, String packet) {
         Casa casa = perso.getCasa();
         if (perso.getGremio() == null) {
             return;
@@ -350,7 +350,7 @@ public class Casa {
 
     public static byte casaGremio(int gremioID) {
         byte i = 0;
-        for (Map.Entry<Integer, Casa> casa : World.getCasas().entrySet()) {
+        for (Map.Entry<Integer, Casa> casa : Mundo.getCasas().entrySet()) {
             if (casa.getValue().getGremioID() != gremioID) continue;
             i = (byte)(i + 1);
         }
@@ -394,13 +394,13 @@ public class Casa {
         }
     }
 
-    public static void salir(Personagens perso, String packet) {
+    public static void salir(Personaje perso, String packet) {
         Casa casa = perso.getCasa();
         if (!casa.esSuCasa(perso, casa)) {
             return;
         }
         int Pid = Integer.parseInt(packet);
-        Personagens objetivo = World.getPersonaje(Pid);
+        Personaje objetivo = Mundo.getPersonaje(Pid);
         if (objetivo == null || !objetivo.enLinea() || objetivo.getPelea() != null || objetivo.getMapa().getID() != perso.getMapa().getID()) {
             return;
         }
@@ -408,9 +408,9 @@ public class Casa {
         SocketManager.ENVIAR_Im_INFORMACION(objetivo, "018;" + perso.getNombre());
     }
 
-    public static Casa getCasaDePj(Personagens perso) {
+    public static Casa getCasaDePj(Personaje perso) {
         try {
-            for (Map.Entry<Integer, Casa> entry : World.getCasas().entrySet()) {
+            for (Map.Entry<Integer, Casa> entry : Mundo.getCasas().entrySet()) {
                 Casa casa = entry.getValue();
                 if (casa.getDue\u00f1oID() != perso.getCuentaID()) continue;
                 return casa;
@@ -423,7 +423,7 @@ public class Casa {
     }
 
     public static void borrarCasaGremio(int gremioID) {
-        for (Map.Entry<Integer, Casa> entry : World.getCasas().entrySet()) {
+        for (Map.Entry<Integer, Casa> entry : Mundo.getCasas().entrySet()) {
             Casa casa = entry.getValue();
             if (casa.getGremioID() != gremioID) continue;
             casa.setDerechosGremio(0);

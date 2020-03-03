@@ -3,20 +3,20 @@ package common;
 import common.Fórmulas;
 import common.LesGuardians;
 import common.SocketManager;
-import common.World;
+import common.Mundo;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
-import objects.Fight;
-import objects.Fight.Luchador;
-import objects.Maps;
+import objects.Combate;
+import objects.Combate.Luchador;
+import objects.Mapa;
 import objects.Objeto;
-import objects.Personagens;
-import objects.Profissao;
-import objects.Spell;
+import objects.Personaje;
+import objects.Oficio;
+import objects.Hechizo;
 
 public class Constantes {
     public static final String VERSION_SERVIDOR = "2.7.5";
@@ -706,79 +706,79 @@ public class Constantes {
         return posicionesIniciales;
     }
 
-    public static TreeMap<Integer, Spell.StatsHechizos> getHechizosIniciales(int claseID) {
-        TreeMap<Integer, Spell.StatsHechizos> hechizosIniciales = new TreeMap<Integer, Spell.StatsHechizos>();
+    public static TreeMap<Integer, Hechizo.StatsHechizos> getHechizosIniciales(int claseID) {
+        TreeMap<Integer, Hechizo.StatsHechizos> hechizosIniciales = new TreeMap<Integer, Hechizo.StatsHechizos>();
         switch (claseID) {
             case 1: {
-                hechizosIniciales.put(3, World.getHechizo(3).getStatsPorNivel(1));
-                hechizosIniciales.put(6, World.getHechizo(6).getStatsPorNivel(1));
-                hechizosIniciales.put(17, World.getHechizo(17).getStatsPorNivel(1));
+                hechizosIniciales.put(3, Mundo.getHechizo(3).getStatsPorNivel(1));
+                hechizosIniciales.put(6, Mundo.getHechizo(6).getStatsPorNivel(1));
+                hechizosIniciales.put(17, Mundo.getHechizo(17).getStatsPorNivel(1));
                 break;
             }
             case 4: {
-                hechizosIniciales.put(61, World.getHechizo(61).getStatsPorNivel(1));
-                hechizosIniciales.put(72, World.getHechizo(72).getStatsPorNivel(1));
-                hechizosIniciales.put(65, World.getHechizo(65).getStatsPorNivel(1));
+                hechizosIniciales.put(61, Mundo.getHechizo(61).getStatsPorNivel(1));
+                hechizosIniciales.put(72, Mundo.getHechizo(72).getStatsPorNivel(1));
+                hechizosIniciales.put(65, Mundo.getHechizo(65).getStatsPorNivel(1));
                 break;
             }
             case 7: {
-                hechizosIniciales.put(125, World.getHechizo(125).getStatsPorNivel(1));
-                hechizosIniciales.put(128, World.getHechizo(128).getStatsPorNivel(1));
-                hechizosIniciales.put(121, World.getHechizo(121).getStatsPorNivel(1));
+                hechizosIniciales.put(125, Mundo.getHechizo(125).getStatsPorNivel(1));
+                hechizosIniciales.put(128, Mundo.getHechizo(128).getStatsPorNivel(1));
+                hechizosIniciales.put(121, Mundo.getHechizo(121).getStatsPorNivel(1));
                 break;
             }
             case 6: {
-                hechizosIniciales.put(102, World.getHechizo(102).getStatsPorNivel(1));
-                hechizosIniciales.put(103, World.getHechizo(103).getStatsPorNivel(1));
-                hechizosIniciales.put(105, World.getHechizo(105).getStatsPorNivel(1));
+                hechizosIniciales.put(102, Mundo.getHechizo(102).getStatsPorNivel(1));
+                hechizosIniciales.put(103, Mundo.getHechizo(103).getStatsPorNivel(1));
+                hechizosIniciales.put(105, Mundo.getHechizo(105).getStatsPorNivel(1));
                 break;
             }
             case 9: {
-                hechizosIniciales.put(161, World.getHechizo(161).getStatsPorNivel(1));
-                hechizosIniciales.put(169, World.getHechizo(169).getStatsPorNivel(1));
-                hechizosIniciales.put(164, World.getHechizo(164).getStatsPorNivel(1));
+                hechizosIniciales.put(161, Mundo.getHechizo(161).getStatsPorNivel(1));
+                hechizosIniciales.put(169, Mundo.getHechizo(169).getStatsPorNivel(1));
+                hechizosIniciales.put(164, Mundo.getHechizo(164).getStatsPorNivel(1));
                 break;
             }
             case 8: {
-                hechizosIniciales.put(143, World.getHechizo(143).getStatsPorNivel(1));
-                hechizosIniciales.put(141, World.getHechizo(141).getStatsPorNivel(1));
-                hechizosIniciales.put(142, World.getHechizo(142).getStatsPorNivel(1));
+                hechizosIniciales.put(143, Mundo.getHechizo(143).getStatsPorNivel(1));
+                hechizosIniciales.put(141, Mundo.getHechizo(141).getStatsPorNivel(1));
+                hechizosIniciales.put(142, Mundo.getHechizo(142).getStatsPorNivel(1));
                 break;
             }
             case 10: {
-                hechizosIniciales.put(183, World.getHechizo(183).getStatsPorNivel(1));
-                hechizosIniciales.put(200, World.getHechizo(200).getStatsPorNivel(1));
-                hechizosIniciales.put(193, World.getHechizo(193).getStatsPorNivel(1));
+                hechizosIniciales.put(183, Mundo.getHechizo(183).getStatsPorNivel(1));
+                hechizosIniciales.put(200, Mundo.getHechizo(200).getStatsPorNivel(1));
+                hechizosIniciales.put(193, Mundo.getHechizo(193).getStatsPorNivel(1));
                 break;
             }
             case 2: {
-                hechizosIniciales.put(34, World.getHechizo(34).getStatsPorNivel(1));
-                hechizosIniciales.put(21, World.getHechizo(21).getStatsPorNivel(1));
-                hechizosIniciales.put(23, World.getHechizo(23).getStatsPorNivel(1));
+                hechizosIniciales.put(34, Mundo.getHechizo(34).getStatsPorNivel(1));
+                hechizosIniciales.put(21, Mundo.getHechizo(21).getStatsPorNivel(1));
+                hechizosIniciales.put(23, Mundo.getHechizo(23).getStatsPorNivel(1));
                 break;
             }
             case 5: {
-                hechizosIniciales.put(82, World.getHechizo(82).getStatsPorNivel(1));
-                hechizosIniciales.put(81, World.getHechizo(81).getStatsPorNivel(1));
-                hechizosIniciales.put(83, World.getHechizo(83).getStatsPorNivel(1));
+                hechizosIniciales.put(82, Mundo.getHechizo(82).getStatsPorNivel(1));
+                hechizosIniciales.put(81, Mundo.getHechizo(81).getStatsPorNivel(1));
+                hechizosIniciales.put(83, Mundo.getHechizo(83).getStatsPorNivel(1));
                 break;
             }
             case 12: {
-                hechizosIniciales.put(686, World.getHechizo(686).getStatsPorNivel(1));
-                hechizosIniciales.put(692, World.getHechizo(692).getStatsPorNivel(1));
-                hechizosIniciales.put(687, World.getHechizo(687).getStatsPorNivel(1));
+                hechizosIniciales.put(686, Mundo.getHechizo(686).getStatsPorNivel(1));
+                hechizosIniciales.put(692, Mundo.getHechizo(692).getStatsPorNivel(1));
+                hechizosIniciales.put(687, Mundo.getHechizo(687).getStatsPorNivel(1));
                 break;
             }
             case 3: {
-                hechizosIniciales.put(51, World.getHechizo(51).getStatsPorNivel(1));
-                hechizosIniciales.put(43, World.getHechizo(43).getStatsPorNivel(1));
-                hechizosIniciales.put(41, World.getHechizo(41).getStatsPorNivel(1));
+                hechizosIniciales.put(51, Mundo.getHechizo(51).getStatsPorNivel(1));
+                hechizosIniciales.put(43, Mundo.getHechizo(43).getStatsPorNivel(1));
+                hechizosIniciales.put(41, Mundo.getHechizo(41).getStatsPorNivel(1));
                 break;
             }
             case 11: {
-                hechizosIniciales.put(432, World.getHechizo(432).getStatsPorNivel(1));
-                hechizosIniciales.put(431, World.getHechizo(431).getStatsPorNivel(1));
-                hechizosIniciales.put(434, World.getHechizo(434).getStatsPorNivel(1));
+                hechizosIniciales.put(432, Mundo.getHechizo(432).getStatsPorNivel(1));
+                hechizosIniciales.put(431, Mundo.getHechizo(431).getStatsPorNivel(1));
+                hechizosIniciales.put(434, Mundo.getHechizo(434).getStatsPorNivel(1));
             }
         }
         return hechizosIniciales;
@@ -1601,7 +1601,7 @@ public class Constantes {
         return -1;
     }
 
-    public static void subirNivelAprenderHechizos(Personagens perso, int nivel) {
+    public static void subirNivelAprenderHechizos(Personaje perso, int nivel) {
         switch (perso.getClase(true)) {
             case 1: {
                 if (nivel == 3) {
@@ -2333,292 +2333,292 @@ public class Constantes {
         return 7;
     }
 
-    public static ArrayList<Profissao.AccionTrabajo> getTrabajosPorOficios(int idOficio, int nivel) {
-        ArrayList<Profissao.AccionTrabajo> listaTrabajos = new ArrayList<Profissao.AccionTrabajo>();
+    public static ArrayList<Oficio.AccionTrabajo> getTrabajosPorOficios(int idOficio, int nivel) {
+        ArrayList<Oficio.AccionTrabajo> listaTrabajos = new ArrayList<Oficio.AccionTrabajo>();
         int tiempoGanado = nivel * 100;
         int dropGanado = nivel / 5;
         switch (idOficio) {
             case 16: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(11, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
-                listaTrabajos.add(new Profissao.AccionTrabajo(12, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(11, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(12, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
                 break;
             }
             case 27: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(64, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
-                listaTrabajos.add(new Profissao.AccionTrabajo(123, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
-                listaTrabajos.add(new Profissao.AccionTrabajo(63, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(64, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(123, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(63, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
                 break;
             }
             case 15: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(13, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
-                listaTrabajos.add(new Profissao.AccionTrabajo(14, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(13, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(14, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
                 break;
             }
             case 65: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(171, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
-                listaTrabajos.add(new Profissao.AccionTrabajo(182, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(171, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(182, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
                 break;
             }
             case 13: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(15, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
-                listaTrabajos.add(new Profissao.AccionTrabajo(149, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(15, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(149, 3, 3, true, nivel, 0));
                 break;
             }
             case 19: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(16, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
-                listaTrabajos.add(new Profissao.AccionTrabajo(148, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(16, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(148, 3, 3, true, nivel, 0));
                 break;
             }
             case 18: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(17, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
-                listaTrabajos.add(new Profissao.AccionTrabajo(147, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(17, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(147, 3, 3, true, nivel, 0));
                 break;
             }
             case 17: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(18, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
-                listaTrabajos.add(new Profissao.AccionTrabajo(142, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(18, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(142, 3, 3, true, nivel, 0));
                 break;
             }
             case 14: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(19, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
-                listaTrabajos.add(new Profissao.AccionTrabajo(144, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(19, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(144, 3, 3, true, nivel, 0));
                 break;
             }
             case 11: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(20, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
-                listaTrabajos.add(new Profissao.AccionTrabajo(145, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(20, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(145, 3, 3, true, nivel, 0));
                 break;
             }
             case 20: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(21, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
-                listaTrabajos.add(new Profissao.AccionTrabajo(146, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(21, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(146, 3, 3, true, nivel, 0));
                 break;
             }
             case 31: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(65, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
-                listaTrabajos.add(new Profissao.AccionTrabajo(143, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(65, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(143, 3, 3, true, nivel, 0));
                 break;
             }
             case 60: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(156, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(156, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
                 break;
             }
             case 62: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(163, 3, 3, true, nivel, 0));
-                listaTrabajos.add(new Profissao.AccionTrabajo(164, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(163, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(164, 3, 3, true, nivel, 0));
                 break;
             }
             case 63: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(169, 3, 3, true, nivel, 0));
-                listaTrabajos.add(new Profissao.AccionTrabajo(168, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(169, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(168, 3, 3, true, nivel, 0));
                 break;
             }
             case 64: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(165, 3, 3, true, nivel, 0));
-                listaTrabajos.add(new Profissao.AccionTrabajo(167, 3, 3, true, nivel, 0));
-                listaTrabajos.add(new Profissao.AccionTrabajo(166, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(165, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(167, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(166, 3, 3, true, nivel, 0));
                 break;
             }
             case 50: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(120, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(120, 3, 3, true, nivel, 0));
                 break;
             }
             case 49: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(119, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(119, 3, 3, true, nivel, 0));
                 break;
             }
             case 48: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(118, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(118, 3, 3, true, nivel, 0));
                 break;
             }
             case 47: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(115, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(115, 3, 3, true, nivel, 0));
                 break;
             }
             case 43: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(1, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(1, 3, 3, true, nivel, 0));
                 break;
             }
             case 44: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(113, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(113, 3, 3, true, nivel, 0));
                 break;
             }
             case 45: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(116, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(116, 3, 3, true, nivel, 0));
                 break;
             }
             case 46: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(117, 3, 3, true, nivel, 0));
+                listaTrabajos.add(new Oficio.AccionTrabajo(117, 3, 3, true, nivel, 0));
                 break;
             }
             case 41: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(134, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(134, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
                 break;
             }
             case 56: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(132, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(132, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
                 break;
             }
             case 58: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(135, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(135, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
                 break;
             }
             case 25: {
-                listaTrabajos.add(new Profissao.AccionTrabajo(27, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
-                listaTrabajos.add(new Profissao.AccionTrabajo(109, 3, 3, true, 100, -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(27, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(109, 3, 3, true, 100, -1));
                 break;
             }
             case 24: {
                 if (nivel > 99) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(161, -19 + dropGanado, -18 + dropGanado, false, 12000 - tiempoGanado, 60));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(161, -19 + dropGanado, -18 + dropGanado, false, 12000 - tiempoGanado, 60));
                 }
                 if (nivel > 79) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(30, -15 + dropGanado, -14 + dropGanado, false, 12000 - tiempoGanado, 55));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(30, -15 + dropGanado, -14 + dropGanado, false, 12000 - tiempoGanado, 55));
                 }
                 if (nivel > 69) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(31, -13 + dropGanado, -12 + dropGanado, false, 12000 - tiempoGanado, 50));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(31, -13 + dropGanado, -12 + dropGanado, false, 12000 - tiempoGanado, 50));
                 }
                 if (nivel > 59) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(29, -11 + dropGanado, -10 + dropGanado, false, 12000 - tiempoGanado, 40));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(29, -11 + dropGanado, -10 + dropGanado, false, 12000 - tiempoGanado, 40));
                 }
                 if (nivel > 49) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(55, -9 + dropGanado, -8 + dropGanado, false, 12000 - tiempoGanado, 35));
-                    listaTrabajos.add(new Profissao.AccionTrabajo(162, -9 + dropGanado, -8 + dropGanado, false, 12000 - tiempoGanado, 35));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(55, -9 + dropGanado, -8 + dropGanado, false, 12000 - tiempoGanado, 35));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(162, -9 + dropGanado, -8 + dropGanado, false, 12000 - tiempoGanado, 35));
                 }
                 if (nivel > 39) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(56, -7 + dropGanado, -6 + dropGanado, false, 12000 - tiempoGanado, 30));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(56, -7 + dropGanado, -6 + dropGanado, false, 12000 - tiempoGanado, 30));
                 }
                 if (nivel > 29) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(28, -5 + dropGanado, -4 + dropGanado, false, 12000 - tiempoGanado, 25));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(28, -5 + dropGanado, -4 + dropGanado, false, 12000 - tiempoGanado, 25));
                 }
                 if (nivel > 19) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(26, -3 + dropGanado, -2 + dropGanado, false, 12000 - tiempoGanado, 20));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(26, -3 + dropGanado, -2 + dropGanado, false, 12000 - tiempoGanado, 20));
                 }
                 if (nivel > 9) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(25, -1 + dropGanado, 0 + dropGanado, false, 12000 - tiempoGanado, 15));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(25, -1 + dropGanado, 0 + dropGanado, false, 12000 - tiempoGanado, 15));
                 }
-                listaTrabajos.add(new Profissao.AccionTrabajo(24, 1 + dropGanado, 2 + dropGanado, false, 12000 - tiempoGanado, 10));
-                listaTrabajos.add(new Profissao.AccionTrabajo(32, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
-                listaTrabajos.add(new Profissao.AccionTrabajo(48, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(24, 1 + dropGanado, 2 + dropGanado, false, 12000 - tiempoGanado, 10));
+                listaTrabajos.add(new Oficio.AccionTrabajo(32, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(48, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
                 break;
             }
             case 36: {
                 if (nivel > 74) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(131, 0, 1, false, 12000 - tiempoGanado, 35));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(131, 0, 1, false, 12000 - tiempoGanado, 35));
                 }
                 if (nivel > 69) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(127, 0, 1, false, 12000 - tiempoGanado, 35));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(127, 0, 1, false, 12000 - tiempoGanado, 35));
                 }
                 if (nivel > 49) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(130, 0, 1, false, 12000 - tiempoGanado, 30));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(130, 0, 1, false, 12000 - tiempoGanado, 30));
                 }
                 if (nivel > 39) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(126, 0, 1, false, 12000 - tiempoGanado, 25));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(126, 0, 1, false, 12000 - tiempoGanado, 25));
                 }
                 if (nivel > 19) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(129, 0, 1, false, 12000 - tiempoGanado, 20));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(129, 0, 1, false, 12000 - tiempoGanado, 20));
                 }
                 if (nivel > 9) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(125, 0, 1, false, 12000 - tiempoGanado, 15));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(125, 0, 1, false, 12000 - tiempoGanado, 15));
                 }
-                listaTrabajos.add(new Profissao.AccionTrabajo(140, 0, 1, false, 12000 - tiempoGanado, 50));
-                listaTrabajos.add(new Profissao.AccionTrabajo(136, 1, 1, false, 12000 - tiempoGanado, 5));
-                listaTrabajos.add(new Profissao.AccionTrabajo(124, 0, 1, false, 12000 - tiempoGanado, 10));
-                listaTrabajos.add(new Profissao.AccionTrabajo(128, 0, 1, false, 12000 - tiempoGanado, 10));
-                listaTrabajos.add(new Profissao.AccionTrabajo(133, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(140, 0, 1, false, 12000 - tiempoGanado, 50));
+                listaTrabajos.add(new Oficio.AccionTrabajo(136, 1, 1, false, 12000 - tiempoGanado, 5));
+                listaTrabajos.add(new Oficio.AccionTrabajo(124, 0, 1, false, 12000 - tiempoGanado, 10));
+                listaTrabajos.add(new Oficio.AccionTrabajo(128, 0, 1, false, 12000 - tiempoGanado, 10));
+                listaTrabajos.add(new Oficio.AccionTrabajo(133, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
                 break;
             }
             case 26: {
                 if (nivel > 49) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(160, -9 + dropGanado, -8 + dropGanado, false, 12000 - tiempoGanado, 35));
-                    listaTrabajos.add(new Profissao.AccionTrabajo(74, -9 + dropGanado, -8 + dropGanado, false, 12000 - tiempoGanado, 35));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(160, -9 + dropGanado, -8 + dropGanado, false, 12000 - tiempoGanado, 35));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(74, -9 + dropGanado, -8 + dropGanado, false, 12000 - tiempoGanado, 35));
                 }
                 if (nivel > 39) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(73, -7 + dropGanado, -6 + dropGanado, false, 12000 - tiempoGanado, 30));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(73, -7 + dropGanado, -6 + dropGanado, false, 12000 - tiempoGanado, 30));
                 }
                 if (nivel > 29) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(72, -5 + dropGanado, -4 + dropGanado, false, 12000 - tiempoGanado, 25));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(72, -5 + dropGanado, -4 + dropGanado, false, 12000 - tiempoGanado, 25));
                 }
                 if (nivel > 19) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(71, -3 + dropGanado, -2 + dropGanado, false, 12000 - tiempoGanado, 20));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(71, -3 + dropGanado, -2 + dropGanado, false, 12000 - tiempoGanado, 20));
                 }
                 if (nivel > 9) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(54, -1 + dropGanado, 0 + dropGanado, false, 12000 - tiempoGanado, 15));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(54, -1 + dropGanado, 0 + dropGanado, false, 12000 - tiempoGanado, 15));
                 }
-                listaTrabajos.add(new Profissao.AccionTrabajo(68, 1 + dropGanado, 2 + dropGanado, false, 12000 - tiempoGanado, 10));
-                listaTrabajos.add(new Profissao.AccionTrabajo(23, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(68, 1 + dropGanado, 2 + dropGanado, false, 12000 - tiempoGanado, 10));
+                listaTrabajos.add(new Oficio.AccionTrabajo(23, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
                 break;
             }
             case 2: {
                 if (nivel > 99) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(158, -19 + dropGanado, -18 + dropGanado, false, 12000 - tiempoGanado, 75));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(158, -19 + dropGanado, -18 + dropGanado, false, 12000 - tiempoGanado, 75));
                 }
                 if (nivel > 89) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(35, -17 + dropGanado, -16 + dropGanado, false, 12000 - tiempoGanado, 70));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(35, -17 + dropGanado, -16 + dropGanado, false, 12000 - tiempoGanado, 70));
                 }
                 if (nivel > 79) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(38, -15 + dropGanado, -14 + dropGanado, false, 12000 - tiempoGanado, 65));
-                    listaTrabajos.add(new Profissao.AccionTrabajo(155, -15 + dropGanado, -14 + dropGanado, false, 12000 - tiempoGanado, 65));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(38, -15 + dropGanado, -14 + dropGanado, false, 12000 - tiempoGanado, 65));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(155, -15 + dropGanado, -14 + dropGanado, false, 12000 - tiempoGanado, 65));
                 }
                 if (nivel > 74) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(174, -14 + dropGanado, -13 + dropGanado, false, 12000 - tiempoGanado, 55));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(174, -14 + dropGanado, -13 + dropGanado, false, 12000 - tiempoGanado, 55));
                 }
                 if (nivel > 69) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(34, -13 + dropGanado, -12 + dropGanado, false, 12000 - tiempoGanado, 50));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(34, -13 + dropGanado, -12 + dropGanado, false, 12000 - tiempoGanado, 50));
                 }
                 if (nivel > 59) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(41, -11 + dropGanado, -10 + dropGanado, false, 12000 - tiempoGanado, 45));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(41, -11 + dropGanado, -10 + dropGanado, false, 12000 - tiempoGanado, 45));
                 }
                 if (nivel > 49) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(33, -9 + dropGanado, -8 + dropGanado, false, 12000 - tiempoGanado, 40));
-                    listaTrabajos.add(new Profissao.AccionTrabajo(154, -9 + dropGanado, -8 + dropGanado, false, 12000 - tiempoGanado, 40));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(33, -9 + dropGanado, -8 + dropGanado, false, 12000 - tiempoGanado, 40));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(154, -9 + dropGanado, -8 + dropGanado, false, 12000 - tiempoGanado, 40));
                 }
                 if (nivel > 39) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(37, -7 + dropGanado, -6 + dropGanado, false, 12000 - tiempoGanado, 35));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(37, -7 + dropGanado, -6 + dropGanado, false, 12000 - tiempoGanado, 35));
                 }
                 if (nivel > 34) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(139, -6 + dropGanado, -5 + dropGanado, false, 12000 - tiempoGanado, 30));
-                    listaTrabajos.add(new Profissao.AccionTrabajo(141, -6 + dropGanado, -5 + dropGanado, false, 12000 - tiempoGanado, 30));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(139, -6 + dropGanado, -5 + dropGanado, false, 12000 - tiempoGanado, 30));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(141, -6 + dropGanado, -5 + dropGanado, false, 12000 - tiempoGanado, 30));
                 }
                 if (nivel > 29) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(10, -5 + dropGanado, -4 + dropGanado, false, 12000 - tiempoGanado, 25));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(10, -5 + dropGanado, -4 + dropGanado, false, 12000 - tiempoGanado, 25));
                 }
                 if (nivel > 19) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(40, -3 + dropGanado, -2 + dropGanado, false, 12000 - tiempoGanado, 20));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(40, -3 + dropGanado, -2 + dropGanado, false, 12000 - tiempoGanado, 20));
                 }
                 if (nivel > 9) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(39, -1 + dropGanado, 0 + dropGanado, false, 12000 - tiempoGanado, 15));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(39, -1 + dropGanado, 0 + dropGanado, false, 12000 - tiempoGanado, 15));
                 }
-                listaTrabajos.add(new Profissao.AccionTrabajo(6, 1 + dropGanado, 2 + dropGanado, false, 12000 - tiempoGanado, 10));
-                listaTrabajos.add(new Profissao.AccionTrabajo(101, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(6, 1 + dropGanado, 2 + dropGanado, false, 12000 - tiempoGanado, 10));
+                listaTrabajos.add(new Oficio.AccionTrabajo(101, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
                 break;
             }
             case 28: {
                 if (nivel > 69) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(54, -13 + dropGanado, -12 + dropGanado, false, 12000 - tiempoGanado, 45));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(54, -13 + dropGanado, -12 + dropGanado, false, 12000 - tiempoGanado, 45));
                 }
                 if (nivel > 59) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(58, -11 + dropGanado, -10 + dropGanado, false, 12000 - tiempoGanado, 40));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(58, -11 + dropGanado, -10 + dropGanado, false, 12000 - tiempoGanado, 40));
                 }
                 if (nivel > 49) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(159, -9 + dropGanado, -8 + dropGanado, false, 12000 - tiempoGanado, 35));
-                    listaTrabajos.add(new Profissao.AccionTrabajo(52, -9 + dropGanado, -8 + dropGanado, false, 12000 - tiempoGanado, 35));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(159, -9 + dropGanado, -8 + dropGanado, false, 12000 - tiempoGanado, 35));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(52, -9 + dropGanado, -8 + dropGanado, false, 12000 - tiempoGanado, 35));
                 }
                 if (nivel > 39) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(50, -7 + dropGanado, -6 + dropGanado, false, 12000 - tiempoGanado, 30));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(50, -7 + dropGanado, -6 + dropGanado, false, 12000 - tiempoGanado, 30));
                 }
                 if (nivel > 29) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(46, -5 + dropGanado, -4 + dropGanado, false, 12000 - tiempoGanado, 25));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(46, -5 + dropGanado, -4 + dropGanado, false, 12000 - tiempoGanado, 25));
                 }
                 if (nivel > 19) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(57, -3 + dropGanado, -2 + dropGanado, false, 12000 - tiempoGanado, 20));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(57, -3 + dropGanado, -2 + dropGanado, false, 12000 - tiempoGanado, 20));
                 }
                 if (nivel > 9) {
-                    listaTrabajos.add(new Profissao.AccionTrabajo(53, -1 + dropGanado, 0 + dropGanado, false, 12000 - tiempoGanado, 15));
+                    listaTrabajos.add(new Oficio.AccionTrabajo(53, -1 + dropGanado, 0 + dropGanado, false, 12000 - tiempoGanado, 15));
                 }
-                listaTrabajos.add(new Profissao.AccionTrabajo(45, 1 + dropGanado, 2 + dropGanado, false, 12000 - tiempoGanado, 10));
-                listaTrabajos.add(new Profissao.AccionTrabajo(47, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
-                listaTrabajos.add(new Profissao.AccionTrabajo(122, 1, 1, true, 100, -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(45, 1 + dropGanado, 2 + dropGanado, false, 12000 - tiempoGanado, 10));
+                listaTrabajos.add(new Oficio.AccionTrabajo(47, 2, Constantes.getIngMaxPorNivel(nivel), true, Constantes.getSuerteMaxPorNivel(nivel), -1));
+                listaTrabajos.add(new Oficio.AccionTrabajo(122, 1, 1, true, 100, -1));
             }
         }
         return listaTrabajos;
@@ -3211,8 +3211,8 @@ public class Constantes {
         return colorcria;
     }
 
-    public static Personagens.Stats getStatsMonturaVIP(String definido, int nivel) {
-        Personagens.Stats stats = new Personagens.Stats();
+    public static Personaje.Stats getStatsMonturaVIP(String definido, int nivel) {
+        Personaje.Stats stats = new Personaje.Stats();
         if (definido.isEmpty() || definido == "") {
             return stats;
         }
@@ -3261,8 +3261,8 @@ public class Constantes {
         return stats;
     }
 
-    public static Personagens.Stats getStatsMontura(int color, int nivel) {
-        Personagens.Stats stats = new Personagens.Stats();
+    public static Personaje.Stats getStatsMontura(int color, int nivel) {
+        Personaje.Stats stats = new Personaje.Stats();
         switch (color) {
             case 1: {
                 break;
@@ -3843,223 +3843,223 @@ public class Constantes {
     public static Objeto.ObjetoModelo getPergaPorColorDragopavo(int color) {
         switch (color) {
             case 2: {
-                return World.getObjModelo(7807);
+                return Mundo.getObjModelo(7807);
             }
             case 3: {
-                return World.getObjModelo(7808);
+                return Mundo.getObjModelo(7808);
             }
             case 4: {
-                return World.getObjModelo(7809);
+                return Mundo.getObjModelo(7809);
             }
             case 9: {
-                return World.getObjModelo(7810);
+                return Mundo.getObjModelo(7810);
             }
             case 10: {
-                return World.getObjModelo(7811);
+                return Mundo.getObjModelo(7811);
             }
             case 11: {
-                return World.getObjModelo(7812);
+                return Mundo.getObjModelo(7812);
             }
             case 12: {
-                return World.getObjModelo(7813);
+                return Mundo.getObjModelo(7813);
             }
             case 15: {
-                return World.getObjModelo(7814);
+                return Mundo.getObjModelo(7814);
             }
             case 16: {
-                return World.getObjModelo(7815);
+                return Mundo.getObjModelo(7815);
             }
             case 17: {
-                return World.getObjModelo(7816);
+                return Mundo.getObjModelo(7816);
             }
             case 18: {
-                return World.getObjModelo(7817);
+                return Mundo.getObjModelo(7817);
             }
             case 19: {
-                return World.getObjModelo(7818);
+                return Mundo.getObjModelo(7818);
             }
             case 20: {
-                return World.getObjModelo(7819);
+                return Mundo.getObjModelo(7819);
             }
             case 21: {
-                return World.getObjModelo(7820);
+                return Mundo.getObjModelo(7820);
             }
             case 22: {
-                return World.getObjModelo(7821);
+                return Mundo.getObjModelo(7821);
             }
             case 23: {
-                return World.getObjModelo(7822);
+                return Mundo.getObjModelo(7822);
             }
             case 33: {
-                return World.getObjModelo(7823);
+                return Mundo.getObjModelo(7823);
             }
             case 34: {
-                return World.getObjModelo(7824);
+                return Mundo.getObjModelo(7824);
             }
             case 35: {
-                return World.getObjModelo(7825);
+                return Mundo.getObjModelo(7825);
             }
             case 36: {
-                return World.getObjModelo(7826);
+                return Mundo.getObjModelo(7826);
             }
             case 37: {
-                return World.getObjModelo(7827);
+                return Mundo.getObjModelo(7827);
             }
             case 38: {
-                return World.getObjModelo(7828);
+                return Mundo.getObjModelo(7828);
             }
             case 39: {
-                return World.getObjModelo(7829);
+                return Mundo.getObjModelo(7829);
             }
             case 40: {
-                return World.getObjModelo(7830);
+                return Mundo.getObjModelo(7830);
             }
             case 41: {
-                return World.getObjModelo(7831);
+                return Mundo.getObjModelo(7831);
             }
             case 42: {
-                return World.getObjModelo(7832);
+                return Mundo.getObjModelo(7832);
             }
             case 43: {
-                return World.getObjModelo(7833);
+                return Mundo.getObjModelo(7833);
             }
             case 44: {
-                return World.getObjModelo(7834);
+                return Mundo.getObjModelo(7834);
             }
             case 45: {
-                return World.getObjModelo(7835);
+                return Mundo.getObjModelo(7835);
             }
             case 46: {
-                return World.getObjModelo(7836);
+                return Mundo.getObjModelo(7836);
             }
             case 47: {
-                return World.getObjModelo(7837);
+                return Mundo.getObjModelo(7837);
             }
             case 48: {
-                return World.getObjModelo(7838);
+                return Mundo.getObjModelo(7838);
             }
             case 49: {
-                return World.getObjModelo(7839);
+                return Mundo.getObjModelo(7839);
             }
             case 50: {
-                return World.getObjModelo(7840);
+                return Mundo.getObjModelo(7840);
             }
             case 51: {
-                return World.getObjModelo(7841);
+                return Mundo.getObjModelo(7841);
             }
             case 52: {
-                return World.getObjModelo(7842);
+                return Mundo.getObjModelo(7842);
             }
             case 53: {
-                return World.getObjModelo(7843);
+                return Mundo.getObjModelo(7843);
             }
             case 54: {
-                return World.getObjModelo(7844);
+                return Mundo.getObjModelo(7844);
             }
             case 55: {
-                return World.getObjModelo(7845);
+                return Mundo.getObjModelo(7845);
             }
             case 56: {
-                return World.getObjModelo(7846);
+                return Mundo.getObjModelo(7846);
             }
             case 57: {
-                return World.getObjModelo(7847);
+                return Mundo.getObjModelo(7847);
             }
             case 58: {
-                return World.getObjModelo(7848);
+                return Mundo.getObjModelo(7848);
             }
             case 59: {
-                return World.getObjModelo(7849);
+                return Mundo.getObjModelo(7849);
             }
             case 60: {
-                return World.getObjModelo(7850);
+                return Mundo.getObjModelo(7850);
             }
             case 61: {
-                return World.getObjModelo(7851);
+                return Mundo.getObjModelo(7851);
             }
             case 62: {
-                return World.getObjModelo(7852);
+                return Mundo.getObjModelo(7852);
             }
             case 63: {
-                return World.getObjModelo(7853);
+                return Mundo.getObjModelo(7853);
             }
             case 64: {
-                return World.getObjModelo(7854);
+                return Mundo.getObjModelo(7854);
             }
             case 65: {
-                return World.getObjModelo(7855);
+                return Mundo.getObjModelo(7855);
             }
             case 66: {
-                return World.getObjModelo(7856);
+                return Mundo.getObjModelo(7856);
             }
             case 67: {
-                return World.getObjModelo(7857);
+                return Mundo.getObjModelo(7857);
             }
             case 68: {
-                return World.getObjModelo(7858);
+                return Mundo.getObjModelo(7858);
             }
             case 69: {
-                return World.getObjModelo(7859);
+                return Mundo.getObjModelo(7859);
             }
             case 70: {
-                return World.getObjModelo(7860);
+                return Mundo.getObjModelo(7860);
             }
             case 71: {
-                return World.getObjModelo(7861);
+                return Mundo.getObjModelo(7861);
             }
             case 72: {
-                return World.getObjModelo(7862);
+                return Mundo.getObjModelo(7862);
             }
             case 73: {
-                return World.getObjModelo(7863);
+                return Mundo.getObjModelo(7863);
             }
             case 74: {
-                return World.getObjModelo(7864);
+                return Mundo.getObjModelo(7864);
             }
             case 75: {
-                return World.getObjModelo(11143);
+                return Mundo.getObjModelo(11143);
             }
             case 76: {
-                return World.getObjModelo(7866);
+                return Mundo.getObjModelo(7866);
             }
             case 77: {
-                return World.getObjModelo(7867);
+                return Mundo.getObjModelo(7867);
             }
             case 78: {
-                return World.getObjModelo(7868);
+                return Mundo.getObjModelo(7868);
             }
             case 79: {
-                return World.getObjModelo(7869);
+                return Mundo.getObjModelo(7869);
             }
             case 80: {
-                return World.getObjModelo(7870);
+                return Mundo.getObjModelo(7870);
             }
             case 82: {
-                return World.getObjModelo(7871);
+                return Mundo.getObjModelo(7871);
             }
             case 83: {
-                return World.getObjModelo(7872);
+                return Mundo.getObjModelo(7872);
             }
             case 84: {
-                return World.getObjModelo(7873);
+                return Mundo.getObjModelo(7873);
             }
             case 85: {
-                return World.getObjModelo(7874);
+                return Mundo.getObjModelo(7874);
             }
             case 86: {
-                return World.getObjModelo(7875);
+                return Mundo.getObjModelo(7875);
             }
             case 87: {
-                return World.getObjModelo(7876);
+                return Mundo.getObjModelo(7876);
             }
             case 88: {
-                return World.getObjModelo(9582);
+                return Mundo.getObjModelo(9582);
             }
             case 89: {
-                return World.getObjModelo(81000);
+                return Mundo.getObjModelo(81000);
             }
             case 90: {
-                return World.getObjModelo(80000);
+                return Mundo.getObjModelo(80000);
             }
         }
         return null;
@@ -4073,7 +4073,7 @@ public class Constantes {
         return -1;
     }
 
-    public static void aplicarAccionOI(Personagens perso, int mapaID, int celdaID) {
+    public static void aplicarAccionOI(Personaje perso, int mapaID, int celdaID) {
         switch (mapaID) {
             case 2196: {
                 if (perso.estaOcupado()) {
@@ -4096,8 +4096,8 @@ public class Constantes {
         }
     }
 
-    public static short getCeldaIDCercanaNoUsada(Personagens perso) {
-        Maps mapa = perso.getMapa();
+    public static short getCeldaIDCercanaNoUsada(Personaje perso) {
+        Mapa mapa = perso.getMapa();
         short celda = perso.getCelda().getID();
         byte ancho = perso.getMapa().getAncho();
         short celdaFrente = (short)(celda + ancho);
@@ -4776,7 +4776,7 @@ public class Constantes {
         }
     }
 
-    public static boolean esRetoPosible1(int nuevo, Fight pelea) {
+    public static boolean esRetoPosible1(int nuevo, Combate pelea) {
 		try {
 			switch (nuevo) {
 				case 7 :// jardinero, durante el combate, plantar una zanahowia cada vez q se pueda

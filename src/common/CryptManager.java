@@ -3,7 +3,7 @@ package common;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
-import objects.Maps;
+import objects.Mapa;
 
 public class CryptManager {
     public static String encriptarPassword(String codigoLlave, String Password) {
@@ -107,12 +107,12 @@ public class CryptManager {
         return hash[c];
     }
 
-    public static ArrayList<Maps.Celda> analizarInicioCelda(Maps mapa, int num) {
-        ArrayList<Maps.Celda> listaCeldas = null;
+    public static ArrayList<Mapa.Celda> analizarInicioCelda(Mapa mapa, int num) {
+        ArrayList<Mapa.Celda> listaCeldas = null;
         String infos = null;
         if (!mapa.getPosicionesPelea().equalsIgnoreCase("-1")) {
             infos = mapa.getPosicionesPelea().split("\\|")[num];
-            listaCeldas = new ArrayList<Maps.Celda>();
+            listaCeldas = new ArrayList<Mapa.Celda>();
             for (int a = 0; a < infos.length(); a += 2) {
                 listaCeldas.add(mapa.getCelda((short)((CryptManager.getNumeroPorValorHash(infos.charAt(a)) << 6) + CryptManager.getNumeroPorValorHash(infos.charAt(a + 1)))));
             }
@@ -120,8 +120,8 @@ public class CryptManager {
         return listaCeldas;
     }
 
-    public static Map<Short, Maps.Celda> decompilarMapaData(Maps mapa, String dData) {
-        TreeMap<Short, Maps.Celda> celdas = new TreeMap<Short, Maps.Celda>();
+    public static Map<Short, Mapa.Celda> decompilarMapaData(Mapa mapa, String dData) {
+        TreeMap<Short, Mapa.Celda> celdas = new TreeMap<Short, Mapa.Celda>();
         for (int f = 0; f < dData.length(); f = (int)((short)(f + 10))) {
             String celdaData = dData.substring(f, f + 10);
             ArrayList<Byte> celdaInfo = new ArrayList<Byte>();
@@ -133,7 +133,7 @@ public class CryptManager {
             int layerObject2 = (((Byte)celdaInfo.get(0) & 2) << 12) + (((Byte)celdaInfo.get(7) & 1) << 12) + ((Byte)celdaInfo.get(8) << 6) + (Byte)celdaInfo.get(9);
             boolean layerObjeto2Interac = ((Byte)celdaInfo.get(7) & 2) >> 1 != 0;
             int objeto = layerObjeto2Interac ? layerObject2 : -1;
-            celdas.put((short)(f / 10), new Maps.Celda(mapa, (short)(f / 10), caminable != 0, lineaDeVista, objeto));
+            celdas.put((short)(f / 10), new Mapa.Celda(mapa, (short)(f / 10), caminable != 0, lineaDeVista, objeto));
         }
         return celdas;
     }

@@ -1,13 +1,13 @@
 package objects;
 
 import common.SocketManager;
-import common.World;
+import common.Mundo;
 import java.util.Map;
 import java.util.TreeMap;
-import objects.Fight;
-import objects.Maps;
-import objects.Personagens;
-import objects.Spell;
+import objects.Combate;
+import objects.Mapa;
+import objects.Personaje;
+import objects.Hechizo;
 
 public class Prisma {
     private int _id;
@@ -23,9 +23,9 @@ public class Prisma {
     private int _tiempoTurno = 45000;
     private int _honor = 0;
     private short _area = (short)-1;
-    private Fight _pelea;
+    private Combate _pelea;
     private Map<Integer, Integer> _stats = new TreeMap<Integer, Integer>();
-    private Map<Integer, Spell.StatsHechizos> _hechizos = new TreeMap<Integer, Spell.StatsHechizos>();
+    private Map<Integer, Hechizo.StatsHechizos> _hechizos = new TreeMap<Integer, Hechizo.StatsHechizos>();
 
     public Prisma(int id, byte alineacion, byte nivel, short mapa, short celda, int honor, short area) {
         this._id = id;
@@ -76,11 +76,11 @@ public class Prisma {
         return this._celda;
     }
 
-    public Personagens.Stats getStats() {
-        return new Personagens.Stats(this._stats);
+    public Personaje.Stats getStats() {
+        return new Personaje.Stats(this._stats);
     }
 
-    public Map<Integer, Spell.StatsHechizos> getHechizos() {
+    public Map<Integer, Hechizo.StatsHechizos> getHechizos() {
         return this._hechizos;
     }
 
@@ -112,8 +112,8 @@ public class Prisma {
         String[] arrstring = arrayHechizos = hechizos.split(";");
         int n = arrayHechizos.length;
         for (int i = 0; i < n; ++i) {
-            Spell.StatsHechizos hechizoStats;
-            Spell hechizo;
+            Hechizo.StatsHechizos hechizoStats;
+            Hechizo hechizo;
             String str = arrstring[i];
             if (str.equals("")) continue;
             String[] hechizoInfo = str.split("@");
@@ -126,7 +126,7 @@ public class Prisma {
             catch (Exception e) {
                 continue;
             }
-            if (hechizoID == 0 || hechizoNivel == 0 || (hechizo = World.getHechizo(hechizoID)) == null || (hechizoStats = hechizo.getStatsPorNivel(hechizoNivel)) == null) continue;
+            if (hechizoID == 0 || hechizoNivel == 0 || (hechizo = Mundo.getHechizo(hechizoID)) == null || (hechizoStats = hechizo.getStatsPorNivel(hechizoNivel)) == null) continue;
             this._hechizos.put(hechizoID, hechizoStats);
         }
     }
@@ -151,11 +151,11 @@ public class Prisma {
         this._peleaID = pelea;
     }
 
-    public void setPelea(Fight pelea) {
+    public void setPelea(Combate pelea) {
         this._pelea = pelea;
     }
 
-    public Fight getPelea() {
+    public Combate getPelea() {
         return this._pelea;
     }
 
@@ -172,32 +172,32 @@ public class Prisma {
     }
 
     public byte getX() {
-        Maps mapa = World.getMapa(this._mapaID);
+        Mapa mapa = Mundo.getMapa(this._mapaID);
         return mapa.getX();
     }
 
     public byte getY() {
-        Maps mapa = World.getMapa(this._mapaID);
+        Mapa mapa = Mundo.getMapa(this._mapaID);
         return mapa.getY();
     }
 
-    public World.SubArea getSubArea() {
-        Maps mapa = World.getMapa(this._mapaID);
+    public Mundo.SubArea getSubArea() {
+        Mapa mapa = Mundo.getMapa(this._mapaID);
         return mapa.getSubArea();
     }
 
-    public World.Area getArea() {
-        Maps mapa = World.getMapa(this._mapaID);
+    public Mundo.Area getArea() {
+        Mapa mapa = Mundo.getMapa(this._mapaID);
         return mapa.getSubArea().getArea();
     }
 
     public int getAlinSubArea() {
-        Maps mapa = World.getMapa(this._mapaID);
+        Mapa mapa = Mundo.getMapa(this._mapaID);
         return mapa.getSubArea().getAlineacion();
     }
 
     public int getAlinArea() {
-        Maps mapa = World.getMapa(this._mapaID);
+        Mapa mapa = Mundo.getMapa(this._mapaID);
         return mapa.getSubArea().getAlineacion();
     }
 
@@ -212,7 +212,7 @@ public class Prisma {
             this._honor = 25000;
         }
         for (int n = 1; n <= 10; ++n) {
-            if (this._honor >= World.getExpNivel((int)n)._pvp) continue;
+            if (this._honor >= Mundo.getExpNivel((int)n)._pvp) continue;
             this._nivel = (byte)(n - 1);
             break;
         }
@@ -232,15 +232,15 @@ public class Prisma {
         return str;
     }
 
-    public static void analizarAtaque(Personagens perso) {
-        for (Prisma prisma : World.todosPrismas()) {
+    public static void analizarAtaque(Personaje perso) {
+        for (Prisma prisma : Mundo.todosPrismas()) {
             if (prisma._estadoPelea != 0 && prisma._estadoPelea != -2 || perso.getAlineacion() != prisma.getAlineacion()) continue;
             SocketManager.ENVIAR_Cp_INFO_ATACANTES_PRISMA(perso, Prisma.atacantesDePrisma(prisma._id, prisma._mapaID, prisma._peleaID));
         }
     }
 
-    public static void analizarDefensa(Personagens perso) {
-        for (Prisma prisma : World.todosPrismas()) {
+    public static void analizarDefensa(Personaje perso) {
+        for (Prisma prisma : Mundo.todosPrismas()) {
             if (prisma._estadoPelea != 0 && prisma._estadoPelea != -2 || perso.getAlineacion() != prisma.getAlineacion()) continue;
             SocketManager.ENVIAR_CP_INFO_DEFENSORES_PRISMA(perso, Prisma.defensoresDePrisma(prisma._id, prisma._mapaID, prisma._peleaID));
         }
@@ -249,9 +249,9 @@ public class Prisma {
     public static String atacantesDePrisma(int id, short mapaId, int peleaId) {
         String str = "+";
         str = String.valueOf(str) + Integer.toString(id, 36);
-        for (Map.Entry<Short, Fight> pelea : World.getMapa(mapaId).getPeleas().entrySet()) {
+        for (Map.Entry<Short, Combate> pelea : Mundo.getMapa(mapaId).getPeleas().entrySet()) {
             if (pelea.getValue().getID() != peleaId) continue;
-            for (Fight.Luchador luchador : pelea.getValue().luchadoresDeEquipo(1)) {
+            for (Combate.Luchador luchador : pelea.getValue().luchadoresDeEquipo(1)) {
                 if (luchador.getPersonaje() == null) continue;
                 str = String.valueOf(str) + "|";
                 str = String.valueOf(str) + Integer.toString(luchador.getPersonaje().getID(), 36) + ";";
@@ -267,9 +267,9 @@ public class Prisma {
         String str = "+";
         String stra = "";
         str = String.valueOf(str) + Integer.toString(id, 36);
-        for (Map.Entry<Short, Fight> pelea : World.getMapa(mapaId).getPeleas().entrySet()) {
+        for (Map.Entry<Short, Combate> pelea : Mundo.getMapa(mapaId).getPeleas().entrySet()) {
             if (pelea.getValue().getID() != peleaId) continue;
-            for (Fight.Luchador luchador : pelea.getValue().luchadoresDeEquipo(2)) {
+            for (Combate.Luchador luchador : pelea.getValue().luchadoresDeEquipo(2)) {
                 if (luchador.getPersonaje() == null) continue;
                 str = String.valueOf(str) + "|";
                 str = String.valueOf(str) + Integer.toString(luchador.getPersonaje().getID(), 36) + ";";

@@ -2,17 +2,17 @@ package common;
 
 import common.CryptManager;
 import common.Fórmulas;
-import common.World;
+import common.Mundo;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicReference;
-import objects.Fight;
-import objects.Maps;
+import objects.Combate;
+import objects.Mapa;
 
 public class Pathfinding {
     private static Integer _nroMovimientos = new Integer(0);
 
-    public static short numeroMovimientos(Maps mapa, short celdaID, AtomicReference<String> pathRef, Fight pelea) {
+    public static short numeroMovimientos(Mapa mapa, short celdaID, AtomicReference<String> pathRef, Combate pelea) {
         synchronized (_nroMovimientos) {
           _nroMovimientos = Integer.valueOf(0);
           short nuevaCelda = celdaID;
@@ -31,7 +31,7 @@ public class Pathfinding {
               return movimientos;
             } 
             if (pelea != null && i != 0) {
-              for (Fight.Trampa p : pelea.getTrampas()) {
+              for (Combate.Trampa p : pelea.getTrampas()) {
                 int dist = distanciaEntreDosCeldas(mapa, p.getCelda().getID(), nuevaCelda);
                 if (dist <= p.getTamaño()) {
                   pathRef.set(nuevoPath);
@@ -65,40 +65,40 @@ public class Pathfinding {
         } 
       }
 
-    public static Fight.Luchador getEnemigoAlrededor(short celdaID, Maps mapa, Fight pelea) {
+    public static Combate.Luchador getEnemigoAlrededor(short celdaID, Mapa mapa, Combate pelea) {
         char[] dirs;
         char[] arrc = dirs = new char[]{'b', 'd', 'f', 'h'};
         int n = dirs.length;
         for (int i = 0; i < n; ++i) {
-            Fight.Luchador luchador;
+            Combate.Luchador luchador;
             char dir = arrc[i];
-            Maps.Celda sigCelda = mapa.getCelda(Pathfinding.getSigIDCeldaMismaDir(celdaID, dir, mapa, false));
+            Mapa.Celda sigCelda = mapa.getCelda(Pathfinding.getSigIDCeldaMismaDir(celdaID, dir, mapa, false));
             if (sigCelda == null || (luchador = sigCelda.getPrimerLuchador()) == null || luchador.getEquipoBin() == pelea.getLuchadorTurno().getEquipoBin()) continue;
             return luchador;
         }
         return null;
     }
 
-    public static boolean hayAlrededor(Maps mapa, Fight pelea, Fight.Luchador l, boolean amigo) {
+    public static boolean hayAlrededor(Mapa mapa, Combate pelea, Combate.Luchador l, boolean amigo) {
         char[] dirs;
         char[] arrc = dirs = new char[]{'b', 'd', 'f', 'h'};
         int n = dirs.length;
         for (int i = 0; i < n; ++i) {
-            Fight.Luchador luchador;
+            Combate.Luchador luchador;
             char dir = arrc[i];
-            Maps.Celda sigCelda = mapa.getCelda(Pathfinding.getSigIDCeldaMismaDir(l.getCeldaPelea().getID(), dir, mapa, false));
+            Mapa.Celda sigCelda = mapa.getCelda(Pathfinding.getSigIDCeldaMismaDir(l.getCeldaPelea().getID(), dir, mapa, false));
             if (sigCelda == null || (luchador = sigCelda.getPrimerLuchador()) == null || !(amigo ? luchador.getEquipoBin() == l.getEquipoBin() : luchador.getEquipoBin() != l.getEquipoBin())) continue;
             return true;
         }
         return false;
     }
 
-    public static boolean esSiguienteA(int celda1, int celda2, Maps mapa) {
+    public static boolean esSiguienteA(int celda1, int celda2, Mapa mapa) {
         byte ancho = mapa.getAncho();
         return celda1 + (ancho - 1) == celda2 || celda1 + ancho == celda2 || celda1 - (ancho - 1) == celda2 || celda1 - ancho == celda2;
     }
 
-    public static String ValidSinglePath(short celdaID, String Path2, Maps mapa, Fight pelea) {
+    public static String ValidSinglePath(short celdaID, String Path2, Mapa mapa, Combate pelea) {
         _nroMovimientos = 0;
         char dir = Path2.charAt(0);
         short celdaIDDeco = CryptManager.celdaCodigoAID(Path2.substring(1));
@@ -126,7 +126,7 @@ public class Pathfinding {
                 if (Pathfinding.getEnemigoAlrededor(ultimaCelda, mapa, pelea) != null) {
                     return "stop:" + ultimaCelda;
                 }
-                for (Fight.Trampa p : pelea.getTrampas()) {
+                for (Combate.Trampa p : pelea.getTrampas()) {
                     short dist = Pathfinding.distanciaEntreDosCeldas(mapa, p.getCelda().getID(), ultimaCelda);
                     if (dist > p.getTama\u00f1o()) continue;
                     return "stop:" + ultimaCelda;
@@ -137,7 +137,7 @@ public class Pathfinding {
         return "no:";
     }
 
-    public static short getSigIDCeldaMismaDir(short celdaID, char direccion, Maps mapa, boolean combate) {
+    public static short getSigIDCeldaMismaDir(short celdaID, char direccion, Mapa mapa, boolean combate) {
         switch (direccion) {
             case 'a': {
                 return (short)(combate ? -1 : celdaID + 1);
@@ -168,7 +168,7 @@ public class Pathfinding {
     }
 
     public static short getSigIDCeldaMismaDir(short celdaID, char direccion, short mapaID) {
-        Maps mapa = World.getMapa(mapaID);
+        Mapa mapa = Mundo.getMapa(mapaID);
         if (mapa == null) {
             return -1;
         }
@@ -189,7 +189,7 @@ public class Pathfinding {
         return -1;
     }
 
-    public static short distanciaEntreDosCeldas(Maps mapa, short id1, short id2) {
+    public static short distanciaEntreDosCeldas(Mapa mapa, short id1, short id2) {
         if (id1 == id2) {
             return 0;
         }
@@ -207,7 +207,7 @@ public class Pathfinding {
         return direcciones[aleatorio];
     }
 
-    public static short getNuevaCeldaDespuesGolpe(Maps mapa, Maps.Celda celdaInicio, Maps.Celda celdaObjetivo, int valor, Fight pelea, Fight.Luchador objetivo) {
+    public static short getNuevaCeldaDespuesGolpe(Mapa mapa, Mapa.Celda celdaInicio, Mapa.Celda celdaObjetivo, int valor, Combate pelea, Combate.Luchador objetivo) {
         if (celdaInicio.getID() == celdaObjetivo.getID()) {
             return 0;
         }
@@ -221,7 +221,7 @@ public class Pathfinding {
             short sigCelda = Pathfinding.getSigIDCeldaMismaDir(idCelda, c, mapa, true);
             if (mapa.getCelda(sigCelda) != null && mapa.getCelda(sigCelda).esCaminable(true) && mapa.getCelda(sigCelda).getLuchadores().isEmpty()) {
                 idCelda = sigCelda;
-                for (Fight.Trampa trampa : pelea.getTrampas()) {
+                for (Combate.Trampa trampa : pelea.getTrampas()) {
                     short dist = Pathfinding.distanciaEntreDosCeldas(pelea.getMapaCopia(), trampa.getCelda().getID(), idCelda);
                     if (dist > trampa.getTama\u00f1o()) continue;
                     return idCelda;
@@ -236,7 +236,7 @@ public class Pathfinding {
         return idCelda;
     }
 
-    public static short getCeldaDespEmpujon(Maps mapa, Maps.Celda celdaLanz, Maps.Celda celdaObje, int valor, Fight pelea, Fight.Luchador objetivo) {
+    public static short getCeldaDespEmpujon(Mapa mapa, Mapa.Celda celdaLanz, Mapa.Celda celdaObje, int valor, Combate pelea, Combate.Luchador objetivo) {
         if (celdaLanz.getID() == celdaObje.getID()) {
             return 0;
         }
@@ -250,7 +250,7 @@ public class Pathfinding {
             short sigCelda = Pathfinding.getSigIDCeldaMismaDir(idCelda, c, mapa, true);
             if (mapa.getCelda(sigCelda) != null && mapa.getCelda(sigCelda).esCaminable(true) && mapa.getCelda(sigCelda).getLuchadores().isEmpty()) {
                 idCelda = sigCelda;
-                for (Fight.Trampa trampa : pelea.getTrampas()) {
+                for (Combate.Trampa trampa : pelea.getTrampas()) {
                     short dist = Pathfinding.distanciaEntreDosCeldas(pelea.getMapaCopia(), trampa.getCelda().getID(), idCelda);
                     if (dist > trampa.getTama\u00f1o()) continue;
                     return idCelda;
@@ -295,7 +295,7 @@ public class Pathfinding {
         return '\u0000';
     }
 
-    public static boolean siCeldasEstanEnMismaLinea(Maps map, short c1, short c2, char dir) {
+    public static boolean siCeldasEstanEnMismaLinea(Mapa map, short c1, short c2, char dir) {
         if (c1 == c2) {
             return true;
         }
@@ -328,8 +328,8 @@ public class Pathfinding {
         return false;
     }
 
-    public static ArrayList<Fight.Luchador> getObjetivosZonaArma(Fight pelea, int tipo, Maps.Celda celda, short celdaIDLanzador) {
-        ArrayList<Fight.Luchador> objetivos = new ArrayList<Fight.Luchador>();
+    public static ArrayList<Combate.Luchador> getObjetivosZonaArma(Combate pelea, int tipo, Mapa.Celda celda, short celdaIDLanzador) {
+        ArrayList<Combate.Luchador> objetivos = new ArrayList<Combate.Luchador>();
         char c = Pathfinding.getDirEntreDosCeldas(celdaIDLanzador, celda.getID(), pelea.getMapaCopia(), true);
         if (c == '\u0000') {
             if (celda.getPrimerLuchador() != null) {
@@ -339,10 +339,10 @@ public class Pathfinding {
         }
         switch (tipo) {
             case 7: {
-                Fight.Luchador i;
-                Fight.Luchador h;
-                Fight.Luchador g;
-                Fight.Luchador f = Pathfinding.getLuchadorAntesCelda(celdaIDLanzador, c, pelea.getMapaCopia());
+                Combate.Luchador i;
+                Combate.Luchador h;
+                Combate.Luchador g;
+                Combate.Luchador f = Pathfinding.getLuchadorAntesCelda(celdaIDLanzador, c, pelea.getMapaCopia());
                 if (f != null) {
                     objetivos.add(f);
                 }
@@ -357,9 +357,9 @@ public class Pathfinding {
                 break;
             }
             case 4: {
-                Fight.Luchador l;
-                Fight.Luchador k;
-                Fight.Luchador j = Pathfinding.getPrimerLuchadorMismaDireccion(pelea.getMapaCopia(), celdaIDLanzador, (char)(c - '\u0001'));
+                Combate.Luchador l;
+                Combate.Luchador k;
+                Combate.Luchador j = Pathfinding.getPrimerLuchadorMismaDireccion(pelea.getMapaCopia(), celdaIDLanzador, (char)(c - '\u0001'));
                 if (j != null) {
                     objetivos.add(j);
                 }
@@ -378,7 +378,7 @@ public class Pathfinding {
             case 19: 
             case 21: 
             case 22: {
-                Fight.Luchador m = celda.getPrimerLuchador();
+                Combate.Luchador m = celda.getPrimerLuchador();
                 if (m == null) break;
                 objetivos.add(m);
             }
@@ -386,7 +386,7 @@ public class Pathfinding {
         return objetivos;
     }
 
-    private static Fight.Luchador getPrimerLuchadorMismaDireccion(Maps mapa, short idCelda, char dir) {
+    private static Combate.Luchador getPrimerLuchadorMismaDireccion(Mapa mapa, short idCelda, char dir) {
         if (dir == '`') {
             dir = (char)104;
         }
@@ -396,7 +396,7 @@ public class Pathfinding {
         return mapa.getCelda(Pathfinding.getSigIDCeldaMismaDir(idCelda, dir, mapa, false)).getPrimerLuchador();
     }
 
-    private static Fight.Luchador getLuchadorAntesCelda(short celdaID, char dir, Maps mapa) {
+    private static Combate.Luchador getLuchadorAntesCelda(short celdaID, char dir, Mapa mapa) {
         short nueva2CeldaID = Pathfinding.getSigIDCeldaMismaDir(Pathfinding.getSigIDCeldaMismaDir(celdaID, dir, mapa, false), dir, mapa, false);
         return mapa.getCelda(nueva2CeldaID).getPrimerLuchador();
     }
@@ -431,7 +431,7 @@ public class Pathfinding {
         return 'b';
     }
     
-    public static char getDirEntreDosCeldas(Maps mapa, short id1, short id2) {
+    public static char getDirEntreDosCeldas(Mapa mapa, short id1, short id2) {
         if (id1 == id2)
           return Character.MIN_VALUE; 
         if (mapa == null)
@@ -450,7 +450,7 @@ public class Pathfinding {
         return 'd';
       }
 
-    public static char getDirEntreDosCeldas(short celdaID1, short celdaID2, Maps mapa, boolean combate) { //FIXME método con ligeros errores
+    public static char getDirEntreDosCeldas(short celdaID1, short celdaID2, Mapa mapa, boolean combate) { //FIXME método con ligeros errores
         ArrayList<Character> direcciones = new ArrayList<Character>();
         direcciones.add(Character.valueOf('b'));
         direcciones.add(Character.valueOf('d'));
@@ -476,8 +476,8 @@ public class Pathfinding {
         return '\u0000';
     }
 
-    public static ArrayList<Maps.Celda> getCeldasAfectadasEnElArea(Maps mapa, short celdaID, short celdaIDLanzador, String afectados, int posTipoAlcance, boolean esGC) {
-        ArrayList<Maps.Celda> cases = new ArrayList<Maps.Celda>();
+    public static ArrayList<Mapa.Celda> getCeldasAfectadasEnElArea(Mapa mapa, short celdaID, short celdaIDLanzador, String afectados, int posTipoAlcance, boolean esGC) {
+        ArrayList<Mapa.Celda> cases = new ArrayList<Mapa.Celda>();
         if (mapa == null) {
             return cases;
         }
@@ -490,14 +490,14 @@ public class Pathfinding {
             case 'C': {
                 for (int a = 0; a < tama\u00f1o; ++a) {
                     char[] dirs = new char[]{'b', 'd', 'f', 'h'};
-                    ArrayList<Maps.Celda> cases2 = new ArrayList<Maps.Celda>();
+                    ArrayList<Mapa.Celda> cases2 = new ArrayList<Mapa.Celda>();
                     cases2.addAll(cases);
-                    for (Maps.Celda aCell : cases2) {
+                    for (Mapa.Celda aCell : cases2) {
                         char[] arrc = dirs;
                         int n = dirs.length;
                         for (int i = 0; i < n; ++i) {
                             char d = arrc[i];
-                            Maps.Celda cell = mapa.getCelda(Pathfinding.getSigIDCeldaMismaDir(aCell.getID(), d, mapa, true));
+                            Mapa.Celda cell = mapa.getCelda(Pathfinding.getSigIDCeldaMismaDir(aCell.getID(), d, mapa, true));
                             if (cell == null || cases.contains(cell)) continue;
                             cases.add(cell);
                         }
@@ -538,7 +538,7 @@ public class Pathfinding {
         return cases;
     }
 
-    public static short getCeldaCoordenadaX(Maps mapa, short celdaID) {
+    public static short getCeldaCoordenadaX(Mapa mapa, short celdaID) {
         if (mapa == null) {
             return 0;
         }
@@ -546,7 +546,7 @@ public class Pathfinding {
         return (short)((celdaID - (ancho - 1) * Pathfinding.getCeldaCoordenadaY(mapa, celdaID)) / ancho);
     }
 
-    public static short getCeldaCoordenadaY(Maps mapa, short celdaID) {
+    public static short getCeldaCoordenadaY(Mapa mapa, short celdaID) {
         byte ancho = mapa.getAncho();
         short loc5 = (short)(celdaID / (ancho * 2 - 1));
         short loc6 = (short)(celdaID - loc5 * (ancho * 2 - 1));
@@ -554,7 +554,7 @@ public class Pathfinding {
         return (short)(loc5 - loc7);
     }
 
-    public static boolean checkearLineaDeVista(Maps mapa, short celda1, short celda2, Fight.Luchador luchador) {
+    public static boolean checkearLineaDeVista(Mapa mapa, short celda1, short celda2, Combate.Luchador luchador) {
         if (luchador.getPersonaje() != null)
           return true; 
         int dist = distanciaEntreDosCeldas(mapa, celda1, celda2);
@@ -575,7 +575,7 @@ public class Pathfinding {
         return true;
       }
 
-    public static short getCeldaMasCercanaAlrededor(Maps mapa, short celdaInicio, short celdaFinal, ArrayList<Maps.Celda> celdasProhibidas) { //FIXME método con ligeros errores
+    public static short getCeldaMasCercanaAlrededor(Mapa mapa, short celdaInicio, short celdaFinal, ArrayList<Mapa.Celda> celdasProhibidas) { //FIXME método con ligeros errores
         char[] dirs;
         short dist = 1000;
         short celdaID = celdaInicio;
@@ -587,7 +587,7 @@ public class Pathfinding {
         for (int i = 0; i < n; ++i) {
             char d = arrc[i];
             short sigCelda = Pathfinding.getSigIDCeldaMismaDir(celdaInicio, d, mapa, true);
-            Maps.Celda C = mapa.getCelda(sigCelda);
+            Mapa.Celda C = mapa.getCelda(sigCelda);
             if (C == null) break;
             short dis = Pathfinding.distanciaEntreDosCeldas(mapa, celdaFinal, sigCelda);
             if (dis >= dist || !C.esCaminable(true) || C.getPrimerLuchador() != null || celdasProhibidas.contains(C)) continue;
@@ -597,8 +597,8 @@ public class Pathfinding {
         return celdaID == celdaInicio ? (short)-1 : (short)celdaID;
     }
 
-    public static short getCeldaMasCercanaAlrededor2(Maps mapa, short celdaInicio, short celdaFinal, int alcanceMin, int alcanceMax) {
-        Maps.Celda C;
+    public static short getCeldaMasCercanaAlrededor2(Mapa mapa, short celdaInicio, short celdaFinal, int alcanceMin, int alcanceMax) {
+        Mapa.Celda C;
         short dist = 1000;
         short celdaID = celdaInicio;
         char d = Pathfinding.getDirEntreDosCeldas(mapa, celdaInicio, celdaFinal);
@@ -620,13 +620,13 @@ public class Pathfinding {
         return celdaID == celdaInicio ? (short)-1 : (short)celdaID;
     }
 
-    public static ArrayList<Maps.Celda> pathMasCortoEntreDosCeldas(Maps mapa, short inicio, short destino, int distMax) {
+    public static ArrayList<Mapa.Celda> pathMasCortoEntreDosCeldas(Mapa mapa, short inicio, short destino, int distMax) {
         short celdaMasCercana;
-        ArrayList<Maps.Celda> tempPath = new ArrayList<Maps.Celda>();
-        ArrayList<Maps.Celda> tempPath2 = new ArrayList<Maps.Celda>();
-        ArrayList<Maps.Celda> celdasCerradas = new ArrayList<Maps.Celda>();
+        ArrayList<Mapa.Celda> tempPath = new ArrayList<Mapa.Celda>();
+        ArrayList<Mapa.Celda> tempPath2 = new ArrayList<Mapa.Celda>();
+        ArrayList<Mapa.Celda> celdasCerradas = new ArrayList<Mapa.Celda>();
         int limite = 1000;
-        Maps.Celda tempCelda = mapa.getCelda(inicio);
+        Mapa.Celda tempCelda = mapa.getCelda(inicio);
         int stepNum = 0;
         boolean stop = false;
         while (!stop && stepNum++ <= limite) {
@@ -660,7 +660,7 @@ public class Pathfinding {
         tempCelda = mapa.getCelda(inicio);
         celdasCerradas.clear();
         if (!tempPath.isEmpty()) {
-            celdasCerradas.add((Maps.Celda)tempPath.get(0));
+            celdasCerradas.add((Mapa.Celda)tempPath.get(0));
         }
         while (!stop && stepNum++ <= limite) {
             celdaMasCercana = Pathfinding.getCeldaMasCercanaAlrededor(mapa, tempCelda.getID(), destino, celdasCerradas);
@@ -669,7 +669,7 @@ public class Pathfinding {
                 if (tempPath2.size() > 0) {
                     tempPath2.remove(tempPath2.size() - 1);
                     if (tempPath2.size() > 0) {
-                        tempCelda = (Maps.Celda)tempPath2.get(tempPath2.size() - 1);
+                        tempCelda = (Mapa.Celda)tempPath2.get(tempPath2.size() - 1);
                         continue;
                     }
                     tempCelda = mapa.getCelda(inicio);
@@ -696,7 +696,7 @@ public class Pathfinding {
         return tempPath;
     }
 
-    public static ArrayList<Short> listaCeldasDesdeLuchador(Fight pelea, Fight.Luchador luchador) {
+    public static ArrayList<Short> listaCeldasDesdeLuchador(Combate pelea, Combate.Luchador luchador) {
         int[] tempPath;
         ArrayList<Short> celdas = new ArrayList<Short>();
         short celdaInicio = luchador.getCeldaPelea().getID();
@@ -716,7 +716,7 @@ public class Pathfinding {
             continue;
           } 
           short tempCeldaID = getCeldaDesdePath(celdaInicio, tempPath, pelea.getMapaCopia());
-          Maps.Celda celdaTemp = pelea.getMapaCopia().getCelda(tempCeldaID);
+          Mapa.Celda celdaTemp = pelea.getMapaCopia().getCelda(tempCeldaID);
           if (celdaTemp == null)
             continue; 
           if (celdaTemp.esCaminable(true) && celdaTemp.getPrimerLuchador() == null && 
@@ -729,7 +729,7 @@ public class Pathfinding {
         return listaCeldasPorDistancia(pelea, luchador, celdas);
       }
 
-    public static short getCeldaDesdePath(short inicio, int[] path, Maps mapa) {
+    public static short getCeldaDesdePath(short inicio, int[] path, Mapa mapa) {
         short celda = inicio;
         byte ancho = mapa.getAncho();
         for (int i = 0; i < path.length; i = (int)((short)(i + 1))) {
@@ -748,7 +748,7 @@ public class Pathfinding {
         return celda;
     }
 
-    public static ArrayList<Short> listaCeldasPorDistancia(Fight pelea, Fight.Luchador luchador, ArrayList<Short> celdas) { //FIXME método con ligeros errores
+    public static ArrayList<Short> listaCeldasPorDistancia(Combate pelea, Combate.Luchador luchador, ArrayList<Short> celdas) { //FIXME método con ligeros errores
         ArrayList<Short> celdasPelea = new ArrayList<Short>();
         ArrayList<Short> copiaCeldas = new ArrayList<Short>();
         copiaCeldas.addAll(celdasPelea);
@@ -796,7 +796,7 @@ public class Pathfinding {
         return test.contains(id);
     }
 
-    public static ArrayList<Short> getLineaDeVista(short celda1, short celda2, Maps mapa) {
+    public static ArrayList<Short> getLineaDeVista(short celda1, short celda2, Mapa mapa) {
         int[] dir1;
         ArrayList<Short> lineasDeVista = new ArrayList<Short>();
         short celda = celda1;
@@ -825,7 +825,7 @@ public class Pathfinding {
         return null;
     }
 
-    public static short celdaMovPerco(Maps mapa, short celda) {
+    public static short celdaMovPerco(Mapa mapa, short celda) {
         ArrayList<Short> celdasPosibles = new ArrayList<Short>();
         byte ancho = mapa.getAncho();
         short[] dir = new short[]{(short) -ancho, (short)(-(ancho - 1)), (short)(ancho - 1), ancho};

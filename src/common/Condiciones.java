@@ -5,11 +5,11 @@ import com.singularsys.jep.JepException;
 
 import java.util.ArrayList;
 
-import objects.Conta;
-import objects.Personagens;
+import objects.Cuenta;
+import objects.Personaje;
 
 public class Condiciones {
-    public static boolean validaCondiciones(Conta compte, Personagens perso, String condiciones) {
+    public static boolean validaCondiciones(Cuenta compte, Personaje perso, String condiciones) {
         if (condiciones == null || condiciones.equals("") || condiciones.equalsIgnoreCase("EVENTO") || condiciones.contains("Pg") || condiciones.contains("Pj") || condiciones.contains("PJ")) {
             return true;
         }
@@ -22,7 +22,7 @@ public class Condiciones {
         }
         condiciones = condiciones.replace("&", "&&").replace("=", "==").replace("|", "||").replace("!", "!=");
         try {
-            Personagens.Stats totalStas = perso.getTotalStats();
+            Personaje.Stats totalStas = perso.getTotalStats();
             jep.addVariable("CI", totalStas.getEfecto(126));
             jep.addVariable("CV", totalStas.getEfecto(125));
             jep.addVariable("CA", totalStas.getEfecto(119));
@@ -63,7 +63,7 @@ public class Condiciones {
         }
     }
 
-    public static String tieneObjetoModelo(String condiciones, Personagens perso) {
+    public static String tieneObjetoModelo(String condiciones, Personaje perso) {
 		String[] str = condiciones.replaceAll("[ ()]", "").split("[|&]");
 		ArrayList<Integer> valores = new ArrayList<Integer>(str.length);
 		for (String condicion : str) {

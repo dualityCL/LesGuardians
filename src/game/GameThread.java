@@ -9,7 +9,7 @@ import common.LesGuardians;
 import common.Pathfinding;
 import common.SQLManager;
 import common.SocketManager;
-import common.World;
+import common.Mundo;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,23 +22,23 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicReference;
 import objects.Casa;
 import objects.Cofre;
-import objects.Coletor;
-import objects.Conta;
-import objects.Dragossauros;
-import objects.Fight;
-import objects.Guild;
-import objects.Incarnacao;
-import objects.Maps;
-import objects.Mercador;
-import objects.NPC_tmpl;
+import objects.Recaudador;
+import objects.Cuenta;
+import objects.Dragopavo;
+import objects.Combate;
+import objects.Gremio;
+import objects.Encarnación;
+import objects.Mapa;
+import objects.Mercadillo;
+import objects.NPCModelo;
 import objects.Objeto;
-import objects.Personagens;
-import objects.Pets;
+import objects.Personaje;
+import objects.Mascota;
 import objects.Prisma;
-import objects.Profissao;
-import objects.Set_Vivo;
-import objects.Spell;
-import objects.Stockage;
+import objects.Oficio;
+import objects.Objevivo;
+import objects.Hechizo;
+import objects.Tienda;
 import objects.Tutorial;
 
 public class GameThread implements Runnable {
@@ -46,8 +46,8 @@ public class GameThread implements Runnable {
 	private Thread _thread;
 	private PrintWriter _out;
 	private Socket _socket;
-	private Conta _cuenta;
-	private Personagens _perso;
+	private Cuenta _cuenta;
+	private Personaje _perso;
 	private Map<Integer, AccionDeJuego> _acciones = new TreeMap<Integer, AccionDeJuego>();
 	private long _tiempoUltComercio = 0L;
 	private long _tiempoUltReclutamiento = 0L;
@@ -135,8 +135,8 @@ public class GameThread implements Runnable {
 			return;
 		}
 		if (packet.length() > 4 && packet.substring(0, 5).equalsIgnoreCase("qping")) {
-			Fight.Luchador luchador;
-			Fight pelea;
+			Combate.Luchador luchador;
+			Combate pelea;
 			if (_perso != null && (pelea = _perso.getPelea()) != null
 					&& (luchador = pelea.getLuchadorPorPJ(_perso)) != null && luchador.puedeJugar()) {
 				pelea.tiempoTurno();
@@ -145,7 +145,7 @@ public class GameThread implements Runnable {
 			return;
 		}
 		if (_perso != null && _perso.cambiarNombre()) {
-			if (World.getPjPorNombre(packet) != null) {
+			if (Mundo.getPjPorNombre(packet) != null) {
 				SocketManager.ENVIAR_Im1223_MENSAJE_IMBORRABLE(_out, "Nick n\u00e3o disponivel.");
 				SocketManager.ENVIAR_AlE_CAMBIAR_NOMBRE(_out, "r");
 				SocketManager.ENVIAR_AlE_CAMBIAR_NOMBRE(_out, "r");
@@ -321,12 +321,12 @@ public class GameThread implements Runnable {
 		switch (packet.charAt(1)) {
 		case 'b': {
 			SocketManager.ENVIAR_Cb_BALANCE_CONQUISTA(_perso,
-					String.valueOf(World.getBalanceMundo(_perso.getAlineacion())) + ";"
-							+ World.getBalanceArea(_perso.getMapa().getSubArea().getArea(), _perso.getAlineacion()));
+					String.valueOf(Mundo.getBalanceMundo(_perso.getAlineacion())) + ";"
+							+ Mundo.getBalanceArea(_perso.getMapa().getSubArea().getArea(), _perso.getAlineacion()));
 			break;
 		}
 		case 'B': {
-			float porc = World.getBalanceMundo(_perso.getAlineacion());
+			float porc = Mundo.getBalanceMundo(_perso.getAlineacion());
 			float porcN = (float) Math.rint((double) ((float) _perso.getNivelAlineacion() / 2.5f) + 1.0);
 			SocketManager.ENVIAR_CB_BONUS_CONQUISTA(_perso, String.valueOf(porc) + "," + porc + "," + porc + ";" + porcN
 					+ "," + porcN + "," + porcN + ";" + porc + "," + porc + "," + porc);
@@ -362,7 +362,7 @@ public class GameThread implements Runnable {
 		switch (packet.charAt(2)) {
 		case 'J': {
 			String str = _perso.analizarPrismas();
-			Prisma prisma = World.getPrisma(_perso.getMapa().getSubArea().getPrismaID());
+			Prisma prisma = Mundo.getPrisma(_perso.getMapa().getSubArea().getPrismaID());
 			if (prisma != null) {
 				Prisma.analizarAtaque(_perso);
 				Prisma.analizarDefensa(_perso);
@@ -379,7 +379,7 @@ public class GameThread implements Runnable {
 	private void conquista_Geoposicion(String packet) {
 		switch (packet.charAt(2)) {
 		case 'J': {
-			SocketManager.ENVIAR_CW_INFO_MUNDO_CONQUISTA(_perso, World.prismasGeoposicion(_perso.getAlineacion()));
+			SocketManager.ENVIAR_CW_INFO_MUNDO_CONQUISTA(_perso, Mundo.prismasGeoposicion(_perso.getAlineacion()));
 			break;
 		}
 		case 'V': {
@@ -392,7 +392,7 @@ public class GameThread implements Runnable {
 		switch (packet.charAt(2)) {
 		case 'J': {
 			int prismaID = _perso.getMapa().getSubArea().getPrismaID();
-			Prisma prisma = World.getPrisma(prismaID);
+			Prisma prisma = Mundo.getPrisma(prismaID);
 			if (prisma == null) {
 				return;
 			}
@@ -406,7 +406,7 @@ public class GameThread implements Runnable {
 			}
 			if (!prisma.getPelea().unirsePeleaPrisma(_perso, prismaID, mapaID, celdaID))
 				break;
-			for (Personagens z : World.getPJsEnLinea()) {
+			for (Personaje z : Mundo.getPJsEnLinea()) {
 				if (z == null || z.getAlineacion() != _perso.getAlineacion())
 					continue;
 				Prisma.analizarDefensa(z);
@@ -513,7 +513,7 @@ public class GameThread implements Runnable {
 		switch (packet.charAt(2)) {
 		case '%': {
 			packet = packet.substring(3);
-			Personagens perso = World.getPjPorNombre(packet);
+			Personaje perso = Mundo.getPjPorNombre(packet);
 			if (perso == null) {
 				SocketManager.ENVIAR_FD_BORRAR_AMIGO(_perso, "Ef");
 				return;
@@ -523,7 +523,7 @@ public class GameThread implements Runnable {
 		}
 		case '*': {
 			packet = packet.substring(3);
-			Conta cuenta = World.getCuentaPorApodo(packet);
+			Cuenta cuenta = Mundo.getCuentaPorApodo(packet);
 			if (cuenta == null) {
 				SocketManager.ENVIAR_FD_BORRAR_AMIGO(_perso, "Ef");
 				return;
@@ -533,7 +533,7 @@ public class GameThread implements Runnable {
 		}
 		default: {
 			packet = packet.substring(2);
-			Personagens perso2 = World.getPjPorNombre(packet);
+			Personaje perso2 = Mundo.getPjPorNombre(packet);
 			if (perso2 == null || !perso2.enLinea()) {
 				SocketManager.ENVIAR_FD_BORRAR_AMIGO(_perso, "Ef");
 				return;
@@ -549,7 +549,7 @@ public class GameThread implements Runnable {
 		switch (packet.charAt(2)) {
 		case '%': {
 			packet = packet.substring(3);
-			Personagens pj = World.getPjPorNombre(packet);
+			Personaje pj = Mundo.getPjPorNombre(packet);
 			if (pj == null) {
 				SocketManager.ENVIAR_FD_BORRAR_AMIGO(_perso, "Ef");
 				return;
@@ -559,7 +559,7 @@ public class GameThread implements Runnable {
 		}
 		case '*': {
 			packet = packet.substring(3);
-			Conta cuenta = World.getCuentaPorApodo(packet);
+			Cuenta cuenta = Mundo.getCuentaPorApodo(packet);
 			if (cuenta == null) {
 				SocketManager.ENVIAR_FD_BORRAR_AMIGO(_perso, "Ef");
 				return;
@@ -569,7 +569,7 @@ public class GameThread implements Runnable {
 		}
 		default: {
 			packet = packet.substring(2);
-			Personagens perso = World.getPjPorNombre(packet);
+			Personaje perso = Mundo.getPjPorNombre(packet);
 			if (perso == null || !perso.enLinea()) {
 				SocketManager.ENVIAR_FD_BORRAR_AMIGO(_perso, "Ef");
 				return;
@@ -587,7 +587,7 @@ public class GameThread implements Runnable {
 			int posOficio = Integer.parseInt(infos[0]);
 			int opciones = Integer.parseInt(infos[1]);
 			int slots = Integer.parseInt(infos[2]);
-			Profissao.StatsOficio statOficio = _perso.getStatsOficios().get(posOficio);
+			Oficio.StatsOficio statOficio = _perso.getStatsOficios().get(posOficio);
 			if (statOficio == null) {
 				return;
 			}
@@ -731,7 +731,7 @@ public class GameThread implements Runnable {
 		if (_perso.getGremio() == null) {
 			return;
 		}
-		Guild gremio = _perso.getGremio();
+		Gremio gremio = _perso.getGremio();
 		if (!_perso.getMiembroGremio().puede(Constantes.G_MODIFBOOST)) {
 			return;
 		}
@@ -787,7 +787,7 @@ public class GameThread implements Runnable {
 		if (_perso.getGremio() == null) {
 			return;
 		}
-		Guild gremio = _perso.getGremio();
+		Gremio gremio = _perso.getGremio();
 		if (!_perso.getMiembroGremio().puede(Constantes.G_MODIFBOOST)) {
 			return;
 		}
@@ -806,7 +806,7 @@ public class GameThread implements Runnable {
 		switch (packet.charAt(0)) {
 		case 'J': {
 			int recauID = Integer.parseInt(packet.substring(1));
-			Coletor recau = World.getRecaudador(recauID);
+			Recaudador recau = Mundo.getRecaudador(recauID);
 			if (recau == null) {
 				return;
 			}
@@ -817,10 +817,10 @@ public class GameThread implements Runnable {
 			}
 			if (!recau.getPelea().unirsePeleaRecaudador(_perso, recauID, mapaID, celdaID))
 				break;
-			for (Personagens miembros : _perso.getGremio().getPjMiembros()) {
+			for (Personaje miembros : _perso.getGremio().getPjMiembros()) {
 				if (miembros == null || !miembros.enLinea())
 					continue;
-				Coletor.analizarDefensa(miembros, _perso.getGremio().getID());
+				Recaudador.analizarDefensa(miembros, _perso.getGremio().getID());
 			}
 			break;
 		}
@@ -835,27 +835,27 @@ public class GameThread implements Runnable {
 			return;
 		}
 		int recauID = Integer.parseInt(packet);
-		Coletor recau = World.getRecaudador(recauID);
+		Recaudador recau = Mundo.getRecaudador(recauID);
 		if (recau == null || recau.getEstadoPelea() > 0) {
 			return;
 		}
 		SocketManager.ENVIAR_GM_BORRAR_PJ_A_TODOS(_perso.getMapa(), recauID);
 		recau.borrarRecauPorRecolecta(recau.getID(), _perso);
-		for (Personagens z : _perso.getGremio().getPjMiembros()) {
+		for (Personaje z : _perso.getGremio().getPjMiembros()) {
 			if (z == null || !z.enLinea())
 				continue;
-			SocketManager.ENVIAR_gITM_INFO_RECAUDADOR(z, Coletor.analizarRecaudadores(z.getGremio().getID()));
+			SocketManager.ENVIAR_gITM_INFO_RECAUDADOR(z, Recaudador.analizarRecaudadores(z.getGremio().getID()));
 			String str = "";
 			str = String.valueOf(str) + "R" + recau.getN1() + "," + recau.getN2() + "|";
 			str = String.valueOf(str) + recau.getMapaID() + "|";
-			str = String.valueOf(str) + World.getMapa(recau.getMapaID()).getX() + "|"
-					+ World.getMapa(recau.getMapaID()).getY() + "|" + _perso.getNombre();
+			str = String.valueOf(str) + Mundo.getMapa(recau.getMapaID()).getX() + "|"
+					+ Mundo.getMapa(recau.getMapaID()).getY() + "|" + _perso.getNombre();
 			SocketManager.GAME_SEND_gT_PACKET(z, str);
 		}
 	}
 
 	private void gremio_Poner_Recaudador() {
-		Guild gremio = _perso.getGremio();
+		Gremio gremio = _perso.getGremio();
 		if (gremio == null || !_perso.getMiembroGremio().puede(Constantes.G_PONERRECAUDADOR)
 				|| gremio.getPjMiembros().size() < 10) {
 			SocketManager.ENVIAR_BN_NADA(_out);
@@ -866,8 +866,8 @@ public class GameThread implements Runnable {
 			SocketManager.ENVIAR_Im_INFORMACION(_out, "182");
 			return;
 		}
-		Maps mapa = _perso.getMapa();
-		if (Coletor.getIDGremioPorMapaID(mapa.getID()) > 0) {
+		Mapa mapa = _perso.getMapa();
+		if (Recaudador.getIDGremioPorMapaID(mapa.getID()) > 0) {
 			SocketManager.ENVIAR_Im_INFORMACION(_out, "1168;1");
 			return;
 		}
@@ -875,25 +875,25 @@ public class GameThread implements Runnable {
 			SocketManager.ENVIAR_Im_INFORMACION(_out, "113");
 			return;
 		}
-		if (World.cantRecauDelGremio(gremio.getID()) >= gremio.getNroRecau()) {
+		if (Mundo.cantRecauDelGremio(gremio.getID()) >= gremio.getNroRecau()) {
 			return;
 		}
 		String random1 = Integer.toString(Fórmulas.getRandomValor(1, 129), 36);
 		String random2 = Integer.toString(Fórmulas.getRandomValor(1, 227), 36);
-		int id = World.getSigIDRecaudador();
-		Coletor recaudador = new Coletor(id, mapa.getID(), _perso.getCelda().getID(), (byte) 3, gremio.getID(), random1,
+		int id = Mundo.getSigIDRecaudador();
+		Recaudador recaudador = new Recaudador(id, mapa.getID(), _perso.getCelda().getID(), (byte) 3, gremio.getID(), random1,
 				random2, "", 0L, 0L);
-		World.addRecaudador(recaudador);
+		Mundo.addRecaudador(recaudador);
 		SocketManager.ENVIAR_GM_AGREGAR_RECAUDADOR_AL_MAPA(mapa);
-		for (Personagens z : gremio.getPjMiembros()) {
+		for (Personaje z : gremio.getPjMiembros()) {
 			if (z == null || !z.enLinea())
 				continue;
-			SocketManager.ENVIAR_gITM_INFO_RECAUDADOR(z, Coletor.analizarRecaudadores(gremio.getID()));
+			SocketManager.ENVIAR_gITM_INFO_RECAUDADOR(z, Recaudador.analizarRecaudadores(gremio.getID()));
 			String str = "";
 			str = String.valueOf(str) + "S" + recaudador.getN1() + "," + recaudador.getN2() + "|";
 			str = String.valueOf(str) + recaudador.getMapaID() + "|";
-			str = String.valueOf(str) + World.getMapa(recaudador.getMapaID()).getX() + "|"
-					+ World.getMapa(recaudador.getMapaID()).getY() + "|" + _perso.getNombre();
+			str = String.valueOf(str) + Mundo.getMapa(recaudador.getMapaID()).getX() + "|"
+					+ Mundo.getMapa(recaudador.getMapaID()).getY() + "|" + _perso.getNombre();
 			SocketManager.GAME_SEND_gT_PACKET(z, str);
 		}
 	}
@@ -907,12 +907,12 @@ public class GameThread implements Runnable {
 			return;
 		}
 		short mapaID = Short.parseShort(packet);
-		Maps.Cercado cercado = World.getMapa(mapaID).getCercado();
+		Mapa.Cercado cercado = Mundo.getMapa(mapaID).getCercado();
 		if (cercado.getGremio().getID() != _perso.getGremio().getID()) {
 			SocketManager.ENVIAR_Im_INFORMACION(_out, "1135");
 			return;
 		}
-		short celdaID = World.getCeldaCercadoPorMapaID(mapaID);
+		short celdaID = Mundo.getCeldaCercadoPorMapaID(mapaID);
 		if (!_perso.tieneObjModeloNoEquip(9035, 1)) {
 			SocketManager.ENVIAR_Im_INFORMACION(_out, "1159");
 			return;
@@ -930,7 +930,7 @@ public class GameThread implements Runnable {
 			return;
 		}
 		int idCasa = Integer.parseInt(packet);
-		Casa casa = World.getCasas().get(idCasa);
+		Casa casa = Mundo.getCasas().get(idCasa);
 		if (casa == null) {
 			return;
 		}
@@ -959,8 +959,8 @@ public class GameThread implements Runnable {
 		int rango = Integer.parseInt(infos[1]);
 		int xpDonada = Byte.parseByte(infos[2]);
 		int derecho = Integer.parseInt(infos[3]);
-		Personagens perso = World.getPersonaje(id);
-		Guild.MiembroGremio cambiador = _perso.getMiembroGremio();
+		Personaje perso = Mundo.getPersonaje(id);
+		Gremio.MiembroGremio cambiador = _perso.getMiembroGremio();
 		if (perso == null || perso.getGremio() == null) {
 			SocketManager.ENVIAR_BN_NADA(_out);
 			return;
@@ -969,7 +969,7 @@ public class GameThread implements Runnable {
 			SocketManager.ENVIAR_gK_GREMIO_BAN(_perso, "Ea");
 			return;
 		}
-		Guild.MiembroGremio aCambiar = perso.getMiembroGremio();
+		Gremio.MiembroGremio aCambiar = perso.getMiembroGremio();
 		if (cambiador.getRango() == 1) {
 			if (cambiador.getID() == aCambiar.getID()) {
 				rango = -1;
@@ -1012,18 +1012,18 @@ public class GameThread implements Runnable {
 	}
 
 	private void gremio_Expulsar(String nombre) {
-		Guild.MiembroGremio aExpulsar;
+		Gremio.MiembroGremio aExpulsar;
 		if (_perso.getGremio() == null) {
 			return;
 		}
-		Personagens perso = World.getPjPorNombre(nombre);
+		Personaje perso = Mundo.getPjPorNombre(nombre);
 		if (perso == null) {
 			SocketManager.ENVIAR_BN_NADA(_out);
 			return;
 		}
-		Guild gremio = perso.getGremio();
+		Gremio gremio = perso.getGremio();
 		if (gremio == null) {
-			gremio = World.getGremio(_perso.getGremio().getID());
+			gremio = Mundo.getGremio(_perso.getGremio().getID());
 		}
 		if ((aExpulsar = gremio.getMiembro(perso.getID())) == null
 				|| aExpulsar.getGremio().getID() != _perso.getGremio().getID()) {
@@ -1034,7 +1034,7 @@ public class GameThread implements Runnable {
 			SocketManager.ENVIAR_gK_GREMIO_BAN(_perso, "Ea");
 			return;
 		}
-		Guild.MiembroGremio expulsador = _perso.getMiembroGremio();
+		Gremio.MiembroGremio expulsador = _perso.getMiembroGremio();
 		if (!expulsador.puede(Constantes.G_BANEAR) && expulsador.getID() != aExpulsar.getID()) {
 			SocketManager.ENVIAR_gK_GREMIO_BAN(_perso, "Ed");
 			return;
@@ -1053,7 +1053,7 @@ public class GameThread implements Runnable {
 			}
 		} else {
 			if (expulsador.getRango() == 1 && gremio.getPjMiembros().size() > 1) {
-				for (Personagens pj : gremio.getPjMiembros()) {
+				for (Personaje pj : gremio.getPjMiembros()) {
 					gremio.expulsarMiembro(pj);
 					pj.setMiembroGremio(null);
 				}
@@ -1062,7 +1062,7 @@ public class GameThread implements Runnable {
 				_perso.setMiembroGremio(null);
 			}
 			if (gremio.getPjMiembros().isEmpty()) {
-				World.eliminarGremio(gremio.getID());
+				Mundo.eliminarGremio(gremio.getID());
 			}
 			SocketManager.ENVIAR_gK_GREMIO_BAN(_perso, "K" + nombre + "|" + nombre);
 		}
@@ -1071,7 +1071,7 @@ public class GameThread implements Runnable {
 	private void gremio_Unirse(String packet) {
 		switch (packet.charAt(0)) {
 		case 'R': {
-			Personagens perso = World.getPjPorNombre(packet.substring(1));
+			Personaje perso = Mundo.getPjPorNombre(packet.substring(1));
 			if (perso == null || _perso.getGremio() == null) {
 				SocketManager.ENVIAR_gJ_GREMIO_UNIR(_perso, "Eu");
 				return;
@@ -1111,7 +1111,7 @@ public class GameThread implements Runnable {
 				return;
 			}
 			SocketManager.ENVIAR_BN_NADA(_out);
-			Personagens invitado = World.getPersonaje(_perso.getInvitado());
+			Personaje invitado = Mundo.getPersonaje(_perso.getInvitado());
 			if (invitado == null) {
 				return;
 			}
@@ -1124,15 +1124,15 @@ public class GameThread implements Runnable {
 		case 'K': {
 			if (!packet.substring(1).equalsIgnoreCase(String.valueOf(_perso.getInvitado())))
 				break;
-			Personagens invitado2 = World.getPersonaje(_perso.getInvitado());
+			Personaje invitado2 = Mundo.getPersonaje(_perso.getInvitado());
 			if (invitado2 == null) {
 				return;
 			}
-			Guild gremio = invitado2.getGremio();
+			Gremio gremio = invitado2.getGremio();
 			if (gremio == null) {
 				return;
 			}
-			Guild.MiembroGremio miembro = gremio.addNuevoMiembro(_perso);
+			Gremio.MiembroGremio miembro = gremio.addNuevoMiembro(_perso);
 			_perso.setMiembroGremio(miembro);
 			_perso.setInvitado(-1);
 			invitado2.setInvitado(-1);
@@ -1144,7 +1144,7 @@ public class GameThread implements Runnable {
 	}
 
 	private void gremio_Informacion(char c) {
-		Guild gremio = _perso.getGremio();
+		Gremio gremio = _perso.getGremio();
 		switch (c) {
 		case 'B': {
 			SocketManager.ENVIAR_gIB_GREMIO_INFO_BOOST(_perso, gremio.analizarRecauAGrmio());
@@ -1167,9 +1167,9 @@ public class GameThread implements Runnable {
 			break;
 		}
 		case 'T': {
-			SocketManager.ENVIAR_gITM_INFO_RECAUDADOR(_perso, Coletor.analizarRecaudadores(gremio.getID()));
-			Coletor.analizarAtaque(_perso, gremio.getID());
-			Coletor.analizarDefensa(_perso, gremio.getID());
+			SocketManager.ENVIAR_gITM_INFO_RECAUDADOR(_perso, Recaudador.analizarRecaudadores(gremio.getID()));
+			Recaudador.analizarAtaque(_perso, gremio.getID());
+			Recaudador.analizarDefensa(_perso, gremio.getID());
 		}
 		}
 	}
@@ -1190,7 +1190,7 @@ public class GameThread implements Runnable {
 			String emblemaId = Integer.toString(Integer.parseInt(infos[2]), 36);
 			String colorEmblema = Integer.toString(Integer.parseInt(infos[3]), 36);
 			String nombre = infos[4];
-			if (World.nombreGremioUsado(nombre)) {
+			if (Mundo.nombreGremioUsado(nombre)) {
 				SocketManager.ENVIAR_gC_CREAR_PANEL_GREMIO(_perso, "Ean");
 				return;
 			}
@@ -1220,7 +1220,7 @@ public class GameThread implements Runnable {
 				return;
 			}
 			String emblema = String.valueOf(escudoId) + "," + colorEscudo + "," + emblemaId + "," + colorEmblema;
-			if (World.emblemaGremioUsado(emblema)) {
+			if (Mundo.emblemaGremioUsado(emblema)) {
 				SocketManager.ENVIAR_gC_CREAR_PANEL_GREMIO(_perso, "Eae");
 				return;
 			}
@@ -1231,10 +1231,10 @@ public class GameThread implements Runnable {
 				}
 				_perso.removerObjetoPorModYCant(1575, 1);
 			}
-			Guild gremio = new Guild(_perso, nombre, emblema);
-			World.addGremio(gremio);
+			Gremio gremio = new Gremio(_perso, nombre, emblema);
+			Mundo.addGremio(gremio);
 			SQLManager.INSERT_GREMIO(gremio);
-			Guild.MiembroGremio miembro = gremio.addNuevoMiembro(_perso);
+			Gremio.MiembroGremio miembro = gremio.addNuevoMiembro(_perso);
 			miembro.setTodosDerechos(1, (byte) 0, 1);
 			_perso.setMiembroGremio(miembro);
 			SocketManager.ENVIAR_gS_STATS_GREMIO(_perso, miembro);
@@ -1317,7 +1317,7 @@ public class GameThread implements Runnable {
 	private void montura_Vender_Cercado(String packet) {
 		SocketManager.ENVIAR_Rv_MONTURA_CERRAR(_out);
 		int precio = Integer.parseInt(packet.substring(2));
-		Maps.Cercado cercado = _perso.getMapa().getCercado();
+		Mapa.Cercado cercado = _perso.getMapa().getCercado();
 		if (cercado.getDue\u00f1o() == -1) {
 			SocketManager.ENVIAR_Im_INFORMACION(_out, "194");
 			return;
@@ -1328,15 +1328,15 @@ public class GameThread implements Runnable {
 		}
 		cercado.setPrecio(precio);
 		SQLManager.UPDATE_CERCADO(cercado);
-		for (Personagens z : _perso.getMapa().getPersos()) {
+		for (Personaje z : _perso.getMapa().getPersos()) {
 			SocketManager.ENVIAR_Rp_INFORMACION_CERCADO(z, cercado);
 		}
 	}
 
 	private void montura_Comprar_Cercado(String packet) {
 		SocketManager.ENVIAR_Rv_MONTURA_CERRAR(_out);
-		Maps.Cercado cercado = _perso.getMapa().getCercado();
-		Personagens vendedor = World.getPersonaje(cercado.getDue\u00f1o());
+		Mapa.Cercado cercado = _perso.getMapa().getCercado();
+		Personaje vendedor = Mundo.getPersonaje(cercado.getDue\u00f1o());
 		if (cercado.getDue\u00f1o() == -1) {
 			SocketManager.ENVIAR_Im_INFORMACION(_out, "196");
 			return;
@@ -1377,7 +1377,7 @@ public class GameThread implements Runnable {
 		cercado.setPropietario(_perso.getID());
 		cercado.setGremio(_perso.getGremio());
 		SQLManager.UPDATE_CERCADO(cercado);
-		for (Personagens pj : _perso.getMapa().getPersos()) {
+		for (Personaje pj : _perso.getMapa().getPersos()) {
 			SocketManager.ENVIAR_Rp_INFORMACION_CERCADO(pj, cercado);
 		}
 	}
@@ -1396,11 +1396,11 @@ public class GameThread implements Runnable {
 
 	private void montura_Borrar_Objeto_Crianza(String packet) {
 		short celda = Short.parseShort(packet.substring(2));
-		Maps mapa = _perso.getMapa();
+		Mapa mapa = _perso.getMapa();
 		if (mapa.getCercado() == null) {
 			return;
 		}
-		Maps.Cercado cercado = mapa.getCercado();
+		Mapa.Cercado cercado = mapa.getCercado();
 		if (_perso.getNombre() != "Les Guardians") {
 			if (_perso.getGremio() == null) {
 				SocketManager.ENVIAR_BN_NADA(_out);
@@ -1450,15 +1450,15 @@ public class GameThread implements Runnable {
 		if (_perso.getMontura() == null) {
 			SocketManager.ENVIAR_Re_DETALLES_MONTURA(_perso, "Er", null);
 		} else {
-			Dragossauros drago = _perso.getMontura();
+			Dragopavo drago = _perso.getMontura();
 			_perso.setMontura(null);
 			SQLManager.DELETE_DRAGOPAVO(drago);
-			World.borrarDragopavo(drago.getID());
+			Mundo.borrarDragopavo(drago.getID());
 		}
 	}
 
 	private void montura_Descripcion(String packet) {
-		Dragossauros DD;
+		Dragopavo DD;
 		int DPid = -1;
 		try {
 			DPid = Integer.parseInt(packet.substring(2).split("\\|")[0]);
@@ -1471,7 +1471,7 @@ public class GameThread implements Runnable {
 		if (DPid > 0) {
 			DPid = -DPid;
 		}
-		if ((DD = World.getDragopavoPorID(DPid)) == null) {
+		if ((DD = Mundo.getDragopavoPorID(DPid)) == null) {
 			return;
 		}
 		SocketManager.ENVIAR_Rd_DESCRIPCION_MONTURA(_perso, DD);
@@ -1512,7 +1512,7 @@ public class GameThread implements Runnable {
 	}
 
 	private void amigo_Esposo(String packet) {
-		Personagens esposo = World.getPersonaje(_perso.getEsposo());
+		Personaje esposo = Mundo.getPersonaje(_perso.getEsposo());
 		if (esposo == null) {
 			return;
 		}
@@ -1554,7 +1554,7 @@ public class GameThread implements Runnable {
 		switch (packet.charAt(2)) {
 		case '%': {
 			packet = packet.substring(3);
-			Personagens P = World.getPjPorNombre(packet);
+			Personaje P = Mundo.getPjPorNombre(packet);
 			if (P == null) {
 				SocketManager.ENVIAR_FD_BORRAR_AMIGO(_perso, "Ef");
 				return;
@@ -1564,7 +1564,7 @@ public class GameThread implements Runnable {
 		}
 		case '*': {
 			packet = packet.substring(3);
-			Conta C = World.getCuentaPorApodo(packet);
+			Cuenta C = Mundo.getCuentaPorApodo(packet);
 			if (C == null) {
 				SocketManager.ENVIAR_FD_BORRAR_AMIGO(_perso, "Ef");
 				return;
@@ -1574,7 +1574,7 @@ public class GameThread implements Runnable {
 		}
 		default: {
 			packet = packet.substring(2);
-			Personagens Pj = World.getPjPorNombre(packet);
+			Personaje Pj = Mundo.getPjPorNombre(packet);
 			if (Pj == null || !Pj.enLinea()) {
 				SocketManager.ENVIAR_FD_BORRAR_AMIGO(_perso, "Ef");
 				return;
@@ -1597,7 +1597,7 @@ public class GameThread implements Runnable {
 		switch (packet.charAt(2)) {
 		case '%': {
 			packet = packet.substring(3);
-			Personagens perso = World.getPjPorNombre(packet);
+			Personaje perso = Mundo.getPjPorNombre(packet);
 			if (perso == null || !perso.enLinea()) {
 				SocketManager.ENVIAR_FA_AGREGAR_AMIGO(_perso, "Ef");
 				return;
@@ -1607,7 +1607,7 @@ public class GameThread implements Runnable {
 		}
 		case '*': {
 			packet = packet.substring(3);
-			Conta cuenta = World.getCuentaPorApodo(packet);
+			Cuenta cuenta = Mundo.getCuentaPorApodo(packet);
 			if (cuenta == null || !cuenta.enLinea()) {
 				SocketManager.ENVIAR_FA_AGREGAR_AMIGO(_perso, "Ef");
 				return;
@@ -1617,7 +1617,7 @@ public class GameThread implements Runnable {
 		}
 		default: {
 			packet = packet.substring(2);
-			Personagens Pj = World.getPjPorNombre(packet);
+			Personaje Pj = Mundo.getPjPorNombre(packet);
 			if (Pj == null || !Pj.enLinea()) {
 				SocketManager.ENVIAR_FA_AGREGAR_AMIGO(_perso, "Ef");
 				return;
@@ -1639,7 +1639,7 @@ public class GameThread implements Runnable {
 			break;
 		}
 		case 'F': {
-			Personagens.Grupo g = _perso.getGrupo();
+			Personaje.Grupo g = _perso.getGrupo();
 			if (g == null) {
 				return;
 			}
@@ -1652,7 +1652,7 @@ public class GameThread implements Runnable {
 			if (pId == -1) {
 				return;
 			}
-			Personagens perso = World.getPersonaje(pId);
+			Personaje perso = Mundo.getPersonaje(pId);
 			if (perso == null || !perso.enLinea()) {
 				return;
 			}
@@ -1675,7 +1675,7 @@ public class GameThread implements Runnable {
 			break;
 		}
 		case 'G': {
-			Personagens.Grupo g2 = _perso.getGrupo();
+			Personaje.Grupo g2 = _perso.getGrupo();
 			if (g2 == null) {
 				return;
 			}
@@ -1688,12 +1688,12 @@ public class GameThread implements Runnable {
 			if (pId2 == -1) {
 				return;
 			}
-			Personagens P2 = World.getPersonaje(pId2);
+			Personaje P2 = Mundo.getPersonaje(pId2);
 			if (P2 == null || !P2.enLinea()) {
 				return;
 			}
 			if (packet.charAt(2) == '+') {
-				for (Personagens integrante : g2.getPersos()) {
+				for (Personaje integrante : g2.getPersos()) {
 					if (integrante.getID() == P2.getID())
 						continue;
 					if (integrante.getSiguiendo() != null) {
@@ -1707,7 +1707,7 @@ public class GameThread implements Runnable {
 			} else {
 				if (packet.charAt(2) != '-')
 					break;
-				for (Personagens integrante : g2.getPersos()) {
+				for (Personaje integrante : g2.getPersos()) {
 					if (integrante.getID() == P2.getID())
 						continue;
 					SocketManager.ENVIAR_IC_BORRAR_BANDERA_COMPAS(integrante);
@@ -1740,17 +1740,17 @@ public class GameThread implements Runnable {
 		if (_perso == null) {
 			return;
 		}
-		Personagens.Grupo grupo = _perso.getGrupo();
+		Personaje.Grupo grupo = _perso.getGrupo();
 		if (grupo == null) {
 			return;
 		}
 		String str = "";
 		boolean primero = false;
-		for (Personagens pj : grupo.getPersos()) {
+		for (Personaje pj : grupo.getPersos()) {
 			if (primero) {
 				str = String.valueOf(str) + "|";
 			}
-			Maps mapa = pj.getMapa();
+			Mapa mapa = pj.getMapa();
 			str = String.valueOf(str) + mapa.getX() + ";" + mapa.getY() + ";" + mapa.getID() + ";2;" + pj.getID() + ";"
 					+ pj.getNombre();
 			primero = true;
@@ -1762,7 +1762,7 @@ public class GameThread implements Runnable {
 		if (_perso == null) {
 			return;
 		}
-		Personagens.Grupo grupo = _perso.getGrupo();
+		Personaje.Grupo grupo = _perso.getGrupo();
 		if (grupo == null) {
 			return;
 		}
@@ -1780,7 +1780,7 @@ public class GameThread implements Runnable {
 			if (id == -1) {
 				return;
 			}
-			Personagens expulsado = World.getPersonaje(id);
+			Personaje expulsado = Mundo.getPersonaje(id);
 			if (expulsado == null) {
 				return;
 			}
@@ -1798,7 +1798,7 @@ public class GameThread implements Runnable {
 			return;
 		}
 		String nombre = packet.substring(2);
-		Personagens invitado = World.getPjPorNombre(nombre);
+		Personaje invitado = Mundo.getPjPorNombre(nombre);
 		if (invitado == null) {
 			return;
 		}
@@ -1829,7 +1829,7 @@ public class GameThread implements Runnable {
 			return;
 		}
 		SocketManager.ENVIAR_BN_NADA(_out);
-		Personagens t = World.getPersonaje(_perso.getInvitado());
+		Personaje t = Mundo.getPersonaje(_perso.getInvitado());
 		if (t == null) {
 			return;
 		}
@@ -1845,15 +1845,15 @@ public class GameThread implements Runnable {
 		if (_perso.getInvitado() == 0) {
 			return;
 		}
-		Personagens invitado = World.getPersonaje(_perso.getInvitado());
+		Personaje invitado = Mundo.getPersonaje(_perso.getInvitado());
 		if (invitado == null) {
 			return;
 		}
-		Personagens.Grupo grupo = invitado.getGrupo();
+		Personaje.Grupo grupo = invitado.getGrupo();
 		try {
 			if (grupo == null) {
 				PrintWriter out = invitado.getCuenta().getEntradaPersonaje().getOut();
-				grupo = new Personagens.Grupo(invitado, _perso);
+				grupo = new Personaje.Grupo(invitado, _perso);
 				SocketManager.ENVIAR_PCK_CREAR_GRUPO(_out, grupo);
 				SocketManager.ENVIAR_PL_LIDER_GRUPO(_out, grupo);
 				SocketManager.ENVIAR_PCK_CREAR_GRUPO(out, grupo);
@@ -1918,7 +1918,7 @@ public class GameThread implements Runnable {
 		if (id == -1 || cant <= 0 || !_perso.tieneObjetoID(id)) {
 			return;
 		}
-		Objeto obj = World.getObjeto(id);
+		Objeto obj = Mundo.getObjeto(id);
 		if (obj == null) {
 			return;
 		}
@@ -1926,7 +1926,7 @@ public class GameThread implements Runnable {
 		if (idObjModelo == 10085) {
 			_perso.borrarObjetoSinEliminar(id);
 			SocketManager.ENVIAR_OR_ELIMINAR_OBJETO(_out, id);
-			World.eliminarObjeto(id);
+			Mundo.eliminarObjeto(id);
 			return;
 		}
 		short celdaDrop = Constantes.getCeldaIDCercanaNoUsada(_perso);
@@ -1934,7 +1934,7 @@ public class GameThread implements Runnable {
 			SocketManager.ENVIAR_Im_INFORMACION(_out, "1145");
 			return;
 		}
-		Maps.Celda celdaTirar = _perso.getMapa().getCelda(celdaDrop);
+		Mapa.Celda celdaTirar = _perso.getMapa().getCelda(celdaDrop);
 		if (cant >= obj.getCantidad()) {
 			_perso.borrarObjetoSinEliminar(id);
 			celdaTirar.addObjetoTirado(obj, _perso);
@@ -1944,7 +1944,7 @@ public class GameThread implements Runnable {
 			obj.setCantidad(obj.getCantidad() - cant);
 			Objeto obj2 = Objeto.clonarObjeto(obj, cant);
 			obj2.setPosicion(-1);
-			World.addObjeto(obj2, false);
+			Mundo.addObjeto(obj2, false);
 			celdaTirar.addObjetoTirado(obj2, _perso);
 			SocketManager.ENVIAR_OQ_CAMBIA_CANTIDAD_DEL_OBJETO(_perso, obj);
 		}
@@ -1958,7 +1958,7 @@ public class GameThread implements Runnable {
 		int id = -1;
 		int idPjObjetivo = -1;
 		short celdaId = -1;
-		Personagens pjObjetivo = null;
+		Personaje pjObjetivo = null;
 		try {
 			String[] infos = packet.substring(2).split("\\|");
 			id = Integer.parseInt(infos[0]);
@@ -1975,13 +1975,13 @@ public class GameThread implements Runnable {
 		} catch (Exception e) {
 			return;
 		}
-		if (World.getPersonaje(idPjObjetivo) != null) {
-			pjObjetivo = World.getPersonaje(idPjObjetivo);
+		if (Mundo.getPersonaje(idPjObjetivo) != null) {
+			pjObjetivo = Mundo.getPersonaje(idPjObjetivo);
 		}
 		if (!_perso.tieneObjetoID(id)) {
 			return;
 		}
-		Objeto obj = World.getObjeto(id);
+		Objeto obj = Mundo.getObjeto(id);
 		if (obj == null) {
 			return;
 		}
@@ -2016,7 +2016,7 @@ public class GameThread implements Runnable {
 			} catch (Exception exception) {
 				// empty catch block
 			}
-			Objeto obj = World.getObjeto(id);
+			Objeto obj = Mundo.getObjeto(id);
 			if (obj == null || !_perso.tieneObjetoID(id) || cant <= 0) {
 				SocketManager.ENVIAR_OdE_ERROR_ELIMINAR_OBJETO(_out);
 				return;
@@ -2024,7 +2024,7 @@ public class GameThread implements Runnable {
 			int nuevaCant = obj.getCantidad() - cant;
 			if (nuevaCant <= 0) {
 				_perso.borrarObjetoSinEliminar(id);
-				World.eliminarObjeto(id);
+				Mundo.eliminarObjeto(id);
 				SocketManager.ENVIAR_OR_ELIMINAR_OBJETO(_out, id);
 			} else {
 				obj.setCantidad(nuevaCant);
@@ -2053,11 +2053,11 @@ public class GameThread implements Runnable {
 			} catch (Exception e) {
 				cantObjMover = 1;
 			}
-			Objeto objMover = World.getObjeto(idObjMover);
+			Objeto objMover = Mundo.getObjeto(idObjMover);
 			if (!_perso.tieneObjetoID(idObjMover) || objMover == null) {
 				return;
 			}
-			Fight pelea = _perso.getPelea();
+			Combate pelea = _perso.getPelea();
 			if (pelea != null && pelea.getEstado() > 2) {
 				return;
 			}
@@ -2069,11 +2069,11 @@ public class GameThread implements Runnable {
 			if (LesGuardians.ARMAS_ENCARNACAO.contains(objetoMod.getID())) {
 				int segundos = Calendar.getInstance().get(12) * 60 + Calendar.getInstance().get(13);
 				if (_perso.getEncarnacion() == null && posAMover == 1) {
-					Incarnacao encarnacion = World.getEncarnacion(idObjMover);
+					Encarnación encarnacion = Mundo.getEncarnacion(idObjMover);
 					if (encarnacion == null) {
-						encarnacion = new Incarnacao(idObjMover, Constantes.getClasePorObjMod(objetoMod.getID()), 1, 0L,
+						encarnacion = new Encarnación(idObjMover, Constantes.getClasePorObjMod(objetoMod.getID()), 1, 0L,
 								segundos, "");
-						World.addEncarnacion(encarnacion);
+						Mundo.addEncarnacion(encarnacion);
 					} else if (!encarnacion.sePuedePoner(segundos)) {
 						SocketManager.ENVIAR_Im_INFORMACION(_out, "1166");
 						return;
@@ -2108,7 +2108,7 @@ public class GameThread implements Runnable {
 							nuevaCant = objMover.getCantidad() - cantObjMover;
 							Objeto nuevoObj = Objeto.clonarObjeto(objMover, nuevaCant);
 							if (!_perso.addObjetoSimilar(nuevoObj, true, idObjMover)) {
-								World.addObjeto(nuevoObj, true);
+								Mundo.addObjeto(nuevoObj, true);
 								_perso.addObjetoPut(nuevoObj);
 								SocketManager.ENVIAR_OAKO_APARECER_OBJETO(_out, nuevoObj);
 							}
@@ -2142,7 +2142,7 @@ public class GameThread implements Runnable {
 							SocketManager.ENVIAR_OQ_CAMBIA_CANTIDAD_DEL_OBJETO(_perso, objMover);
 						} else {
 							_perso.borrarObjetoSinEliminar(idObjMover);
-							World.eliminarObjeto(idObjMover);
+							Mundo.eliminarObjeto(idObjMover);
 							SocketManager.ENVIAR_OR_ELIMINAR_OBJETO(_out, idObjMover);
 						}
 					}
@@ -2198,7 +2198,7 @@ public class GameThread implements Runnable {
 					}
 					if ((nuevaCant2 = objMover.getCantidad() - cantObjMover) > 0) {
 						Objeto nuevoObj = Objeto.clonarObjeto(objMover, nuevaCant2);
-						World.addObjeto(nuevoObj, true);
+						Mundo.addObjeto(nuevoObj, true);
 						_perso.addObjetoPut(nuevoObj);
 						SocketManager.ENVIAR_OAKO_APARECER_OBJETO(_out, nuevoObj);
 						objMover.setCantidad(cantObjMover);
@@ -2306,7 +2306,7 @@ public class GameThread implements Runnable {
 				if (obj2 != null) {
 					obj2.setCantidad(obj2.getCantidad() + exObj.getCantidad());
 					SocketManager.ENVIAR_OQ_CAMBIA_CANTIDAD_DEL_OBJETO(_perso, obj2);
-					World.eliminarObjeto(exObj.getID());
+					Mundo.eliminarObjeto(exObj.getID());
 					_perso.borrarObjetoSinEliminar(exObj.getID());
 					SocketManager.ENVIAR_OR_ELIMINAR_OBJETO(_out, exObj.getID());
 				} else {
@@ -2349,7 +2349,7 @@ public class GameThread implements Runnable {
 						objMover.setCantidad(objMover.getCantidad() - cantObjMover);
 						SocketManager.ENVIAR_OQ_CAMBIA_CANTIDAD_DEL_OBJETO(_perso, objMover);
 					} else {
-						World.eliminarObjeto(objMover.getID());
+						Mundo.eliminarObjeto(objMover.getID());
 						_perso.borrarObjetoSinEliminar(objMover.getID());
 						SocketManager.ENVIAR_OR_ELIMINAR_OBJETO(_out, objMover.getID());
 					}
@@ -2367,7 +2367,7 @@ public class GameThread implements Runnable {
 							int nuevaCant3 = objMover.getCantidad() - cantObjMover;
 							Objeto nuevoObj = Objeto.clonarObjeto(objMover, nuevaCant3);
 							if (!_perso.addObjetoSimilar(nuevoObj, true, idObjMover)) {
-								World.addObjeto(nuevoObj, true);
+								Mundo.addObjeto(nuevoObj, true);
 								_perso.addObjetoPut(nuevoObj);
 								SocketManager.ENVIAR_OAKO_APARECER_OBJETO(_out, nuevoObj);
 							}
@@ -2395,8 +2395,8 @@ public class GameThread implements Runnable {
 				_perso.setStrOficiosPublicos("");
 			} else if (posAMover == 1 && (arma = _perso.getObjPosicion(1)) != null) {
 				int idModArma = arma.getModelo().getID();
-				for (Map.Entry<Integer, Profissao.StatsOficio> statOficio : _perso.getStatsOficios().entrySet()) {
-					Profissao oficio = statOficio.getValue().getOficio();
+				for (Map.Entry<Integer, Oficio.StatsOficio> statOficio : _perso.getStatsOficios().entrySet()) {
+					Oficio oficio = statOficio.getValue().getOficio();
 					if (!oficio.herramientaValida(idModArma))
 						continue;
 					SocketManager.ENVIAR_OT_OBJETO_HERRAMIENTA(_out, oficio.getID());
@@ -2422,13 +2422,13 @@ public class GameThread implements Runnable {
 	private synchronized void aparienciaObjevivo(String packet) {
 		try {
 			int idObjeto = Integer.parseInt(packet.substring(2).split("\\|")[0]);
-			Objeto objeto = World.getObjeto(idObjeto);
+			Objeto objeto = Mundo.getObjeto(idObjeto);
 			if (objeto == null) {
 				SocketManager.ENVIAR_BN_NADA(_out);
 				return;
 			}
 			int objeviId = objeto.getObjeviID();
-			Set_Vivo objevi = World.getObjevivos(objeviId);
+			Objevivo objevi = Mundo.getObjevivos(objeviId);
 			if (objevi == null) {
 				SocketManager.ENVIAR_BN_NADA(_out);
 				return;
@@ -2446,14 +2446,14 @@ public class GameThread implements Runnable {
 	private synchronized void alimentarObjevivo(String packet) {
 		try {
 			int idObjeto = Integer.parseInt(packet.substring(2).split("\\|")[0]);
-			Objeto objeto = World.getObjeto(idObjeto);
+			Objeto objeto = Mundo.getObjeto(idObjeto);
 			int idObjAlimento = Integer.parseInt(packet.split("\\|")[2]);
-			Objeto objetoAlimento = World.getObjeto(idObjAlimento);
+			Objeto objetoAlimento = Mundo.getObjeto(idObjAlimento);
 			if (objetoAlimento == null || objeto == null) {
 				SocketManager.ENVIAR_BN_NADA(_out);
 				return;
 			}
-			Set_Vivo objevi = World.getObjevivos(objeto.getObjeviID());
+			Objevivo objevi = Mundo.getObjevivos(objeto.getObjeviID());
 			if (objevi == null) {
 				SocketManager.ENVIAR_BN_NADA(_out);
 				return;
@@ -2462,7 +2462,7 @@ public class GameThread implements Runnable {
 				int nuevaCant = objetoAlimento.getCantidad() - 1;
 				Objeto nuevoObj = Objeto.clonarObjeto(objetoAlimento, nuevaCant);
 				if (!_perso.addObjetoSimilar(nuevoObj, true, idObjAlimento)) {
-					World.addObjeto(nuevoObj, true);
+					Mundo.addObjeto(nuevoObj, true);
 					_perso.addObjetoPut(nuevoObj);
 					SocketManager.ENVIAR_OAKO_APARECER_OBJETO(_out, nuevoObj);
 				}
@@ -2471,7 +2471,7 @@ public class GameThread implements Runnable {
 			}
 			long xp = Long.parseLong(Integer.toString(objetoAlimento.getModelo().getNivel()));
 			objevi.setExp(objevi.getExp() + xp);
-			World.eliminarObjeto(idObjAlimento);
+			Mundo.eliminarObjeto(idObjAlimento);
 			_perso.borrarObjetoSinEliminar(idObjAlimento);
 			SocketManager.ENVIAR_OR_ELIMINAR_OBJETO(_out, idObjAlimento);
 			SocketManager.ENVIAR_OCK_ACTUALIZA_OBJETO(_out, objeto);
@@ -2485,7 +2485,7 @@ public class GameThread implements Runnable {
 
 	private synchronized void equiparObjevivo(Objeto objevivo, Objeto objeto) {
 		try {
-			for (Set_Vivo objevi : World.getTodosObjevivos()) {
+			for (Objevivo objevi : Mundo.getTodosObjevivos()) {
 				if (objevi.getObjetoAsociadoID() != objevivo.getID() || objevi.getAsociado() != 0)
 					continue;
 				objeto.setObjeviID(objevi.getID());
@@ -2498,15 +2498,15 @@ public class GameThread implements Runnable {
 				SocketManager.ENVIAR_Oa_ACTUALIZAR_FIGURA_PJ(_perso);
 				return;
 			}
-			int sigID = World.getSigIDObjevivo();
+			int sigID = Mundo.getSigIDObjevivo();
 			String fecha = String.valueOf(Calendar.getInstance().get(2)) + Calendar.getInstance().get(5);
 			String fecharInter = String.valueOf(Calendar.getInstance().get(5)) + Calendar.getInstance().get(5);
 			String tiempo = String.valueOf(Calendar.getInstance().get(11)) + Calendar.getInstance().get(12);
-			Set_Vivo nuevoObjevivo = new Set_Vivo(sigID, 2012, Integer.parseInt(fecha), Integer.parseInt(tiempo), 1, 1,
+			Objevivo nuevoObjevivo = new Objevivo(sigID, 2012, Integer.parseInt(fecha), Integer.parseInt(tiempo), 1, 1,
 					objeto.getModelo().getTipo(), objeto.getID(), 0L, 2012, Integer.parseInt(fecharInter),
 					Integer.parseInt(tiempo), 2012, Integer.parseInt(fecha), Integer.parseInt(tiempo), 1,
 					objevivo.getModelo().getID(), objevivo.getID(), objeto.convertirStatsAString());
-			World.addObjevivo(nuevoObjevivo);
+			Mundo.addObjevivo(nuevoObjevivo);
 			SQLManager.INSERT_OBJEVIVOS(nuevoObjevivo);
 			objeto.setObjeviID(sigID);
 			_perso.borrarObjetoSinEliminar(objevivo.getID());
@@ -2522,16 +2522,16 @@ public class GameThread implements Runnable {
 	private synchronized void desequiparObjevivo(String packet) {
 		try {
 			int id = Integer.parseInt(packet.substring(2).split("\\|")[0]);
-			Objeto objeto = World.getObjeto(id);
+			Objeto objeto = Mundo.getObjeto(id);
 			int idObjevivo = objeto.getObjeviID();
-			Set_Vivo objevivo = World.getObjevivos(idObjevivo);
+			Objevivo objevivo = Mundo.getObjevivos(idObjevivo);
 			if (objevivo == null || objeto == null) {
 				SocketManager.ENVIAR_BN_NADA(_out);
 				return;
 			}
 			if (objevivo.getAsociado() == 1) {
 				int idObjObjevivo = objevivo.getIDObjevivoOrig();
-				Objeto objObjevivo = World.getObjeto(idObjObjevivo);
+				Objeto objObjevivo = Mundo.getObjeto(idObjObjevivo);
 				if (objObjevivo == null) {
 					SocketManager.ENVIAR_BN_NADA(_out);
 					return;
@@ -2553,7 +2553,7 @@ public class GameThread implements Runnable {
 	}
 
 	private synchronized void equiparMascota(Objeto objeto) {
-		for (Pets mascota : World.getTodasMascotas()) {
+		for (Mascota mascota : Mundo.getTodasMascotas()) {
 			if (objeto.getID() != mascota.getID())
 				continue;
 			_perso.setMascota(mascota);
@@ -2566,16 +2566,16 @@ public class GameThread implements Runnable {
 		int dia = calendar.get(5);
 		int hora = calendar.get(11);
 		int minuto = calendar.get(12);
-		Pets mascota = new Pets(objeto.getID(), 10, "", 0, 2012, mes, dia, hora, minuto, -1, "", 0, 0,
+		Mascota mascota = new Mascota(objeto.getID(), 10, "", 0, 2012, mes, dia, hora, minuto, -1, "", 0, 0,
 				objeto.getModelo().getID());
-		World.addMascota(mascota);
+		Mundo.addMascota(mascota);
 		SocketManager.ENVIAR_Oa_ACTUALIZAR_FIGURA_PJ(_perso);
 		_perso.setMascota(mascota);
 	}
 
 	private synchronized void alimentarMascota(Objeto comida, Objeto masc, int cantidad) {
 		try {
-			Pets mascota = World.getMascota(masc.getID());
+			Mascota mascota = Mundo.getMascota(masc.getID());
 			if (mascota == null) {
 				SocketManager.ENVIAR_BN_NADA(_out);
 				return;
@@ -2596,7 +2596,7 @@ public class GameThread implements Runnable {
 					} else {
 						SocketManager.ENVIAR_OR_ELIMINAR_OBJETO(_out, comida.getID());
 						_perso.borrarObjetoSinEliminar(comida.getID());
-						World.eliminarObjeto(comida.getID());
+						Mundo.eliminarObjeto(comida.getID());
 					}
 				}
 				masc.clearTodo();
@@ -2612,7 +2612,7 @@ public class GameThread implements Runnable {
 				} else {
 					SocketManager.ENVIAR_OR_ELIMINAR_OBJETO(_out, comida.getID());
 					_perso.borrarObjetoSinEliminar(comida.getID());
-					World.eliminarObjeto(comida.getID());
+					Mundo.eliminarObjeto(comida.getID());
 				}
 				if (idModComida >= 11170 && idModComida <= 11184 || mascota.horaComer()) {
 					mascota.comerComida(idModComida);
@@ -2659,8 +2659,8 @@ public class GameThread implements Runnable {
 		try {
 			int preguntaID = Integer.parseInt(infos[0]);
 			int respuestaID = Integer.parseInt(infos[1]);
-			NPC_tmpl.PreguntaNPC pregunta = World.getPreguntaNPC(preguntaID);
-			NPC_tmpl.RespuestaNPC respuesta = World.getRespuestaNPC(respuestaID);
+			NPCModelo.PreguntaNPC pregunta = Mundo.getPreguntaNPC(preguntaID);
+			NPCModelo.RespuestaNPC respuesta = Mundo.getRespuestaNPC(respuestaID);
 			if (pregunta == null || respuesta == null || !respuesta.esOtroDialogo()) {
 				SocketManager.ENVIAR_DV_FINALIZAR_DIALOGO(_out);
 				_perso.setConversandoCon(0);
@@ -2683,13 +2683,13 @@ public class GameThread implements Runnable {
 			int ID = Integer.parseInt(packet.substring(2).split("\n")[0]);
 			if (ID > -50) {
 				int npcID = ID;
-				NPC_tmpl.NPC npc = _perso.getMapa().getNPC(npcID);
+				NPCModelo.NPC npc = _perso.getMapa().getNPC(npcID);
 				if (npc == null) {
 					return;
 				}
 				SocketManager.ENVIAR_DCK_CREAR_DIALOGO(_out, npcID);
 				int pID = npc.getModeloBD().getPreguntaID();
-				NPC_tmpl.PreguntaNPC pregunta = World.getPreguntaNPC(pID);
+				NPCModelo.PreguntaNPC pregunta = Mundo.getPreguntaNPC(pID);
 				if (pregunta == null) {
 					SocketManager.ENVIAR_DV_FINALIZAR_DIALOGO(_out);
 					return;
@@ -2697,17 +2697,17 @@ public class GameThread implements Runnable {
 				SocketManager.ENVIAR_DQ_DIALOGO_PREGUNTA(_out, pregunta.stringArgParaDialogo(_perso));
 				_perso.setConversandoCon(npcID);
 			} else {
-				Coletor recauda = World.getRecaudador(ID);
+				Recaudador recauda = Mundo.getRecaudador(ID);
 				if (recauda == null) {
 					return;
 				}
 				SocketManager.ENVIAR_DCK_CREAR_DIALOGO(_out, ID);
-				NPC_tmpl.PreguntaNPC pregunta = World.getPreguntaNPC(1);
+				NPCModelo.PreguntaNPC pregunta = Mundo.getPreguntaNPC(1);
 				if (pregunta == null) {
 					SocketManager.ENVIAR_DV_FINALIZAR_DIALOGO(_out);
 					return;
 				}
-				Guild gremio = World.getGremio(recauda.getGremioID());
+				Gremio gremio = Mundo.getGremio(recauda.getGremioID());
 				SocketManager.ENVIAR_DQ_DIALOGO_PREGUNTA(_out, pregunta.stringGremio(_perso, gremio));
 				_perso.setConversandoCon(ID);
 			}
@@ -2798,7 +2798,7 @@ public class GameThread implements Runnable {
 				SocketManager.ENVIAR_EV_CERRAR_VENTANAS(_out);
 				return;
 			}
-			Mercador mercadillo = World.getPuestoMerca(_perso.getMapa().getID());
+			Mercadillo mercadillo = Mundo.getPuestoMerca(_perso.getMapa().getID());
 			if (mercadillo == null) {
 				return;
 			}
@@ -2818,7 +2818,7 @@ public class GameThread implements Runnable {
 				SocketManager.ENVIAR_EV_CERRAR_VENTANAS(_out);
 				return;
 			}
-			Mercador mercadillo = World.getPuestoMerca(_perso.getMapa().getID());
+			Mercadillo mercadillo = Mundo.getPuestoMerca(_perso.getMapa().getID());
 			if (mercadillo == null) {
 				return;
 			}
@@ -2835,11 +2835,11 @@ public class GameThread implements Runnable {
 				String[] nuevo = packet.substring(5).split("\\|");
 				int idInvitado = Integer.parseInt(nuevo[0]);
 				int idTrabajo = Integer.parseInt(nuevo[1]);
-				Profissao.AccionTrabajo accionT = null;
+				Oficio.AccionTrabajo accionT = null;
 				boolean paso = false;
-				for (Profissao.StatsOficio statOficio : _perso.getStatsOficios().values()) {
-					Profissao oficio = statOficio.getOficio();
-					for (Profissao.AccionTrabajo trabajo : Constantes.getTrabajosPorOficios(oficio.getID(),
+				for (Oficio.StatsOficio statOficio : _perso.getStatsOficios().values()) {
+					Oficio oficio = statOficio.getOficio();
+					for (Oficio.AccionTrabajo trabajo : Constantes.getTrabajosPorOficios(oficio.getID(),
 							statOficio.getNivel())) {
 						if (trabajo.getIDTrabajo() != idTrabajo)
 							continue;
@@ -2854,7 +2854,7 @@ public class GameThread implements Runnable {
 					SocketManager.ENVIAR_BN_NADA(_out);
 					return;
 				}
-				Personagens invitado = World.getPersonaje(idInvitado);
+				Personaje invitado = Mundo.getPersonaje(idInvitado);
 				_perso.setHaciendoTrabajo(accionT);
 				invitado.setHaciendoTrabajo(accionT);
 				_perso.setIntercambiandoCon(idInvitado);
@@ -2869,7 +2869,7 @@ public class GameThread implements Runnable {
 		}
 		if (packet.substring(2, 4).equals("15")) {
 			try {
-				Dragossauros montura = _perso.getMontura();
+				Dragopavo montura = _perso.getMontura();
 				int idMontura = montura.getID();
 				SocketManager.ENVIAR_ECK_PANEL_DE_INTERCAMBIOS(_out, 15, String.valueOf(_perso.getMontura().getID()));
 				SocketManager.ENVIAR_EL_LISTA_OBJETOS_DRAGOPAVO(_out, montura);
@@ -2886,7 +2886,7 @@ public class GameThread implements Runnable {
 			try {
 				int npcID = Integer.parseInt(packet.substring(5));
 				SocketManager.ENVIAR_ECK_PANEL_DE_INTERCAMBIOS(_out, 17, String.valueOf(npcID));
-				World.Trueque trueque = new World.Trueque(_perso, "", "resucitar");
+				Mundo.Trueque trueque = new Mundo.Trueque(_perso, "", "resucitar");
 				_perso.setTrueque(trueque);
 				_perso.setOcupado(true);
 			} catch (Exception npcID) {
@@ -2898,7 +2898,7 @@ public class GameThread implements Runnable {
 		case '0': {
 			try {
 				int npcID = Integer.parseInt(packet.substring(4));
-				NPC_tmpl.NPC npc = _perso.getMapa().getNPC(npcID);
+				NPCModelo.NPC npc = _perso.getMapa().getNPC(npcID);
 				if (npc == null) {
 					return;
 				}
@@ -2913,7 +2913,7 @@ public class GameThread implements Runnable {
 		case '1': {
 			try {
 				int idObjetivo = Integer.parseInt(packet.substring(4));
-				Personagens objetivo = World.getPersonaje(idObjetivo);
+				Personaje objetivo = Mundo.getPersonaje(idObjetivo);
 				if (objetivo == null || objetivo.getMapa() != _perso.getMapa() || !objetivo.enLinea()) {
 					SocketManager.ENVIAR_ERE_ERROR_CONSULTA(_out, 'E');
 					return;
@@ -2936,7 +2936,7 @@ public class GameThread implements Runnable {
 		case '4': {
 			try {
 				int idMercante = Integer.parseInt(packet.split("\\|")[1]);
-				Personagens mercante = World.getPersonaje(idMercante);
+				Personaje mercante = Mundo.getPersonaje(idMercante);
 				if (mercante == null) {
 					return;
 				}
@@ -2961,7 +2961,7 @@ public class GameThread implements Runnable {
 		case '8': {
 			try {
 				int recaudaID = Integer.parseInt(packet.substring(4));
-				Coletor recau = World.getRecaudador(recaudaID);
+				Recaudador recau = Mundo.getRecaudador(recaudaID);
 				if (recau == null || recau.getEstadoPelea() > 0 || recau.getEnRecolecta() || _perso.getGremio() == null
 						|| !_perso.getMiembroGremio().puede(Constantes.G_RECOLECTARRECAUDADOR)) {
 					return;
@@ -2995,7 +2995,7 @@ public class GameThread implements Runnable {
 				return;
 			}
 			int id = _perso.getObjetoARomper();
-			Objeto Obj = World.getObjeto(id);
+			Objeto Obj = Mundo.getObjeto(id);
 			if (Obj == null) {
 				return;
 			}
@@ -3008,10 +3008,10 @@ public class GameThread implements Runnable {
 					String runa = objLista[Fórmulas.getRandomValor(0, objLista.length - 1)];
 					int objModeloID = Integer.parseInt(runa.split(",")[0]);
 					int cantidad = Integer.parseInt(runa.split(",")[1]);
-					Objeto.ObjetoModelo ObjTemp = World.getObjModelo(objModeloID);
+					Objeto.ObjetoModelo ObjTemp = Mundo.getObjModelo(objModeloID);
 					Objeto nuevoObj = ObjTemp.crearObjDesdeModelo(cantidad, true);
 					if (!_perso.addObjetoSimilar(nuevoObj, true, -1)) {
-						World.addObjeto(nuevoObj, true);
+						Mundo.addObjeto(nuevoObj, true);
 						_perso.addObjetoPut(nuevoObj);
 						SocketManager.ENVIAR_OAKO_APARECER_OBJETO(_out, nuevoObj);
 					}
@@ -3020,9 +3020,9 @@ public class GameThread implements Runnable {
 					// empty catch block
 				}
 			}
-			if ((Obj2 = World.getObjeto(id)).getCantidad() == 1) {
+			if ((Obj2 = Mundo.getObjeto(id)).getCantidad() == 1) {
 				_perso.borrarObjetoSinEliminar(id);
-				World.eliminarObjeto(id);
+				Mundo.eliminarObjeto(id);
 				SocketManager.ENVIAR_OR_ELIMINAR_OBJETO(_out, id);
 			} else {
 				Obj2.setCantidad(Obj2.getCantidad() - 1);
@@ -3047,8 +3047,8 @@ public class GameThread implements Runnable {
 	private void intercambio_Aceptar() {
 		if (_perso.getIntercambiandoCon() != 0) {
 			if (_perso.getHaciendoTrabajo() != null) {
-				Profissao.AccionTrabajo trabajo = _perso.getHaciendoTrabajo();
-				Personagens artesano = World.getPersonaje(_perso.getIntercambiandoCon());
+				Oficio.AccionTrabajo trabajo = _perso.getHaciendoTrabajo();
+				Personaje artesano = Mundo.getPersonaje(_perso.getIntercambiandoCon());
 				try {
 					SocketManager.ENVIAR_ECK_PANEL_DE_INTERCAMBIOS(artesano.getCuenta().getEntradaPersonaje().getOut(),
 							12, String.valueOf(trabajo.getCasillasMax()) + ";" + trabajo.getIDTrabajo());
@@ -3060,7 +3060,7 @@ public class GameThread implements Runnable {
 					artesano.setIntercambiandoCon(0);
 					return;
 				}
-				World.InvitarTaller taller = new World.InvitarTaller(artesano, _perso, trabajo.getCasillasMax());
+				Mundo.InvitarTaller taller = new Mundo.InvitarTaller(artesano, _perso, trabajo.getCasillasMax());
 				try {
 					artesano.setTallerInvitado(taller);
 					_perso.setTallerInvitado(taller);
@@ -3069,7 +3069,7 @@ public class GameThread implements Runnable {
 					return;
 				}
 			}
-			Personagens pjInter = World.getPersonaje(_perso.getIntercambiandoCon());
+			Personaje pjInter = Mundo.getPersonaje(_perso.getIntercambiandoCon());
 			try {
 				SocketManager.ENVIAR_ECK_PANEL_DE_INTERCAMBIOS(pjInter.getCuenta().getEntradaPersonaje().getOut(), 1,
 						"");
@@ -3080,7 +3080,7 @@ public class GameThread implements Runnable {
 				pjInter.setIntercambiandoCon(0);
 				return;
 			}
-			World.Intercambio intercambio = new World.Intercambio(pjInter, _perso);
+			Mundo.Intercambio intercambio = new Mundo.Intercambio(pjInter, _perso);
 			try {
 				pjInter.setIntercambio(intercambio);
 				_perso.setIntercambio(intercambio);
@@ -3144,7 +3144,7 @@ public class GameThread implements Runnable {
 			return;
 		}
 		if (_perso.getTallerInvitado() != null) {
-			Personagens perso = World.getPersonaje(_perso.getIntercambiandoCon());
+			Personaje perso = Mundo.getPersonaje(_perso.getIntercambiandoCon());
 			if (perso != null && perso.enLinea()) {
 				PrintWriter out = perso.getCuenta().getEntradaPersonaje().getOut();
 				perso.setIntercambiandoCon(0);
@@ -3161,12 +3161,12 @@ public class GameThread implements Runnable {
 			return;
 		}
 		if (_perso.getHaciendoTrabajo() != null) {
-			Personagens perso;
+			Personaje perso;
 			_perso.getHaciendoTrabajo().resetReceta();
 			_perso.setOcupado(false);
 			_perso.setHaciendoTrabajo(null);
 			_perso.setIntercambiandoCon(0);
-			if (_perso.getIntercambiandoCon() > 0 && (perso = World.getPersonaje(_perso.getIntercambiandoCon())) != null
+			if (_perso.getIntercambiandoCon() > 0 && (perso = Mundo.getPersonaje(_perso.getIntercambiandoCon())) != null
 					&& perso.enLinea()) {
 				PrintWriter out = perso.getCuenta().getEntradaPersonaje().getOut();
 				perso.setHaciendoTrabajo(null);
@@ -3190,7 +3190,7 @@ public class GameThread implements Runnable {
 			return;
 		}
 		if (_perso.getIntercambiandoCon() > 0) {
-			Personagens perso = World.getPersonaje(_perso.getIntercambiandoCon());
+			Personaje perso = Mundo.getPersonaje(_perso.getIntercambiandoCon());
 			if (perso != null && perso.enLinea()) {
 				PrintWriter out = perso.getCuenta().getEntradaPersonaje().getOut();
 				perso.setIntercambiandoCon(0);
@@ -3205,15 +3205,15 @@ public class GameThread implements Runnable {
 			return;
 		}
 		if (_perso.getRecaudando()) {
-			Coletor recau = World.getRecaudador(_perso.getRecaudandoRecauID());
-			for (Personagens z : World.getGremio(recau.getGremioID()).getPjMiembros()) {
+			Recaudador recau = Mundo.getRecaudador(_perso.getRecaudandoRecauID());
+			for (Personaje z : Mundo.getGremio(recau.getGremioID()).getPjMiembros()) {
 				if (z == null || !z.enLinea())
 					continue;
-				SocketManager.ENVIAR_gITM_INFO_RECAUDADOR(z, Coletor.analizarRecaudadores(z.getGremio().getID()));
+				SocketManager.ENVIAR_gITM_INFO_RECAUDADOR(z, Recaudador.analizarRecaudadores(z.getGremio().getID()));
 				String str = "";
 				str = String.valueOf(str) + "G" + recau.getN1() + "," + recau.getN2();
-				str = String.valueOf(str) + "|.|" + World.getMapa(recau.getMapaID()).getX() + "|"
-						+ World.getMapa(recau.getMapaID()).getY() + "|";
+				str = String.valueOf(str) + "|.|" + Mundo.getMapa(recau.getMapaID()).getX() + "|"
+						+ Mundo.getMapa(recau.getMapaID()).getY() + "|";
 				str = String.valueOf(str) + _perso.getNombre() + "|";
 				str = String.valueOf(str) + recau.getXp();
 				if (!recau.stringObjetos().isEmpty()) {
@@ -3238,7 +3238,7 @@ public class GameThread implements Runnable {
 		switch (packet.charAt(2)) {
 		case 'F': {
 			int idOficio = Integer.parseInt(packet.substring(3));
-			for (Personagens artesano : World.getPJsEnLinea()) {
+			for (Personaje artesano : Mundo.getPJsEnLinea()) {
 				if (artesano.getStatsOficios().isEmpty())
 					continue;
 				String enviar = "";
@@ -3251,7 +3251,7 @@ public class GameThread implements Runnable {
 				short mapa = artesano.getMapa().getID();
 				int entaller = mapa == 8731 || mapa == 8732 ? 1 : 0;
 				int clase = artesano.getClase(true);
-				for (Profissao.StatsOficio oficio : artesano.getStatsOficios().values()) {
+				for (Oficio.StatsOficio oficio : artesano.getStatsOficios().values()) {
 					if (oficio.getOficio().getID() != idOficio)
 						continue;
 					enviar = "+" + oficio.getOficio().getID() + ";" + id + ";" + nombre + ";" + oficio.getNivel() + ";"
@@ -3269,7 +3269,7 @@ public class GameThread implements Runnable {
 		switch (packet.charAt(2)) {
 		case '+': {
 			_perso.setOficioPublico(true);
-			for (Profissao.StatsOficio oficio : _perso.getStatsOficios().values()) {
+			for (Oficio.StatsOficio oficio : _perso.getStatsOficios().values()) {
 				int idModOficio = oficio.getOficio().getID();
 				SocketManager.ENVIAR_Ej_AGREGAR_LIBRO_ARTESANO(_perso, "+" + idModOficio);
 			}
@@ -3282,7 +3282,7 @@ public class GameThread implements Runnable {
 		}
 		case '-': {
 			_perso.setOficioPublico(false);
-			for (Profissao.StatsOficio oficio : _perso.getStatsOficios().values()) {
+			for (Oficio.StatsOficio oficio : _perso.getStatsOficios().values()) {
 				SocketManager.ENVIAR_Ej_AGREGAR_LIBRO_ARTESANO(_perso, "-" + oficio.getOficio().getID());
 			}
 			SocketManager.ENVIAR_EW_OFICIO_MODO_PUBLICO(_out, "-");
@@ -3293,7 +3293,7 @@ public class GameThread implements Runnable {
 
 	private synchronized void intercambio_Mover_Objeto(String packet) {
 		if (_perso.getTallerInvitado() != null) {
-			World.InvitarTaller taller = _perso.getTallerInvitado();
+			Mundo.InvitarTaller taller = _perso.getTallerInvitado();
 			switch (packet.charAt(2)) {
 			case 'O': {
 				if (packet.charAt(3) == '+') {
@@ -3314,7 +3314,7 @@ public class GameThread implements Runnable {
 						if (!_perso.tieneObjetoID(id)) {
 							return;
 						}
-						Objeto obj = World.getObjeto(id);
+						Objeto obj = Mundo.getObjeto(id);
 						if (obj == null) {
 							return;
 						}
@@ -3337,7 +3337,7 @@ public class GameThread implements Runnable {
 					if (!_perso.tieneObjetoID(id)) {
 						return;
 					}
-					Objeto obj = World.getObjeto(id);
+					Objeto obj = Mundo.getObjeto(id);
 					if (obj == null) {
 						return;
 					}
@@ -3355,7 +3355,7 @@ public class GameThread implements Runnable {
 			return;
 		}
 		if (_perso.getRecaudando()) {
-			Coletor recaudador = World.getRecaudador(_perso.getRecaudandoRecauID());
+			Recaudador recaudador = Mundo.getRecaudador(_perso.getRecaudandoRecauID());
 			if (recaudador == null || recaudador.getEstadoPelea() > 0) {
 				return;
 			}
@@ -3390,7 +3390,7 @@ public class GameThread implements Runnable {
 				if (id <= 0 || cant <= 0) {
 					return;
 				}
-				Objeto obj = World.getObjeto(id);
+				Objeto obj = Mundo.getObjeto(id);
 				if (obj == null) {
 					return;
 				}
@@ -3414,7 +3414,7 @@ public class GameThread implements Runnable {
 							if (!_perso.tieneObjetoID(id)) {
 								return;
 							}
-							Objeto Obj = World.getObjeto(id);
+							Objeto Obj = Mundo.getObjeto(id);
 							if (Obj == null || Obj.getModelo().getTipo() == 18) {
 								return;
 							}
@@ -3433,7 +3433,7 @@ public class GameThread implements Runnable {
 							if (!_perso.tieneObjetoID(id)) {
 								return;
 							}
-							Objeto Obj = World.getObjeto(id);
+							Objeto Obj = Mundo.getObjeto(id);
 							if (Obj == null) {
 								return;
 							}
@@ -3448,7 +3448,7 @@ public class GameThread implements Runnable {
 					try {
 						int id = Integer.parseInt(Infos[0]);
 						int cantidad = Integer.parseInt(Infos[1]);
-						Objeto Obj = World.getObjeto(id);
+						Objeto Obj = Mundo.getObjeto(id);
 						if (Obj == null) {
 							return;
 						}
@@ -3486,7 +3486,7 @@ public class GameThread implements Runnable {
 				if (cantidad <= 0 || precio <= 0) {
 					return;
 				}
-				Mercador puesto = World.getPuestoMerca(Math.abs(_perso.getIntercambiandoCon()));
+				Mercadillo puesto = Mundo.getPuestoMerca(Math.abs(_perso.getIntercambiandoCon()));
 				int porcentaje = (int) ((float) precio * (puesto.getPorcentaje() / 100.0f));
 				if (!_perso.tieneObjetoID(objetoID)) {
 					return;
@@ -3501,7 +3501,7 @@ public class GameThread implements Runnable {
 				}
 				_perso.addKamas(porcentaje * -1);
 				SocketManager.ENVIAR_As_STATS_DEL_PJ(_perso);
-				Objeto obj = World.getObjeto(objetoID);
+				Objeto obj = Mundo.getObjeto(objetoID);
 				if (cantidad > obj.getCantidad()) {
 					return;
 				}
@@ -3514,10 +3514,10 @@ public class GameThread implements Runnable {
 					obj.setCantidad(obj.getCantidad() - cantReal);
 					SocketManager.ENVIAR_OQ_CAMBIA_CANTIDAD_DEL_OBJETO(_perso, obj);
 					Objeto nuevoObj = Objeto.clonarObjeto(obj, cantReal);
-					World.addObjeto(nuevoObj, true);
+					Mundo.addObjeto(nuevoObj, true);
 					obj = nuevoObj;
 				}
-				Mercador.ObjetoMercadillo objMerca = new Mercador.ObjetoMercadillo(precio, cantidad,
+				Mercadillo.ObjetoMercadillo objMerca = new Mercadillo.ObjetoMercadillo(precio, cantidad,
 						_perso.getCuenta().getID(), obj);
 				puesto.addObjMercaAlPuesto(objMerca);
 				SocketManager.ENVIAR_EmK_MOVER_OBJETO_DISTANTE(_out, '+', "", objMerca.analizarParaEmK());
@@ -3541,7 +3541,7 @@ public class GameThread implements Runnable {
 						if (!_perso.tieneObjetoID(id)) {
 							return;
 						}
-						Objeto obj = World.getObjeto(id);
+						Objeto obj = Mundo.getObjeto(id);
 						if (obj == null) {
 							return;
 						}
@@ -3559,7 +3559,7 @@ public class GameThread implements Runnable {
 						if (cantidad <= 0) {
 							return;
 						}
-						Objeto obj = World.getObjeto(id);
+						Objeto obj = Mundo.getObjeto(id);
 						if (obj == null) {
 							return;
 						}
@@ -3626,11 +3626,11 @@ public class GameThread implements Runnable {
 				if (id == 0 || cant2 <= 0) {
 					return;
 				}
-				if (World.getObjeto(id) == null) {
+				if (Mundo.getObjeto(id) == null) {
 					SocketManager.ENVIAR_BN_NADA(_out);
 					return;
 				}
-				int idModObj = World.getObjeto(id).getModelo().getID();
+				int idModObj = Mundo.getObjeto(id).getModelo().getID();
 				if (idModObj >= 7808 && idModObj <= 7876 && idModObj != 7864 && idModObj != 7865 && idModObj != 7819
 						&& idModObj != 7811 && idModObj != 7817) {
 					int color = Constantes.getColorDragoPavoPorPerga(idModObj);
@@ -3639,11 +3639,11 @@ public class GameThread implements Runnable {
 						return;
 					}
 					_perso.borrarObjetoSinEliminar(id);
-					World.eliminarObjeto(id);
+					Mundo.eliminarObjeto(id);
 					SocketManager.ENVIAR_OR_ELIMINAR_OBJETO(_out, id);
-					Objeto scroll = World.getObjModelo(idScroll).crearObjDesdeModelo(2, false);
+					Objeto scroll = Mundo.getObjModelo(idScroll).crearObjDesdeModelo(2, false);
 					if (!_perso.addObjetoSimilar(scroll, true, -1)) {
-						World.addObjeto(scroll, true);
+						Mundo.addObjeto(scroll, true);
 						_perso.addObjetoPut(scroll);
 						SocketManager.ENVIAR_OAKO_APARECER_OBJETO(_out, scroll);
 					}
@@ -3665,7 +3665,7 @@ public class GameThread implements Runnable {
 			return;
 		}
 		if (_perso.getMochilaMontura()) {
-			Dragossauros drago = _perso.getMontura();
+			Dragopavo drago = _perso.getMontura();
 			if (drago == null) {
 				return;
 			}
@@ -3682,7 +3682,7 @@ public class GameThread implements Runnable {
 				if (id == 0 || cant <= 0) {
 					return;
 				}
-				if (World.getObjeto(id) == null) {
+				if (Mundo.getObjeto(id) == null) {
 					SocketManager.ENVIAR_BN_NADA(_out);
 					return;
 				}
@@ -3732,7 +3732,7 @@ public class GameThread implements Runnable {
 					_perso.setKamas(_perso.getKamas() + kamas);
 					SocketManager.ENVIAR_As_STATS_DEL_PJ(_perso);
 				}
-				for (Personagens P : World.getPJsEnLinea()) {
+				for (Personaje P : Mundo.getPJsEnLinea()) {
 					if (P.getCofre() == null || _perso.getCofre().getID() != P.getCofre().getID())
 						continue;
 					SocketManager.ENVIAR_EsK_MOVER_A_TIENDA_COFRE_BANCO(P, "G" + cofre.getKamas());
@@ -3777,7 +3777,7 @@ public class GameThread implements Runnable {
 						if (!_perso.tieneObjetoID(id)) {
 							return;
 						}
-						Objeto obj = World.getObjeto(id);
+						Objeto obj = Mundo.getObjeto(id);
 						if (obj == null) {
 							return;
 						}
@@ -3800,7 +3800,7 @@ public class GameThread implements Runnable {
 					if (!_perso.tieneObjetoID(id)) {
 						return;
 					}
-					Objeto obj = World.getObjeto(id);
+					Objeto obj = Mundo.getObjeto(id);
 					if (obj == null) {
 						return;
 					}
@@ -3833,7 +3833,7 @@ public class GameThread implements Runnable {
 				int idObjeto = Integer.parseInt(packet.substring(4).split("\\|")[0]);
 				int cantidad = Integer.parseInt(packet.substring(4).split("\\|")[1]);
 				long precio = Long.parseLong(packet.substring(4).split("\\|")[2]);
-				if (!_perso.getTienda().contains(World.getObjeto(idObjeto))) {
+				if (!_perso.getTienda().contains(Mundo.getObjeto(idObjeto))) {
 					if (cantidad <= 0 || precio <= 0L || !_perso.tieneObjetoID(idObjeto)) {
 						return;
 					}
@@ -3841,7 +3841,7 @@ public class GameThread implements Runnable {
 						SocketManager.ENVIAR_Im_INFORMACION(_out, "176");
 						return;
 					}
-					Objeto obj = World.getObjeto(idObjeto);
+					Objeto obj = Mundo.getObjeto(idObjeto);
 					if (cantidad > obj.getCantidad()) {
 						return;
 					}
@@ -3853,11 +3853,11 @@ public class GameThread implements Runnable {
 						obj.setCantidad(sobrante);
 						SocketManager.ENVIAR_OQ_CAMBIA_CANTIDAD_DEL_OBJETO(_perso, obj);
 						Objeto nuevoObj = Objeto.clonarObjeto(obj, cantidad);
-						World.addObjeto(nuevoObj, true);
+						Mundo.addObjeto(nuevoObj, true);
 						obj = nuevoObj;
 					}
-					Stockage nuevoObjeto = new Stockage(idObjeto, precio, cantidad);
-					World.agregarTienda(nuevoObjeto, true);
+					Tienda nuevoObjeto = new Tienda(idObjeto, precio, cantidad);
+					Mundo.agregarTienda(nuevoObjeto, true);
 					String venta = String.valueOf(obj.getID()) + "|" + cantidad + "|" + obj.getModelo().getID() + "|"
 							+ obj.convertirStatsAString() + "|" + precio;
 					SocketManager.ENVIAR_EiK_MOVER_OBJETO_TIENDA(_out, '+', "", venta);
@@ -3867,7 +3867,7 @@ public class GameThread implements Runnable {
 				if (precio <= 0L) {
 					return;
 				}
-				Objeto obj = World.getObjeto(idObjeto);
+				Objeto obj = Mundo.getObjeto(idObjeto);
 				String venta = String.valueOf(idObjeto) + "|" + cantidad + "|" + obj.getModelo().getID() + "|"
 						+ obj.convertirStatsAString() + "|" + precio;
 				SocketManager.ENVIAR_EiK_MOVER_OBJETO_TIENDA(_out, '+', "", venta);
@@ -3879,7 +3879,7 @@ public class GameThread implements Runnable {
 		if (_perso.getIntercambio() == null) {
 			return;
 		}
-		World.Intercambio inter = _perso.getIntercambio();
+		Mundo.Intercambio inter = _perso.getIntercambio();
 		switch (packet.charAt(2)) {
 		case 'O': {
 			if (packet.charAt(3) == '+') {
@@ -3900,7 +3900,7 @@ public class GameThread implements Runnable {
 					if (!_perso.tieneObjetoID(id)) {
 						return;
 					}
-					Objeto obj = World.getObjeto(id);
+					Objeto obj = Mundo.getObjeto(id);
 					if (obj == null) {
 						return;
 					}
@@ -3923,7 +3923,7 @@ public class GameThread implements Runnable {
 				if (!_perso.tieneObjetoID(id)) {
 					return;
 				}
-				Objeto obj = World.getObjeto(id);
+				Objeto obj = Mundo.getObjeto(id);
 				if (obj == null) {
 					return;
 				}
@@ -3959,7 +3959,7 @@ public class GameThread implements Runnable {
 		int tipoPago = Integer.parseInt(packet.substring(2, 3));
 		char caracter = packet.charAt(3);
 		char signo = packet.charAt(4);
-		World.InvitarTaller taller = _perso.getTallerInvitado();
+		Mundo.InvitarTaller taller = _perso.getTallerInvitado();
 		if (caracter == 'G') {
 			long kamas = Long.parseLong(packet.substring(4));
 			_perso.getTallerInvitado().setKamas(tipoPago, kamas, _perso.getKamas());
@@ -3981,7 +3981,7 @@ public class GameThread implements Runnable {
 				if (!_perso.tieneObjetoID(id)) {
 					return;
 				}
-				Objeto obj = World.getObjeto(id);
+				Objeto obj = Mundo.getObjeto(id);
 				if (obj == null) {
 					return;
 				}
@@ -4003,7 +4003,7 @@ public class GameThread implements Runnable {
 				if (!_perso.tieneObjetoID(id)) {
 					return;
 				}
-				Objeto obj = World.getObjeto(id);
+				Objeto obj = Mundo.getObjeto(id);
 				if (obj == null) {
 					return;
 				}
@@ -4030,7 +4030,7 @@ public class GameThread implements Runnable {
 	}
 
 	private synchronized void intercambio_Ok_Mercante() {
-		Maps mapa = _perso.getMapa();
+		Mapa mapa = _perso.getMapa();
 		int tasa = _perso.getNivel() / 2;
 		long pagar = _perso.precioTotalTienda() * (long) tasa / 1000L;
 		long kamas = _perso.getKamas();
@@ -4059,7 +4059,7 @@ public class GameThread implements Runnable {
 		switch (packet.charAt(2)) {
 		case 'B': {
 			String[] info = packet.substring(3).split("\\|");
-			Mercador puesto = World.getPuestoMerca(Math.abs(_perso.getIntercambiandoCon()));
+			Mercadillo puesto = Mundo.getPuestoMerca(Math.abs(_perso.getIntercambiandoCon()));
 			int lineaID = Integer.parseInt(info[0]);
 			int cantidad = Integer.parseInt(info[1]);
 			if (puesto.comprarObjeto(lineaID, cantidad, Integer.parseInt(info[2]), _perso)) {
@@ -4078,7 +4078,7 @@ public class GameThread implements Runnable {
 		case 'l': {
 			int modeloId = Integer.parseInt(packet.substring(3));
 			try {
-				SocketManager.GAME_SEND_EHl(_perso, World.getPuestoMerca(Math.abs(_perso.getIntercambiandoCon())),
+				SocketManager.GAME_SEND_EHl(_perso, Mundo.getPuestoMerca(Math.abs(_perso.getIntercambiandoCon())),
 						modeloId);
 			} catch (NullPointerException e) {
 				SocketManager.GAME_SEND_EHM_PACKET(_perso, "-", String.valueOf(modeloId));
@@ -4092,7 +4092,7 @@ public class GameThread implements Runnable {
 		}
 		case 'T': {
 			int categoria = Integer.parseInt(packet.substring(3));
-			String todosModelos = World.getPuestoMerca(Math.abs(_perso.getIntercambiandoCon())).stringModelo(categoria);
+			String todosModelos = Mundo.getPuestoMerca(Math.abs(_perso.getIntercambiandoCon())).stringModelo(categoria);
 			SocketManager.GAME_SEND_EHL_PACKET(_perso, categoria, todosModelos);
 		}
 		}
@@ -4115,7 +4115,7 @@ public class GameThread implements Runnable {
 			}
 			switch (c) {
 			case 'g': {
-				Dragossauros DP3 = World.getDragopavoPorID(id);
+				Dragopavo DP3 = Mundo.getDragopavoPorID(id);
 				if (!_cuenta.getEstablo().contains(DP3)) {
 					_cuenta.getEstablo().add(DP3);
 				}
@@ -4130,11 +4130,11 @@ public class GameThread implements Runnable {
 						crias = 20 - DP3.getReprod();
 					}
 					SocketManager.ENVIAR_Im_INFORMACION(_out, "1111;" + crias);
-					Dragossauros DragoPadre = World.getDragopavoPorID(DP3.getPareja());
+					Dragopavo DragoPadre = Mundo.getDragopavoPorID(DP3.getPareja());
 					for (int i = 0; i < crias; ++i) {
 						int color = DragoPadre != null ? Constantes.colorCria(DP3.getColor(), DragoPadre.getColor())
 								: Constantes.colorCria(DP3.getColor(), DP3.getColor());
-						Dragossauros drago = new Dragossauros(color, DP3, DragoPadre);
+						Dragopavo drago = new Dragopavo(color, DP3, DragoPadre);
 						SocketManager.ENVIAR_Ee_MONTURA_A_ESTABLO(_perso, '~', drago.detallesMontura());
 						DP3.aumReproduccion();
 						_cuenta.getEstablo().add(drago);
@@ -4155,7 +4155,7 @@ public class GameThread implements Runnable {
 				break;
 			}
 			case 'p': {
-				Maps mapa = _perso.getMapa();
+				Mapa mapa = _perso.getMapa();
 				if (mapa.getCercado().getListaCriando().size() >= mapa.getCercado().getTama\u00f1o()) {
 					SocketManager.ENVIAR_Im_INFORMACION(_out, "1107");
 					return;
@@ -4169,7 +4169,7 @@ public class GameThread implements Runnable {
 					}
 					_perso.setMontura(null);
 				}
-				Dragossauros DP2 = World.getDragopavoPorID(id);
+				Dragopavo DP2 = Mundo.getDragopavoPorID(id);
 				DP2.setDue\u00f1o(_perso.getID());
 				_cuenta.getEstablo().remove(DP2);
 				mapa.getCercado().addCriando(id);
@@ -4202,19 +4202,19 @@ public class GameThread implements Runnable {
 				if (id == -1 || !_perso.tieneObjetoID(id)) {
 					return;
 				}
-				Objeto obj = World.getObjeto(id);
+				Objeto obj = Mundo.getObjeto(id);
 				int DPid = obj.getStats().getEfecto(995);
-				Dragossauros DP = World.getDragopavoPorID(-DPid);
+				Dragopavo DP = Mundo.getDragopavoPorID(-DPid);
 				if (DP == null) {
 					int color = Constantes.getColorDragoPavoPorPerga(obj.getModelo().getID());
 					if (color < 1) {
 						return;
 					}
-					DP = new Dragossauros(color, _perso.getID());
+					DP = new Dragopavo(color, _perso.getID());
 				}
 				if (obj.getCantidad() == 1) {
 					_perso.borrarObjetoSinEliminar(id);
-					World.eliminarObjeto(id);
+					Mundo.eliminarObjeto(id);
 					SocketManager.ENVIAR_OR_ELIMINAR_OBJETO(_out, id);
 				} else {
 					obj.setCantidad(obj.getCantidad() - 1);
@@ -4232,11 +4232,11 @@ public class GameThread implements Runnable {
 						crias = 20 - DP.getReprod();
 					}
 					SocketManager.ENVIAR_Im_INFORMACION(_out, "1111;" + crias);
-					Dragossauros DragoPadre = World.getDragopavoPorID(DP.getPareja());
+					Dragopavo DragoPadre = Mundo.getDragopavoPorID(DP.getPareja());
 					for (int i = 0; i < crias; ++i) {
 						int color = DragoPadre != null ? Constantes.colorCria(DP.getColor(), DragoPadre.getColor())
 								: Constantes.colorCria(DP.getColor(), DP.getColor());
-						Dragossauros Drago = new Dragossauros(color, DP, DragoPadre);
+						Dragopavo Drago = new Dragopavo(color, DP, DragoPadre);
 						SocketManager.ENVIAR_Ee_MONTURA_A_ESTABLO(_perso, '~', Drago.detallesMontura());
 						DP.aumReproduccion();
 						_cuenta.getEstablo().add(Drago);
@@ -4255,14 +4255,14 @@ public class GameThread implements Runnable {
 				break;
 			}
 			case 'c': {
-				Dragossauros DP1 = World.getDragopavoPorID(id);
+				Dragopavo DP1 = Mundo.getDragopavoPorID(id);
 				if (!_cuenta.getEstablo().contains(DP1) || DP1 == null) {
 					return;
 				}
 				_cuenta.getEstablo().remove(DP1);
 				Objeto.ObjetoModelo OM = Constantes.getPergaPorColorDragopavo(DP1.getColor());
 				Objeto obj1 = OM.crearObjDesdeModelo(1, false);
-				World.addObjeto(obj1, true);
+				Mundo.addObjeto(obj1, true);
 				obj1.clearTodo();
 				obj1.getStats().addStat(995, -DP1.getID());
 				obj1.addTextoStat(996, _perso.getNombre());
@@ -4274,7 +4274,7 @@ public class GameThread implements Runnable {
 				break;
 			}
 			case 'g': {
-				Dragossauros DP3 = World.getDragopavoPorID(id);
+				Dragopavo DP3 = Mundo.getDragopavoPorID(id);
 				if (!_cuenta.getEstablo().contains(DP3) || DP3 == null) {
 					SocketManager.ENVIAR_Im_INFORMACION(_out, "1104");
 					return;
@@ -4293,7 +4293,7 @@ public class GameThread implements Runnable {
 			case 'p': {
 				if (_perso.getMontura() == null || _perso.getMontura().getID() != id)
 					break;
-				Dragossauros DP2 = _perso.getMontura();
+				Dragopavo DP2 = _perso.getMontura();
 				if (DP2.getObjetos().size() == 0) {
 					if (_perso.estaMontando()) {
 						_perso.subirBajarMontura();
@@ -4311,11 +4311,11 @@ public class GameThread implements Runnable {
 							crias = 20 - DP2.getReprod();
 						}
 						SocketManager.ENVIAR_Im_INFORMACION(_out, "1111;" + crias);
-						Dragossauros DragoPadre = World.getDragopavoPorID(DP2.getPareja());
+						Dragopavo DragoPadre = Mundo.getDragopavoPorID(DP2.getPareja());
 						for (int i = 0; i < crias; ++i) {
 							int color = DragoPadre != null ? Constantes.colorCria(DP2.getColor(), DragoPadre.getColor())
 									: Constantes.colorCria(DP2.getColor(), DP2.getColor());
-							Dragossauros Drago = new Dragossauros(color, DP2, DragoPadre);
+							Dragopavo Drago = new Dragopavo(color, DP2, DragoPadre);
 							SocketManager.ENVIAR_Ee_MONTURA_A_ESTABLO(_perso, '~', Drago.detallesMontura());
 							DP2.aumReproduccion();
 							_cuenta.getEstablo().add(Drago);
@@ -4378,17 +4378,17 @@ public class GameThread implements Runnable {
 					if (cantidad <= 0 || idObjModelo <= 0) {
 						return;
 					}
-					Objeto.ObjetoModelo objModelo = World.getObjModelo(idObjModelo);
+					Objeto.ObjetoModelo objModelo = Mundo.getObjModelo(idObjModelo);
 					if (objModelo == null) {
 						SocketManager.ENVIAR_EBE_ERROR_DE_COMPRA(_out);
 						return;
 					}
-					NPC_tmpl.NPC npc = _perso.getMapa().getNPC(_perso.getIntercambiandoCon());
+					NPCModelo.NPC npc = _perso.getMapa().getNPC(_perso.getIntercambiandoCon());
 					if (npc == null) {
 						SocketManager.ENVIAR_EBE_ERROR_DE_COMPRA(_out);
 						return;
 					}
-					NPC_tmpl npcMod = npc.getModeloBD();
+					NPCModelo npcMod = npc.getModeloBD();
 					if (npcMod == null || !npcMod.tieneObjeto(idObjModelo)) {
 						SocketManager.ENVIAR_EBE_ERROR_DE_COMPRA(_out);
 						return;
@@ -4426,7 +4426,7 @@ public class GameThread implements Runnable {
 					Objeto nuevoObj = null;
 					nuevoObj = objModelo.crearObjDesdeModelo(cantidad, false);
 					if (!_perso.addObjetoSimilar(nuevoObj, true, -1)) {
-						World.addObjeto(nuevoObj, true);
+						Mundo.addObjeto(nuevoObj, true);
 						_perso.addObjetoPut(nuevoObj);
 						SocketManager.ENVIAR_OAKO_APARECER_OBJETO(_out, nuevoObj);
 					}
@@ -4439,15 +4439,15 @@ public class GameThread implements Runnable {
 					return;
 				}
 			}
-			Personagens mercante = World.getPersonaje(_perso.getIntercambiandoCon());
+			Personaje mercante = Mundo.getPersonaje(_perso.getIntercambiandoCon());
 			try {
 				int id = Integer.parseInt(infos[0]);
 				int cant = Integer.parseInt(infos[1]);
 				if (cant <= 0) {
 					return;
 				}
-				Objeto objeto = World.getObjeto(id);
-				Stockage tienda = World.getObjTienda(id);
+				Objeto objeto = Mundo.getObjeto(id);
+				Tienda tienda = Mundo.getObjTienda(id);
 				if (objeto == null || tienda == null) {
 					SocketManager.ENVIAR_EBE_ERROR_DE_COMPRA(_out);
 					return;
@@ -4464,7 +4464,7 @@ public class GameThread implements Runnable {
 					mercante.setKamas(mercante.getKamas() + precio);
 					mercante.borrarObjTienda(objeto);
 					if (_perso.addObjetoSimilar(objeto, true, -1)) {
-						World.eliminarObjeto(id);
+						Mundo.eliminarObjeto(id);
 					} else {
 						_perso.addObjetoPut(objeto);
 						SocketManager.ENVIAR_OAKO_APARECER_OBJETO(_out, objeto);
@@ -4492,7 +4492,7 @@ public class GameThread implements Runnable {
 					_perso.setKamas(nuevasKamas);
 					mercante.setKamas(mercante.getKamas() + precio);
 					if (!_perso.addObjetoSimilar(nuevoObj, true, id)) {
-						World.addObjeto(nuevoObj, true);
+						Mundo.addObjeto(nuevoObj, true);
 						_perso.addObjetoPut(nuevoObj);
 						SocketManager.ENVIAR_OAKO_APARECER_OBJETO(_out, nuevoObj);
 					}
@@ -4550,14 +4550,14 @@ public class GameThread implements Runnable {
 		} else if (emote == 21) {
 			tiempo = "5000";
 		}
-		Maps.Cercado cercado = _perso.getMapa().getCercado();
+		Mapa.Cercado cercado = _perso.getMapa().getCercado();
 		SocketManager.ENVIAR_eUK_EMOTE_MAPA(_perso.getMapa(), _perso.getID(), emote, tiempo);
 		if ((emote == 2 || emote == 4 || emote == 3 || emote == 6 || emote == 8 || emote == 10) && cercado != null) {
-			ArrayList<Dragossauros> pavos = new ArrayList<Dragossauros>();
+			ArrayList<Dragopavo> pavos = new ArrayList<Dragopavo>();
 			for (int pavo : cercado.getListaCriando()) {
-				if (World.getDragopavoPorID(pavo).getDue\u00f1o() != _perso.getID())
+				if (Mundo.getDragopavoPorID(pavo).getDue\u00f1o() != _perso.getID())
 					continue;
-				pavos.add(World.getDragopavoPorID(pavo));
+				pavos.add(Mundo.getDragopavoPorID(pavo));
 			}
 			if (pavos.size() > 0) {
 				int casillas = 0;
@@ -4578,7 +4578,7 @@ public class GameThread implements Runnable {
 				}
 				}
 				boolean alejar = emote != 2 && emote != 3 && emote != 10;
-				Dragossauros dragopavo = (Dragossauros) pavos.get(Fórmulas.getRandomValor(0, pavos.size() - 1));
+				Dragopavo dragopavo = (Dragopavo) pavos.get(Fórmulas.getRandomValor(0, pavos.size() - 1));
 				dragopavo.moverMontura(_perso, casillas, alejar);
 			}
 		}
@@ -4617,7 +4617,7 @@ public class GameThread implements Runnable {
 		try {
 			int hechizoID = Integer.parseInt(packet.substring(2).split("\\|")[0]);
 			int posicion = Integer.parseInt(packet.substring(2).split("\\|")[1]);
-			Spell.StatsHechizos hechizo = _perso.getStatsHechizo(hechizoID);
+			Hechizo.StatsHechizos hechizo = _perso.getStatsHechizo(hechizoID);
 			if (hechizo != null) {
 				_perso.setPosHechizo(hechizoID, CryptManager.getValorHashPorNumero(posicion));
 				if (hechizoID == 183 && posicion == 12) {
@@ -4658,7 +4658,7 @@ public class GameThread implements Runnable {
 	}
 
 	private void analizar_Peleas(String packet) {
-		Fight pelea = _perso.getPelea();
+		Combate pelea = _perso.getPelea();
 		switch (packet.charAt(1)) {
 		case 'D': {
 			short key = -1;
@@ -4773,7 +4773,7 @@ public class GameThread implements Runnable {
 	private void basicos_Chat(String packet) {
 		String mensajeC = "";
 		if (_perso.estaMuteado()) {
-			Conta cuenta = _perso.getCuenta();
+			Cuenta cuenta = _perso.getCuenta();
 			long tiempoTrans = System.currentTimeMillis() - cuenta._horaMuteada;
 			if (tiempoTrans > cuenta._tiempoMuteado) {
 				cuenta.mutear(false, 0);
@@ -4800,7 +4800,7 @@ public class GameThread implements Runnable {
 			}
 			if (mensajeC.charAt(0) == '.') {
 				try {
-					Fight pelea;
+					Combate pelea;
 					String[] infos;
 					String mensaje;
 					if (mensajeC.length() > 4 && mensajeC.substring(1, 5).equalsIgnoreCase("shop")) {
@@ -4851,7 +4851,7 @@ public class GameThread implements Runnable {
 						SQLManager.CARGAR_PERSONAJES_POR_CUENTA(_cuenta);
 						String pjs = "";
 						boolean primero = false;
-						for (Personagens perso : _cuenta.getPersonajes().values()) {
+						for (Personaje perso : _cuenta.getPersonajes().values()) {
 							if (primero) {
 								pjs = String.valueOf(pjs) + ",";
 							}
@@ -4867,7 +4867,7 @@ public class GameThread implements Runnable {
 							mensajeC = mensajeC.substring(0, mensajeC.length() - 1);
 							String[] r = mensajeC.split(" ", 3);
 							String nombreVictima = r[1];
-							Personagens victima = World.getPjPorNombre(nombreVictima);
+							Personaje victima = Mundo.getPjPorNombre(nombreVictima);
 							if (victima == null || !victima.enLinea()) {
 								SocketManager.ENVIAR_Im1223_MENSAJE_IMBORRABLE(_out, "O personagem n\u00e3o existe.");
 								return;
@@ -4890,12 +4890,12 @@ public class GameThread implements Runnable {
 								return;
 							}
 							_perso.setKamas(_perso.getKamas() - (long) (kamas + impuesto));
-							Objeto.ObjetoModelo objModelo = World.getObjModelo(9995);
+							Objeto.ObjetoModelo objModelo = Mundo.getObjModelo(9995);
 							Objeto nuevoObj = objModelo.crearObjDesdeModelo(10, false);
 							nuevoObj.addTextoStat(989, victima.getNombre());
 							nuevoObj.addTextoStat(962, Integer.toHexString(victima.getNivel()));
 							nuevoObj.addStat(194, kamas);
-							World.addObjeto(nuevoObj, true);
+							Mundo.addObjeto(nuevoObj, true);
 							_perso.addObjetoPut(nuevoObj);
 							SocketManager.ENVIAR_OAKO_APARECER_OBJETO(_out, nuevoObj);
 							SocketManager.ENVIAR_Im_INFORMACION(_perso, "021;10~9995");
@@ -4916,7 +4916,7 @@ public class GameThread implements Runnable {
 						mensaje = mensajeC.split(" ", 2)[1];
 						String mensajet = mensaje.substring(0, mensaje.length() - 1);
 						short mapaID = (short) Integer.parseInt(mensajet);
-						Maps mapa = World.getMapa(mapaID);
+						Mapa mapa = Mundo.getMapa(mapaID);
 						if (mapa == null) {
 							SocketManager.ENVIAR_BN_NADA(_out);
 							return;
@@ -4948,7 +4948,7 @@ public class GameThread implements Runnable {
 						mensaje = mensajeC.split(" ", 2)[1];
 						String mensajet = mensaje.substring(0, mensaje.length() - 1);
 						short mapaID = (short) Integer.parseInt(mensajet);
-						Maps mapa = World.getMapa(mapaID);
+						Mapa mapa = Mundo.getMapa(mapaID);
 						if (mapa == null) {
 							SocketManager.ENVIAR_BN_NADA(_out);
 							return;
@@ -5116,7 +5116,7 @@ public class GameThread implements Runnable {
 					if (mensajeC.length() > 4 && mensajeC.substring(1, 5).equalsIgnoreCase("vida")
 							&& _cuenta.getVIP() >= 1) {
 						int count = 100;
-						Personagens perso = _perso;
+						Personaje perso = _perso;
 						int newPDV = perso.getPDVMAX() * count / 100;
 						perso.setPDV(newPDV);
 						if (perso.enLinea()) {
@@ -5182,18 +5182,18 @@ public class GameThread implements Runnable {
 					if (mensajeC.length() > 5 && mensajeC.substring(1, 6).equalsIgnoreCase("staff")) {
 						String staff = "<b>Membros da staff ON:</b>\n";
 						boolean allOffline = true;
-						for (int i = 0; i < World.getPJsEnLinea().size(); ++i) {
-							if (World.getPJsEnLinea().get(i).getCuenta().getRango() <= 0)
+						for (int i = 0; i < Mundo.getPJsEnLinea().size(); ++i) {
+							if (Mundo.getPJsEnLinea().get(i).getCuenta().getRango() <= 0)
 								continue;
-							staff = String.valueOf(staff) + "<b>@</b> " + World.getPJsEnLinea().get(i).getNombre()
+							staff = String.valueOf(staff) + "<b>@</b> " + Mundo.getPJsEnLinea().get(i).getNombre()
 									+ " (";
-							staff = World.getPJsEnLinea().get(i).getCuenta().getRango() == 2
+							staff = Mundo.getPJsEnLinea().get(i).getCuenta().getRango() == 2
 									? String.valueOf(staff) + "<b>Moderador</b>)"
-									: (World.getPJsEnLinea().get(i).getCuenta().getRango() == 3
+									: (Mundo.getPJsEnLinea().get(i).getCuenta().getRango() == 3
 											? String.valueOf(staff) + "<b>Game Master</b>)"
-											: (World.getPJsEnLinea().get(i).getCuenta().getRango() == 4
+											: (Mundo.getPJsEnLinea().get(i).getCuenta().getRango() == 4
 													? String.valueOf(staff) + "<b>Designer</b>)"
-													: (World.getPJsEnLinea().get(i).getCuenta().getRango() == 5
+													: (Mundo.getPJsEnLinea().get(i).getCuenta().getRango() == 5
 															? String.valueOf(staff) + "<b>Administrador</b>)"
 															: String.valueOf(staff) + "Undefined.")));
 							staff = String.valueOf(staff) + "\n";
@@ -5220,7 +5220,7 @@ public class GameThread implements Runnable {
 							SocketManager.ENVIAR_BN_NADA(_out);
 							return;
 						}
-						Fight.Luchador luchador = pelea.getLuchadorPorPJ(_perso);
+						Combate.Luchador luchador = pelea.getLuchadorPorPJ(_perso);
 						if (!luchador.puedeJugar()) {
 							SocketManager.ENVIAR_BN_NADA(_out);
 							return;
@@ -5374,12 +5374,12 @@ public class GameThread implements Runnable {
 			mensajeC = packet.split("\\|", 2)[1];
 			if (nombre.length() <= 1)
 				break;
-			Personagens perso = World.getPjPorNombre(nombre);
+			Personaje perso = Mundo.getPjPorNombre(nombre);
 			if (perso == null || !perso.enLinea()) {
 				SocketManager.ENVIAR_cMEf_CHAT_ERROR(_out, nombre);
 				return;
 			}
-			Conta cuenta = perso.getCuenta();
+			Cuenta cuenta = perso.getCuenta();
 			if (cuenta == null) {
 				SocketManager.ENVIAR_cMEf_CHAT_ERROR(_out, nombre);
 				return;
@@ -5405,7 +5405,7 @@ public class GameThread implements Runnable {
 	}
 
 	private void basicos_Mensaje_Informacion(String packet) {
-		Personagens perso = World.getPjPorNombre(packet = packet.substring(2));
+		Personaje perso = Mundo.getPjPorNombre(packet = packet.substring(2));
 		if (perso == null || !perso.enLinea()) {
 			SocketManager.ENVIAR_BN_NADA(_out);
 			return;
@@ -5466,7 +5466,7 @@ public class GameThread implements Runnable {
 			break;
 		}
 		case 't': {
-			Fight pelea = _perso.getPelea();
+			Combate pelea = _perso.getPelea();
 			if (pelea == null) {
 				return;
 			}
@@ -5498,7 +5498,7 @@ public class GameThread implements Runnable {
 	}
 
 	private void juego_Retirar_Pelea(String packet) {
-		Fight pelea;
+		Combate pelea;
 		int objetivoID = -1;
 		if (!packet.substring(2).isEmpty()) {
 			try {
@@ -5511,7 +5511,7 @@ public class GameThread implements Runnable {
 			return;
 		}
 		if (objetivoID > 0) {
-			Personagens expulsado = World.getPersonaje(objetivoID);
+			Personaje expulsado = Mundo.getPersonaje(objetivoID);
 			if (expulsado == null || expulsado.getPelea() == null
 					|| expulsado.getPelea().getParamEquipo(expulsado.getID()) != pelea.getParamEquipo(_perso.getID())) {
 				return;
@@ -5539,7 +5539,7 @@ public class GameThread implements Runnable {
 	}
 
 	private void juego_Listo(String packet) {
-		Fight pelea = _perso.getPelea();
+		Combate pelea = _perso.getPelea();
 		if (pelea == null || pelea.getEstado() != 2) {
 			return;
 		}
@@ -5582,17 +5582,17 @@ public class GameThread implements Runnable {
 			if (esOk) {
 				if (_perso.getPelea() == null) {
 					String path = AJ._args;
-					Maps mapa = _perso.getMapa();
-					Maps.Celda sigCelda = mapa.getCelda(CryptManager.celdaCodigoAID(path.substring(path.length() - 2)));
+					Mapa mapa = _perso.getMapa();
+					Mapa.Celda sigCelda = mapa.getCelda(CryptManager.celdaCodigoAID(path.substring(path.length() - 2)));
 					if (sigCelda == null) {
 						SocketManager.ENVIAR_BN_NADA(_out);
 						return;
 					}
-					Maps.Celda celdaObjetivo = mapa
+					Mapa.Celda celdaObjetivo = mapa
 							.getCelda(CryptManager.celdaCodigoAID(AJ._packet.substring(AJ._packet.length() - 2)));
 					_perso.setCelda(sigCelda);
 					_perso.setOrientacion((byte) CryptManager.getNumeroPorValorHash(path.charAt(path.length() - 3)));
-					Maps.ObjetoInteractivo objeto = null;
+					Mapa.ObjetoInteractivo objeto = null;
 					if (celdaObjetivo != null) {
 						objeto = celdaObjetivo.getObjetoInterac();
 					}
@@ -5621,7 +5621,7 @@ public class GameThread implements Runnable {
 			if (nuevaCeldaID == -1) {
 				return;
 			}
-			Maps.Celda celda = _perso.getMapa().getCelda(nuevaCeldaID);
+			Mapa.Celda celda = _perso.getMapa().getCelda(nuevaCeldaID);
 			String path = AJ._args;
 			_perso.setCelda(celda);
 			_perso.setOrientacion((byte) CryptManager.getNumeroPorValorHash(path.charAt(path.length() - 3)));
@@ -5662,7 +5662,7 @@ public class GameThread implements Runnable {
 			_perso.setDefendiendo(false);
 			return;
 		}
-		Maps mapa = _perso.getMapa();
+		Mapa mapa = _perso.getMapa();
 		if (_perso.getMapaDefPerco() != null) {
 			_perso.setMapa(_perso.getMapaDefPerco());
 			SocketManager.ENVIAR_GM_BORRAR_PJ_A_TODOS(mapa, _perso.getID());
@@ -5684,7 +5684,7 @@ public class GameThread implements Runnable {
 		SocketManager.ENVIAR_GDO_OBJETOS_CRIAS_EN_MAPA(_out, mapa);
 		SocketManager.ENVIAR_ILS_TIEMPO_REGENERAR_VIDA(_out, 1000);
 		Casa.cargarCasa(_perso, mapa.getID());
-		Fight.agregarEspadaDePelea(mapa, _perso);
+		Combate.agregarEspadaDePelea(mapa, _perso);
 		mapa.objetosTirados(_perso);
 		if (mapa.esTaller() && _perso.getOficioPublico()) {
 			SocketManager.ENVIAR_EW_OFICIO_MODO_INVITACION(_out, "+", _perso.getID(),
@@ -5733,16 +5733,16 @@ public class GameThread implements Runnable {
 		case 618: {
 			_perso.setEsOK(Integer.parseInt(packet.substring(5, 6)));
 			SocketManager.ENVIAR_cMK_CHAT_MENSAJE_MAPA(_perso.getMapa(), "", _perso.getID(), _perso.getNombre(), "Oui");
-			if (World.getCasado(0).getEsOK() <= 0 || World.getCasado(1).getEsOK() <= 0)
+			if (Mundo.getCasado(0).getEsOK() <= 0 || Mundo.getCasado(1).getEsOK() <= 0)
 				break;
-			World.casando(World.getCasado(0), World.getCasado(1), 1);
+			Mundo.casando(Mundo.getCasado(0), Mundo.getCasado(1), 1);
 			break;
 		}
 		case 619: {
 			_perso.setEsOK(0);
 			SocketManager.ENVIAR_cMK_CHAT_MENSAJE_MAPA(_perso.getMapa(), "", _perso.getID(), _perso.getNombre(),
 					"Non, d\u00e9sol\u00e9");
-			World.casando(World.getCasado(0), World.getCasado(1), 0);
+			Mundo.casando(Mundo.getCasado(0), Mundo.getCasado(1), 0);
 			break;
 		}
 		case 900: {
@@ -5789,7 +5789,7 @@ public class GameThread implements Runnable {
 				return;
 			}
 			int id = Integer.parseInt(packet.substring(5));
-			Coletor recaudador = World.getRecaudador(id);
+			Recaudador recaudador = Mundo.getRecaudador(id);
 			if (recaudador == null || recaudador.getEstadoPelea() > 0) {
 				return;
 			}
@@ -5813,7 +5813,7 @@ public class GameThread implements Runnable {
 				return;
 			}
 			int id = Integer.parseInt(packet.substring(5));
-			Prisma prisma = World.getPrisma(id);
+			Prisma prisma = Mundo.getPrisma(id);
 			if (prisma.getEstadoPelea() == 0 || prisma.getEstadoPelea() == -2) {
 				return;
 			}
@@ -5833,8 +5833,8 @@ public class GameThread implements Runnable {
 				return;
 			}
 			int id = Integer.parseInt(packet.substring(5));
-			Personagens agredido = World.getPersonaje(id);
-			Maps mapa = _perso.getMapa();
+			Personaje agredido = Mundo.getPersonaje(id);
+			Mapa mapa = _perso.getMapa();
 			if (agredido == null || !agredido.enLinea() || agredido.esFantasma() || agredido.getPelea() != null
 					|| agredido.estaOcupado() || agredido.getMapa().getID() != mapa.getID()
 					|| agredido.getAlineacion() == _perso.getAlineacion()) {
@@ -5904,9 +5904,9 @@ public class GameThread implements Runnable {
 			String[] splt = packet.split(";");
 			int hechizoID = Integer.parseInt(splt[0].substring(5));
 			short celdaID = Short.parseShort(splt[1]);
-			Fight pelea = _perso.getPelea();
+			Combate pelea = _perso.getPelea();
 			if (pelea != null) {
-				Spell.StatsHechizos SH = _perso.getStatsHechizo(hechizoID);
+				Hechizo.StatsHechizos SH = _perso.getStatsHechizo(hechizoID);
 				if (SH == null) {
 					return;
 				}
@@ -5925,7 +5925,7 @@ public class GameThread implements Runnable {
 					SocketManager.ENVIAR_GA903_ERROR_PELEA(_out, 'o');
 					return;
 				}
-				Fight pelea = _perso.getMapa().getPelea(Short.parseShort(infos[0]));
+				Combate pelea = _perso.getMapa().getPelea(Short.parseShort(infos[0]));
 				pelea.unirseEspectador(_perso);
 			} catch (Exception e) {
 				return;
@@ -5948,7 +5948,7 @@ public class GameThread implements Runnable {
 			if (id < -100) {
 				int resta = (id + 100) % 3;
 				if (resta == -2) {
-					Prisma prisma = World.getPrisma(id);
+					Prisma prisma = Mundo.getPrisma(id);
 					if (prisma == null) {
 						SocketManager.ENVIAR_BN_NADA(_out);
 						return;
@@ -5959,14 +5959,14 @@ public class GameThread implements Runnable {
 						return;
 					}
 					if (prisma.getPelea().unirsePeleaPrisma(_perso, id, mapaID, celdaID)) {
-						for (Personagens z : World.getPJsEnLinea()) {
+						for (Personaje z : Mundo.getPJsEnLinea()) {
 							if (z == null || z.getAlineacion() != _perso.getAlineacion())
 								continue;
 							Prisma.analizarDefensa(z);
 						}
 					}
 				} else if (resta == 0) {
-					Coletor recau = World.getRecaudador(id);
+					Recaudador recau = Mundo.getRecaudador(id);
 					if (recau == null) {
 						SocketManager.ENVIAR_BN_NADA(_out);
 						return;
@@ -5977,15 +5977,15 @@ public class GameThread implements Runnable {
 						return;
 					}
 					if (recau.getPelea().unirsePeleaRecaudador(_perso, id, mapaID, celdaID)) {
-						for (Personagens miembros : _perso.getGremio().getPjMiembros()) {
+						for (Personaje miembros : _perso.getGremio().getPjMiembros()) {
 							if (miembros == null || !miembros.enLinea())
 								continue;
-							Coletor.analizarDefensa(miembros, _perso.getGremio().getID());
+							Recaudador.analizarDefensa(miembros, _perso.getGremio().getID());
 						}
 					}
 				}
 			} else {
-				World.getPersonaje(id).getPelea().unirsePelea(_perso, id);
+				Mundo.getPersonaje(id).getPelea().unirsePelea(_perso, id);
 			}
 		} catch (Exception e) {
 			SocketManager.ENVIAR_BN_NADA(_out);
@@ -6004,15 +6004,15 @@ public class GameThread implements Runnable {
 		if (idDuelo != id || idDuelo == -1) {
 			return;
 		}
-		Maps mapa = _perso.getMapa();
+		Mapa mapa = _perso.getMapa();
 		if (!mapa.aptoParaPelea()) {
 			SocketManager.ENVIAR_BN_NADA(_out);
 			return;
 		}
 		SocketManager.ENVIAR_GA901_ACEPTAR_DESAFIO(mapa, idDuelo, _perso.getID());
-		Fight pelea = mapa.iniciarPeleaPjVSPj(World.getPersonaje(idDuelo), _perso, (byte) 0);
+		Combate pelea = mapa.iniciarPeleaPjVSPj(Mundo.getPersonaje(idDuelo), _perso, (byte) 0);
 		_perso.setPelea(pelea);
-		World.getPersonaje(idDuelo).setPelea(pelea);
+		Mundo.getPersonaje(idDuelo).setPelea(pelea);
 	}
 
 	private void juego_Cancelar_Desafio(String packet) {
@@ -6021,7 +6021,7 @@ public class GameThread implements Runnable {
 		}
 		SocketManager.ENVIAR_GA902_RECHAZAR_DESAFIO(_perso.getMapa(), _perso.getDueloID(), _perso.getID());
 		try {
-			Personagens desafiador = World.getPersonaje(_perso.getDueloID());
+			Personaje desafiador = Mundo.getPersonaje(_perso.getDueloID());
 			desafiador.setOcupado(false);
 			desafiador.setDueloID(-1);
 		} catch (NullPointerException nullPointerException) {
@@ -6032,7 +6032,7 @@ public class GameThread implements Runnable {
 	}
 
 	private void juego_Desafiar(String packet) {
-		Maps mapa = _perso.getMapa();
+		Mapa mapa = _perso.getMapa();
 		int idPerso = _perso.getID();
 		if (!mapa.aptoParaPelea()) {
 			SocketManager.ENVIAR_GA903_ERROR_PELEA(_out, 'p');
@@ -6044,7 +6044,7 @@ public class GameThread implements Runnable {
 				SocketManager.ENVIAR_GA903_UNIRSE_PELEA_Y_ESTAR_OCUPADO(_out, idPerso);
 				return;
 			}
-			Personagens desafiado = World.getPersonaje(id);
+			Personaje desafiado = Mundo.getPersonaje(id);
 			if (desafiado == null) {
 				return;
 			}
@@ -6065,7 +6065,7 @@ public class GameThread implements Runnable {
 
 	private void juego_Desplazamiento(AccionDeJuego AJ) {
 		String path = AJ._packet.substring(5);
-		Fight pelea = _perso.getPelea();
+		Combate pelea = _perso.getPelea();
 		if (pelea == null) {
 			if (_perso.esTumba()) {
 				SocketManager.ENVIAR_BN_NADA(_out);
@@ -6080,7 +6080,7 @@ public class GameThread implements Runnable {
 			}
 			AtomicReference<String> pathRef = new AtomicReference<String>(path);
 			short celdaID = _perso.getCelda().getID();
-			Maps mapa = _perso.getMapa();
+			Mapa mapa = _perso.getMapa();
 			short resultado = Pathfinding.numeroMovimientos(mapa, celdaID, pathRef, null);
 			if (resultado == 0) {
 				SocketManager.ENVIAR_GA_ACCION_DE_JUEGO(_out, "", "0", "", "");
@@ -6104,7 +6104,7 @@ public class GameThread implements Runnable {
 			}
 			_perso.setOcupado(true);
 		} else {
-			Fight.Luchador luchador = pelea.getLuchadorPorPJ(_perso);
+			Combate.Luchador luchador = pelea.getLuchadorPorPJ(_perso);
 			if (luchador == null) {
 				return;
 			}
@@ -6155,7 +6155,7 @@ public class GameThread implements Runnable {
 			if (regalo == 0)
 				break;
 			String idModObjeto = Integer.toString(regalo, 16);
-			String efectos = World.getObjModelo(regalo).getStringStatsObj();
+			String efectos = Mundo.getObjModelo(regalo).getStringStatsObj();
 			SocketManager.ENVIAR_Ag_LISTA_REGALOS(_out, regalo, "1~" + idModObjeto + "~1~~" + efectos);
 			break;
 		}
@@ -6226,11 +6226,11 @@ public class GameThread implements Runnable {
 		String[] info = packet.split("\\|");
 		int idObjeto = Integer.parseInt(info[0]);
 		int idPj = Integer.parseInt(info[1]);
-		Personagens pj = null;
+		Personaje pj = null;
 		Objeto objeto = null;
 		try {
-			pj = World.getPersonaje(idPj);
-			objeto = World.getObjModelo(idObjeto).crearObjDesdeModelo(1, true);
+			pj = Mundo.getPersonaje(idPj);
+			objeto = Mundo.getObjModelo(idObjeto).crearObjDesdeModelo(1, true);
 		} catch (Exception exception) {
 			// empty catch block
 		}
@@ -6238,7 +6238,7 @@ public class GameThread implements Runnable {
 			return;
 		}
 		if (!pj.addObjetoSimilar(objeto, true, -1)) {
-			World.addObjeto(objeto, true);
+			Mundo.addObjeto(objeto, true);
 			pj.addObjetoPut(objeto);
 			SocketManager.ENVIAR_OAKO_APARECER_OBJETO(pj, objeto);
 		}
@@ -6252,8 +6252,8 @@ public class GameThread implements Runnable {
 	    int id = Integer.parseInt(split[0]);
 	    String respuesta = (split.length > 1) ? split[1] : "";
 	    if (this._cuenta.getPersonajes().containsKey(Integer.valueOf(id))) {
-	      if (((Personagens)this._cuenta.getPersonajes().get(Integer.valueOf(id))).getNivel() < 25 || ((
-	        (Personagens)this._cuenta.getPersonajes().get(Integer.valueOf(id))).getNivel() >= 25 && respuesta.equals(this._cuenta.getRespuesta()))) {
+	      if (((Personaje)this._cuenta.getPersonajes().get(Integer.valueOf(id))).getNivel() < 25 || ((
+	        (Personaje)this._cuenta.getPersonajes().get(Integer.valueOf(id))).getNivel() >= 25 && respuesta.equals(this._cuenta.getRespuesta()))) {
 	        this._cuenta.borrarPerso(id);
 	        SocketManager.ENVIAR_ALK_LISTA_DE_PERSONAJES(this._out, this._cuenta);
 	      } else {
@@ -6266,7 +6266,7 @@ public class GameThread implements Runnable {
 
 	private void cuenta_Crear_Personaje(String packet) {
 		String[] infos = packet.substring(2).split("\\|");
-		if (World.getPjPorNombre(infos[0]) != null) {
+		if (Mundo.getPjPorNombre(infos[0]) != null) {
 			SocketManager.ENVIAR_AAEa_NOMBRE_YA_EXISTENTE(_out);
 			return;
 		}
@@ -6351,11 +6351,11 @@ public class GameThread implements Runnable {
 		return _thread;
 	}
 
-	public Personagens getPersonaje() {
+	public Personaje getPersonaje() {
 		return _perso;
 	}
 
-	public Conta getCuenta() {
+	public Cuenta getCuenta() {
 		return _cuenta;
 	}
 
