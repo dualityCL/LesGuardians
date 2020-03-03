@@ -8,4 +8,4 @@ Inicio este proyecto porque los desarrolladores han dejado de trabajar en él a 
 
 # Créditos
 
-El emulador fue desarrollado originalmente por EduardoLBS (eduardo.lbs@live.com) y Samuka basándose en Elbustemu 3.9 (probablemente). Si lo deseas, puedes visitar la página oficial de los desarrolladores de LesGuardians (http://www.lesguardiansemu.xpg.com.br/).
+El emulador fue desarrollado originalmente por EduardoLBS (eduardo.lbs@live.com) y Samuka basándose en Elbustemu 3.9 (probablemente). Si lo deseas, puedes visitar la página oficial de los desarrolladores: [LesGuardians](http://www.lesguardiansemu.xpg.com.br/).
