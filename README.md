@@ -3,6 +3,11 @@
 
 <p align="center"><img src="https://i.imgur.com/SubpjnI.png" width="50%"><br>Escrito en Java</p>
 
-Emulador en su versión 2.7.5 desarrollado por EduardoLBS y Samuka, decompilado por mí :D
+Emulador en su versión 2.7.5 desarrollado por EduardoLBS y Samuka, decompilado por mí ❤️
+
+- INICIALIZACIÓN DEL SERVIDOR ✔️
+- CONEXIÓN AL SERVIDOR DE CONEXIÓN ✔️
+- CONEXIÓN AL SERVIDOR DE JUEGO ✔️
+- DESPLAZAMIENTO (PATHFINDING) ❌
 
 
