@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -925,11 +926,9 @@ public class Combate {
                   temporal.remove(l);
                   ordenLuchMobs.put(Integer.valueOf(l.getID()), l);
                 } 
-                this._ordenLuchMobs.putAll(ordenLuchMobs);
-                null = this._ordenLuchMobs.entrySet().iterator();
-                if (null.hasNext()) {
-                  Map.Entry<Integer, Luchador> e = null.next();
-                  SocketManager.ENVIAR_Gf_MOSTRAR_CASILLA_EN_PELEA(this, 5, ((Integer)e.getKey()).intValue(), ((Luchador)e.getValue()).getCeldaPelea().getID());
+                _ordenLuchMobs.putAll(ordenLuchMobs);
+                for (Entry<Integer, Luchador> e : _ordenLuchMobs.entrySet()) {              	
+                	SocketManager.ENVIAR_Gf_MOSTRAR_CASILLA_EN_PELEA(this, 5, e.getKey(), e.getValue().getCeldaPelea().getID());
                 } 
               case 47:
                 for (Luchador luch : this._equipo1.values())
@@ -3181,10 +3180,8 @@ public class Combate {
                                 idObjetos.add(objeto.getID());
                                 if (++veces >= maximo) break;
                             }
-                            Iterator<Objeto> iterator = idObjetos.iterator();
-                            while (iterator.hasNext()) {
-                                int integer = (Integer)((Object)iterator.next());
-                                this._Recaudador.borrarObjeto(integer);
+                            for (int integer : idObjetos) {
+								_Recaudador.borrarObjeto(integer);
                             }
                         }
                     }
@@ -3350,7 +3347,6 @@ public class Combate {
             packet.append("0;0;;0;0;0;0;0|");
         }
         for (Luchador perdedor : perdedores) {
-            Object object;
             if (perdedor._doble != null) continue;
             Personaje pjPerdedor = perdedor.getPersonaje();
             if (perdedor.esInvocacion() && pjPerdedor == null) continue;
@@ -3364,7 +3360,7 @@ public class Combate {
                 packet.append(";" + perdedor.xpStringLuch(";") + ";;;;|");
                 continue;
             }
-            object = false;
+            int honor = 0;
             int deshonor = 0;
             if (pjPerdedor != null) {
                 int maxHonor;
@@ -3372,23 +3368,22 @@ public class Combate {
                 if (this._tipo == 1) {
                     if (this._luchInit2.getPersonaje().getAlineacion() != 0 && this._luchInit1.getPersonaje().getAlineacion() != 0) {
                         if (this._luchInit2.getPersonaje().getCuenta().getActualIP().compareTo(this._luchInit1.getPersonaje().getCuenta().getActualIP()) != 0) {
-                            object = Fórmulas.calcularHonorGanado(ganadores, perdedores, perdedor);
+                        	honor = Fórmulas.calcularHonorGanado(ganadores, perdedores, perdedor);
                         }
                         if (this._luchInit2.getPersonaje().getAlineacion() != 0 && this._luchInit1.getPersonaje().getAlineacion() != 0 && pjPerdedor.getDeshonor() > 0) {
                             deshonor = pjPerdedor.getDeshonor() - 1;
                         }
                     }
-                } else if (this._tipo == 2) {
-                    object = Fórmulas.calcularHonorGanado(ganadores, perdedores, perdedor);
+                } else if (_tipo == 2) { //Prisma
+                    honor = Fórmulas.calcularHonorGanado(ganadores, perdedores, perdedor); //FIXME object = honor
                 }
-                if (object < 0) {
-                    object = false;
-                }
+                if (honor < 0)
+					honor = 0;
                 if ((maxHonor = Mundo.getExpNivel((int)(pjPerdedor.getNivelAlineacion() + 1))._pvp) == -1) {
                     maxHonor = Mundo.getExpNivel((int)pjPerdedor.getNivelAlineacion())._pvp;
                 }
                 packet.append(String.valueOf(pjPerdedor.getAlineacion() != -1 ? maxHonor : 0) + ";");
-                packet.append(String.valueOf((int)object) + ";");
+                packet.append(String.valueOf((int)honor) + ";");
                 packet.append(String.valueOf(pjPerdedor.getNivelAlineacion()) + ";");
                 packet.append(String.valueOf(pjPerdedor.getDeshonor()) + ";");
                 packet.append(String.valueOf(deshonor) + ";");
@@ -3412,19 +3407,19 @@ public class Combate {
                 continue;
             }
             if (perdedor.getPrisma() == null) continue;
-            object = Fórmulas.calcularHonorGanado(ganadores, perdedores, perdedor);
+            honor = Fórmulas.calcularHonorGanado(ganadores, perdedores, perdedor);
             Prisma prisma = perdedor.getPrisma();
-            if (prisma.getHonor() + object < 0) {
-                object = -prisma.getHonor();
+            if (prisma.getHonor() + honor < 0) {
+            	honor = -prisma.getHonor();
             }
-            prisma.addHonor((int)object);
+            prisma.addHonor((int)honor);
             packet.append("0;" + perdedor.getID() + ";" + perdedor.getNombreLuchador() + ";" + perdedor.getNivel() + ";" + (perdedor._estaMuerto ? "1" : "0") + ";" + Mundo.getExpNivel((int)prisma.getNivel())._pvp + ";" + prisma.getHonor() + ";");
             int maxHonor = Mundo.getExpNivel((int)(prisma.getNivel() + 1))._pvp;
             if (maxHonor == -1) {
                 maxHonor = Mundo.getExpNivel((int)prisma.getNivel())._pvp;
             }
             packet.append(String.valueOf(maxHonor) + ";");
-            packet.append(String.valueOf((int)object) + ";");
+            packet.append(String.valueOf((int)honor) + ";");
             packet.append(String.valueOf(prisma.getNivel()) + ";");
             packet.append("0;0;;0;0;0;0;0|");
         }
