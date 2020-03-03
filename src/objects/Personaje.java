@@ -32,10 +32,12 @@ import objects.Objeto;
 import objects.Mascota;
 import objects.Prisma;
 import objects.Oficio;
+import objects.Oficio.StatsOficio;
 import objects.Objevivo;
 import objects.Hechizo;
 import objects.Tienda;
 import objects.Tutorial;
+
 import org.fusesource.jansi.AnsiConsole;
 
 public class Personaje {
@@ -560,8 +562,6 @@ public class Personaje {
 			int montura, int honor, int deshonor, int nivelAlineacion, String zaaps, byte titulo, int esposoId,
 			String tienda, int mercante, int ScrollFuerza, int ScrollInteligencia, int ScrollAgilidad, int ScrollSuerte,
 			int ScrollVitalidad, int ScrollSabiduria, int restriccionesA, int restriccionesB, int encarnacion) {
-		String[] infos;
-		Objeto obj;
 		_encarnacion = Mundo.getEncarnacion(encarnacion);
 		if (_encarnacion != null) {
 			_idEncarnacion = encarnacion;
@@ -602,11 +602,15 @@ public class Personaje {
 		try {
 			_cuenta.addPerso(this);
 		} catch (NullPointerException e) {
-			System.out.println("O personagem " + nombre + " n\u00e3o pode ser adicionado \u00e0 conta.");
+			System.out.println("- El personaje " + nombre + " no se pudo agregar a la cuenta " + cuenta);
 		}
 		_mostrarConeccionAmigos = mostrarAmigos == 1;
 		_esposo = esposoId;
-		_mostrarAlas = _alineacion != 0 ? mostarAlineacion == 1 : false;
+		if (_alineacion != 0) {
+			_mostrarAlas = (mostarAlineacion == 1);
+		} else {
+			_mostrarAlas = false;
+		}
 		_canales = canal;
 		_mapa = Mundo.getMapa(mapa);
 		_puntoSalvado = ptoSalvada;
@@ -624,55 +628,45 @@ public class Personaje {
 		for (String str : zaaps.split(",")) {
 			try {
 				_zaaps.add(Short.parseShort(str));
-			} catch (Exception exception) {
-				// empty catch block
-			}
+			} catch (Exception exception) {}
 		}
 		if (_mapa == null || _celda == null) {
-			System.out.println("Mapa ou c\u00e9lula invalida no personagem: " + _nombre + ".");
+			System.out.println("El Mapa o la celda del personaje " + _nombre + " es null. Cerrando servidor...");
 			try {
 				Thread.sleep(10000L);
-			} catch (InterruptedException str) {
-				// empty catch block
-			}
+			} catch (InterruptedException str) {}
 			LesGuardians.cerrarServer();
 			return;
 		}
-		if (!inventario.equals("")) {
-			if (inventario.charAt(inventario.length() - 1) == '|') {
-				inventario = inventario.substring(0, inventario.length() - 1);
-			}
-			SQLManager.CARGAR_OBJETOS(inventario.replace("|", ","));
-		}
 		for (String item : inventario.split("\\|")) {
-			int idObj;
-			if (item.equals("")
-					|| (obj = Mundo.getObjeto(idObj = Integer.parseInt((infos = item.split(":"))[0]))) == null)
+			if (item.equals("")) {
 				continue;
+			}
+			String[] infos = item.split(":");
+			int idObj = Integer.parseInt(infos[0]);
+			Objeto obj = Mundo.getObjeto(idObj);
+			if (obj == null) {
+				continue;
+			}
 			_objetos.put(obj.getID(), obj);
 		}
-		if (!tienda.equals("")) {
-			if (tienda.charAt(tienda.length() - 1) == '|') {
-				tienda = tienda.substring(0, tienda.length() - 1);
-			}
-			SQLManager.CARGAR_OBJETOS(tienda.replace("|", ","));
-		}
 		for (String item : tienda.split("\\|")) {
-			int idObjeto;
-			if (item.equals("")
-					|| (obj = Mundo.getObjeto(idObjeto = Integer.parseInt((infos = item.split(":"))[0]))) == null)
+			if (item.equals("")) {
 				continue;
+			}
+			String[] infos = item.split(":");
+			int idObjeto = Integer.parseInt(infos[0]);
+			Objeto obj = Mundo.getObjeto(idObjeto);
+			if (obj == null) {
+				continue;
+			}
 			_tienda.add(obj);
 		}
 		_esMercante = mercante;
-		_PDVMAX = _encarnacion != null ? _encarnacion.getPDVMAX()
-				: (nivel - 1) * 5 + (_nivel > 200 ? (_nivel - 200) * (_clase == 11 ? 2 : 1) * 5 : 0)
-						+ Constantes.getBasePDV(clase) + getTotalStats().getEfecto(125);
+		_PDVMAX = _encarnacion != null ? _encarnacion.getPDVMAX() : (nivel - 1) * 5 + (_nivel > 200 ? (_nivel - 200) * (_clase == 11 ? 2 : 1) * 5 : 0) + Constantes.getBasePDV(clase) + getTotalStats().getEfecto(125);
 		_PDV = pdvPorc > 100 ? _PDVMAX * 100 / 100 : _PDVMAX * pdvPorc / 100;
 		analizarPosHechizos(hechizos);
 		_recuperarVida = new Timer(1000, new ActionListener() {
-
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				regenerarPuntoAPunto();
 			}
@@ -680,18 +674,18 @@ public class Personaje {
 		_exPdv = _PDV;
 		if (!oficios.equals("")) {
 			for (String aJobData : oficios.split(";")) {
-				infos = aJobData.split(",");
+				String[] infos = aJobData.split(",");
 				try {
-					int oficioID = Integer.parseInt(infos[0]);
+					byte oficioID = Byte.parseByte(infos[0]);
 					long xp = Long.parseLong(infos[1]);
 					Oficio oficio = Mundo.getOficio(oficioID);
 					int pos = aprenderOficio(oficio);
-					if (pos == -1)
+					if (pos == -1) {
 						continue;
-					Oficio.StatsOficio statsOficio = _statsOficios.get(pos);
+					}
+					StatsOficio statsOficio = _statsOficios.get(pos);
 					statsOficio.addXP(this, xp);
-				} catch (Exception exception) {
-					// empty catch block
+				} catch (Exception localException1) {
 				}
 			}
 		}
@@ -3563,12 +3557,14 @@ public class Personaje {
 		int superAreaID = _mapa.getSubArea().getArea().getSuperArea().getID();
 		short celdaID = Mundo.getCeldaZaapPorMapaID(mapaID);
 		Mapa zaapMapa = Mundo.getMapa(mapaID);
-		if (zaapMapa == null || zaapMapa.getCelda(celdaID) == null || !zaapMapa.getCelda(celdaID).esCaminable(true) || zaapMapa.getSubArea().getArea().getSuperArea().getID() != superAreaID) {
+		if (zaapMapa == null || zaapMapa.getCelda(celdaID) == null || !zaapMapa.getCelda(celdaID).esCaminable(true)
+				|| zaapMapa.getSubArea().getArea().getSuperArea().getID() != superAreaID) {
 			SocketManager.ENVIAR_WUE_ZAPPI_ERROR(this);
 			return;
 		}
 		if (_alineacion == 2 && mapaID == 4263 || _alineacion == 1 && mapaID == 5295) {
-			SocketManager.ENVIAR_Im1223_MENSAJE_IMBORRABLE(this, "<b>Sistema</b>: Esse zaap \u00e9 do alinhamento inimigo.");
+			SocketManager.ENVIAR_Im1223_MENSAJE_IMBORRABLE(this,
+					"<b>Sistema</b>: Esse zaap \u00e9 do alinhamento inimigo.");
 			SocketManager.ENVIAR_WUE_ZAPPI_ERROR(this);
 			return;
 		}
