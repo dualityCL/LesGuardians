@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
@@ -30,6 +31,7 @@ import objects.Mercadillo;
 import objects.NPCModelo;
 import objects.Objeto;
 import objects.Personaje;
+import objects.Personaje.GrupoKoliseo;
 import objects.Mascota;
 import objects.Prisma;
 import objects.Oficio;
@@ -76,12 +78,12 @@ public class Mundo {
     private static Map<Integer, Cofre> Cofres = new TreeMap<Integer, Cofre>();
     private static Map<Integer, Recaudador> Recaudadores = new TreeMap<Integer, Recaudador>();
     private static Map<Integer, RankingPVP> RankingsPVP = new TreeMap<Integer, RankingPVP>();
-    private static CopyOnWriteArrayList<Personaje> Koliseo1 = new CopyOnWriteArrayList();
-    private static CopyOnWriteArrayList<Personaje> Koliseo2 = new CopyOnWriteArrayList();
-    private static CopyOnWriteArrayList<Personaje> Koliseo3 = new CopyOnWriteArrayList();
-    private static CopyOnWriteArrayList<Personaje.GrupoKoliseo> GrupoKoliseo1 = new CopyOnWriteArrayList();
-    private static CopyOnWriteArrayList<Personaje.GrupoKoliseo> GrupoKoliseo2 = new CopyOnWriteArrayList();
-    private static CopyOnWriteArrayList<Personaje.GrupoKoliseo> GrupoKoliseo3 = new CopyOnWriteArrayList();
+    private static CopyOnWriteArrayList<Personaje> Koliseo1 = new CopyOnWriteArrayList<Personaje>();
+    private static CopyOnWriteArrayList<Personaje> Koliseo2 = new CopyOnWriteArrayList<Personaje>();
+    private static CopyOnWriteArrayList<Personaje> Koliseo3 = new CopyOnWriteArrayList<Personaje>();
+    private static CopyOnWriteArrayList<GrupoKoliseo> GrupoKoliseo1 = new CopyOnWriteArrayList<GrupoKoliseo>();
+    private static CopyOnWriteArrayList<GrupoKoliseo> GrupoKoliseo2 = new CopyOnWriteArrayList<GrupoKoliseo>();
+    private static CopyOnWriteArrayList<GrupoKoliseo> GrupoKoliseo3 = new CopyOnWriteArrayList<GrupoKoliseo>();
     private static Map<Integer, Encarnación> Encarnaciones = new TreeMap<Integer, Encarnación>();
     private static Map<Integer, Tutorial> Tutoriales = new TreeMap<Integer, Tutorial>();
     public static String liderRanking = "Ninguem";
@@ -335,6 +337,8 @@ public class Mundo {
 		System.out.println("Se han cargado " + numero + " comidas de mascotas.");
 		SQLManager.CARGAR_TUTORIALES();
 		System.out.println("Se han cargado " + Tutoriales.size() + " tutoriales.");     
+		numero = SQLManager.SELECT_ZAAPS();
+		System.out.println("Se han cargado " + numero + " zaaps.");     
         System.out.println("=======>Datos Dinámicos<=======");     
         SQLManager.UPDATE_TODAS_CUENTAS_CERO();
 		SQLManager.SELECT_OBJEVIVOS();
@@ -765,12 +769,12 @@ public class Mundo {
     }
 
     public static short getCeldaZaapPorMapaID(short i) {
-        for (Map.Entry<Short, Short> zaap : Constantes.ZAAPS.entrySet()) {
-            if (zaap.getKey() != i) continue;
-            return zaap.getValue();
-        }
-        return -1;
-    }
+		for (Entry<Short, Short> zaap : Constantes.ZAAPS.entrySet()) {
+			if (zaap.getKey() == i)
+				return zaap.getValue();
+		}
+		return -1;
+	}
 
     public static short getCeldaCercadoPorMapaID(short i) {
         Mapa.Cercado cercado = Mundo.getMapa(i).getCercado();
