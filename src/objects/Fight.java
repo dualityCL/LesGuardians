@@ -34,6 +34,7 @@ import objects.Desafios;
 import objects.Guild;
 import objects.MOB_tmpl;
 import objects.Maps;
+import objects.Maps.Celda;
 import objects.Objeto;
 import objects.Personagens;
 import objects.Pets;
@@ -54,8 +55,8 @@ public class Fight {
     private Luchador _luchInit2;
     private int _idLuchInit1;
     private int _idLuchInit2;
-    private ArrayList<Maps.Celda> _celdasPos1 = new ArrayList();
-    private ArrayList<Maps.Celda> _celdasPos2 = new ArrayList();
+    private ArrayList<Celda> _celdasPos1 = new ArrayList<Celda>();
+    private ArrayList<Celda> _celdasPos2 = new ArrayList<Celda>();
     private byte _estadoPelea = 0;
     private int _gremioID = -1;
     private byte _tipo = (byte)-1;
@@ -79,15 +80,15 @@ public class Fight {
     private List<Glifo> _glifos = new ArrayList<Glifo>();
     private List<Trampa> _trampas = new ArrayList<Trampa>();
     private MOB_tmpl.GrupoMobs _mobGrupo;
-    private ArrayList<Luchador> _capturadores = new ArrayList(8);
+    private ArrayList<Luchador> _capturadores = new ArrayList<Luchador>(8);
     private boolean _esCapturable = false;
     private int _capturadorGanador = -1;
     private Almas _piedraAlma;
     private Coletor _Recaudador;
     private Prisma _Prisma;
-    private ArrayList<Integer> _mobsMuertosReto = new ArrayList();
-    private ArrayList<Integer> _muertesLuchInic1 = new ArrayList();
-    private ArrayList<Integer> _muertesLuchInic2 = new ArrayList();
+    private ArrayList<Integer> _mobsMuertosReto = new ArrayList<Integer>();
+    private ArrayList<Integer> _muertesLuchInic1 = new ArrayList<Integer>();
+    private ArrayList<Integer> _muertesLuchInic2 = new ArrayList<Integer>();
     private byte _cantLucEquipo1 = 0;
     private byte _cantLucEquipo2 = 1;
     public List<Luchador> _inicioLucEquipo1 = new ArrayList<Luchador>();
@@ -113,7 +114,7 @@ public class Fight {
     private Timer _esperarTempAccion;
     private int _cantTimer = 0;
     private int _cantFinTurno = 0;
-    private ArrayList<Objeto> _objetosRobados = new ArrayList();
+    private ArrayList<Objeto> _objetosRobados = new ArrayList<Objeto>();
     private long _kamasRobadas = 0L;
 
     public void setUltAfec(byte afec) {
@@ -676,27 +677,23 @@ public class Fight {
         return this._id;
     }
 
-    public ArrayList<Luchador> luchadoresDeEquipo(int equipos) { //FIXME
+    public ArrayList<Luchador> luchadoresDeEquipo(int equipos) {
         ArrayList<Luchador> luchadores = new ArrayList<Luchador>();
         if (equipos - 4 >= 0) {
-            for (Map.Entry<Integer, Object> entry : this._espectadores.entrySet()) {
-                luchadores.add(new Luchador(this, (Personagens)entry.getValue()));
-            }
-            equipos -= 4;
-        }
+          for (Map.Entry<Integer, Personagens> entry : this._espectadores.entrySet())
+            luchadores.add(new Luchador(this, entry.getValue())); 
+          equipos -= 4;
+        } 
         if (equipos - 2 >= 0) {
-            for (Map.Entry<Integer, Object> entry : this._equipo2.entrySet()) {
-                luchadores.add((Luchador)entry.getValue());
-            }
-            equipos -= 2;
-        }
-        if (equipos - 1 >= 0) {
-            for (Map.Entry<Integer, Object> entry : this._equipo1.entrySet()) {
-                luchadores.add((Luchador)entry.getValue());
-            }
-        }
+          for (Map.Entry<Integer, Luchador> entry : this._equipo2.entrySet())
+            luchadores.add(entry.getValue()); 
+          equipos -= 2;
+        } 
+        if (equipos - 1 >= 0)
+          for (Map.Entry<Integer, Luchador> entry : this._equipo1.entrySet())
+            luchadores.add(entry.getValue());  
         return luchadores;
-    }
+      }
 
     public synchronized void cambiarLugar(Personagens perso, short celda) {
         Luchador luchador = this.getLuchadorPorPJ(perso);
@@ -753,199 +750,199 @@ public class Fight {
         }
     }
 
-    private void iniciarPelea() { //FIXME
-        if (this._estadoPelea >= 3) {
-            return;
-        }
-        this._estadoPelea = (byte)3;
+    private void iniciarPelea() {
+        if (this._estadoPelea >= 3)
+          return; 
+        this._estadoPelea = 3;
         this._tiempoInicio = System.currentTimeMillis();
         this._tiempoInicioTurno = 0L;
         if (this._tipo == 5) {
-            this._Recaudador.setEstadoPelea((byte)2);
-            for (Personagens z : World.getGremio(this._gremioID).getPjMiembros()) {
-                if (z == null || !z.enLinea()) continue;
-                SocketManager.ENVIAR_gITM_INFO_RECAUDADOR(z, Coletor.analizarRecaudadores(z.getGremio().getID()));
-                Coletor.analizarAtaque(z, this._gremioID);
-                Coletor.analizarDefensa(z, this._gremioID);
-            }
+          this._Recaudador.setEstadoPelea((byte)2);
+          for (Personagens z : World.getGremio(this._gremioID).getPjMiembros()) {
+            if (z == null)
+              continue; 
+            if (z.enLinea()) {
+              SocketManager.ENVIAR_gITM_INFO_RECAUDADOR(z, Coletor.analizarRecaudadores(z.getGremio().getID()));
+              Coletor.analizarAtaque(z, this._gremioID);
+              Coletor.analizarDefensa(z, this._gremioID);
+            } 
+          } 
         } else if (this._tipo == 2) {
-            this._Prisma.setEstadoPelea((byte)-2);
-            for (Personagens z : World.getPJsEnLinea()) {
-                if (z == null || z.getAlineacion() != this._Prisma.getAlineacion()) continue;
-                Prisma.analizarAtaque(z);
-                Prisma.analizarDefensa(z);
-            }
+          this._Prisma.setEstadoPelea((byte)-2);
+          for (Personagens z : World.getPJsEnLinea()) {
+            if (z == null)
+              continue; 
+            if (z.getAlineacion() == this._Prisma.getAlineacion()) {
+              Prisma.analizarAtaque(z);
+              Prisma.analizarDefensa(z);
+            } 
+          } 
         } else if (this._tipo == 1) {
-            Personagens init2;
-            String victima;
-            if (this._equipo1.size() == 1) {
-                Personagens init1 = this._luchInit1.getPersonaje();
-                if (init1 != null && init1.getMisionPVP() != null) {
-                    victima = "";
-                    try {
-                        victima = init1.getMisionPVP().getPjMision().getNombre();
-                    }
-                    catch (NullPointerException e) {
-                        victima = "";
-                    }
-                    for (Luchador luchador : this._equipo2.values()) {
-                        if (!luchador.getPersonaje().getNombre().equalsIgnoreCase(victima)) continue;
-                        this._misionPVP = 1;
-                    }
-                }
-            } else if (this._tipo == 4 && this._mobGrupo.esPermanente()) {
-                this._mapaReal.addGrupoMobPermanente(this._mobGrupo.getCeldaID(), this._mobGrupo.getStrGrupoMob());
-            }
-            if (this._equipo2.size() == 1 && (init2 = this._luchInit2.getPersonaje()) != null && init2.getMisionPVP() != null) {
+          if (this._equipo1.size() == 1) {
+            Personagens init1 = this._luchInit1.getPersonaje();
+            if (init1 != null && init1.getMisionPVP() != null) {
+              String victima = "";
+              try {
+                victima = init1.getMisionPVP().getPjMision().getNombre();
+              } catch (NullPointerException e) {
                 victima = "";
-                try {
-                    victima = init2.getMisionPVP().getPjMision().getNombre();
-                }
-                catch (NullPointerException e) {
-                    victima = "";
-                }
-                for (Luchador luchador : this._equipo1.values()) {
-                    if (!luchador.getPersonaje().getNombre().equalsIgnoreCase(victima)) continue;
-                    this._misionPVP = 2;
-                }
-            }
-        }
+              } 
+              for (Luchador luchador : this._equipo2.values()) {
+                if (luchador.getPersonaje().getNombre().equalsIgnoreCase(victima))
+                  this._misionPVP = 1; 
+              } 
+            } 
+          } else if (this._tipo == 4 && 
+            this._mobGrupo.esPermanente()) {
+            this._mapaReal.addGrupoMobPermanente(this._mobGrupo.getCeldaID(), this._mobGrupo.getStrGrupoMob());
+          } 
+          if (this._equipo2.size() == 1) {
+            Personagens init2 = this._luchInit2.getPersonaje();
+            if (init2 != null && init2.getMisionPVP() != null) {
+              String victima = "";
+              try {
+                victima = init2.getMisionPVP().getPjMision().getNombre();
+              } catch (NullPointerException e) {
+                victima = "";
+              } 
+              for (Luchador luchador : this._equipo1.values()) {
+                if (luchador.getPersonaje().getNombre().equalsIgnoreCase(victima))
+                  this._misionPVP = 2; 
+              } 
+            } 
+          } 
+        } 
         SocketManager.ENVIAR_Gc_BORRAR_ESPADA_EN_MAPA(this._mapaReal, this._idLuchInit1);
         SocketManager.ENVIAR_GIC_UBICACION_LUCHADORES_INICIAR(this, 7);
         SocketManager.ENVIAR_GS_EMPEZAR_COMBATE_EQUIPOS(this, 7);
-        this.iniciarOrdenLuchadores();
-        this._nroOrdenLuc = (byte)-1;
+        iniciarOrdenLuchadores();
+        this._nroOrdenLuc = -1;
         SocketManager.ENVIAR_GTL_ORDEN_JUGADORES(this, 7);
         SocketManager.ENVIAR_GTM_INFO_STATS_TODO_LUCHADORES(this, 7);
         if (this._tipo == 4 || this._tipo == 3) {
-            ArrayList<Integer> retosPosibles = new ArrayList<Integer>();
-            for (int i = 1; i < 51; ++i) {
-                if (i == 13 || i == 16 || i == 19 || i == 26 || i == 27 || i == 38 || i == 48 || i == 49 || !Constantes.esRetoPosible1(i, this)) continue;
-                retosPosibles.add(i);
-            }
-            int idReto = (Integer)retosPosibles.get(Fórmulas.getRandomValor(0, retosPosibles.size() - 1));
-            this._retos.put(idReto, 0);
+          ArrayList<Integer> retosPosibles = new ArrayList<Integer>();
+          for (int i = 1; i < 51; i++) {
+            if (i != 13 && i != 16 && i != 19 && i != 26 && i != 27 && i != 38 && i != 48 && i != 49)
+              if (Constantes.esRetoPosible1(i, this))
+                retosPosibles.add(Integer.valueOf(i));  
+          } 
+          int idReto = ((Integer)retosPosibles.get(Fórmulas.getRandomValor(0, retosPosibles.size() - 1))).intValue();
+          this._retos.put(Integer.valueOf(idReto), Integer.valueOf(0));
+          SocketManager.ENVIAR_Gd_RETO_A_LOS_LUCHADORES(this, World.getReto(idReto).getDetalleReto(this));
+          if (this._mapaReal.esArena() || this._mapaReal.esMazmorra()) {
+            idReto = ((Integer)retosPosibles.get(Fórmulas.getRandomValor(0, retosPosibles.size() - 1))).intValue();
+            boolean repetir = true;
+            while (repetir) {
+              repetir = false;
+              idReto = ((Integer)retosPosibles.get(Fórmulas.getRandomValor(0, retosPosibles.size() - 1))).intValue();
+              for (Integer nro : this._retos.keySet()) {
+                if (Constantes.esRetoPosible2(nro.intValue(), idReto) && !repetir) {
+                  repetir = false;
+                  continue;
+                } 
+                repetir = true;
+              } 
+            } 
+            this._retos.put(Integer.valueOf(idReto), Integer.valueOf(0));
             SocketManager.ENVIAR_Gd_RETO_A_LOS_LUCHADORES(this, World.getReto(idReto).getDetalleReto(this));
-            if (this._mapaReal.esArena() || this._mapaReal.esMazmorra()) {
-                idReto = (Integer)retosPosibles.get(Fórmulas.getRandomValor(0, retosPosibles.size() - 1));
-                boolean repetir = true;
-                while (repetir) {
-                    repetir = false;
-                    idReto = (Integer)retosPosibles.get(Fórmulas.getRandomValor(0, retosPosibles.size() - 1));
-                    for (Integer nro : this._retos.keySet()) {
-                        repetir = !Constantes.esRetoPosible2(nro, idReto) || repetir;
-                    }
-                }
-                this._retos.put(idReto, 0);
-                SocketManager.ENVIAR_Gd_RETO_A_LOS_LUCHADORES(this, World.getReto(idReto).getDetalleReto(this));
-            }
-        }
-        for (Luchador luchador : this.luchadoresDeEquipo(3)) {
-            this._posinicial.put(luchador.getID(), luchador.getCeldaPelea());
-            Personagens perso = luchador.getPersonaje();
-            if (perso == null) continue;
-            if (perso.estaMontando()) {
-                SocketManager.ENVIAR_GA_ACCION_PELEA(this, 3, 950, String.valueOf(perso.getID()), String.valueOf(perso.getID()) + "," + 11 + ",1");
-            }
-            if (perso.getPDV() != luchador.getPDVConBuff()) {
-                luchador.setPDV(perso.getPDV());
-                luchador.setPDVMAX(perso.getPDVMAX());
-            }
-            luchador._totalStats = perso.getTotalStats();
-        }
-        this._cantLucEquipo1 = (byte)this.luchadoresDeEquipo(1).size();
-        this._cantLucEquipo2 = (byte)this.luchadoresDeEquipo(2).size();
-        this._inicioLucEquipo1.addAll(this.luchadoresDeEquipo(1));
-        this._inicioLucEquipo2.addAll(this.luchadoresDeEquipo(2));
+          } 
+        } 
+        for (Luchador luchador : luchadoresDeEquipo(3)) {
+          this._posinicial.put(Integer.valueOf(luchador.getID()), luchador.getCeldaPelea());
+          Personagens perso = luchador.getPersonaje();
+          if (perso == null)
+            continue; 
+          if (perso.estaMontando())
+            SocketManager.ENVIAR_GA_ACCION_PELEA(this, 3, 950, (new StringBuilder(String.valueOf(perso.getID()))).toString(), String.valueOf(perso.getID()) + "," + 
+                '\013' + ",1"); 
+          if (perso.getPDV() != luchador.getPDVConBuff()) {
+            luchador.setPDV(perso.getPDV());
+            luchador.setPDVMAX(perso.getPDVMAX());
+          } 
+          luchador._totalStats = perso.getTotalStats();
+        } 
+        this._cantLucEquipo1 = (byte)luchadoresDeEquipo(1).size();
+        this._cantLucEquipo2 = (byte)luchadoresDeEquipo(2).size();
+        this._inicioLucEquipo1.addAll(luchadoresDeEquipo(1));
+        this._inicioLucEquipo2.addAll(luchadoresDeEquipo(2));
         try {
-            Thread.sleep(200L);
-        }
-        catch (Exception luchador) {
-            // empty catch block
-        }
+          Thread.sleep(200L);
+        } catch (Exception exception) {}
         if (this._tipo == 4 || this._tipo == 3) {
-            TreeMap<Integer, Integer> copiaRetos = new TreeMap<Integer, Integer>();
-            copiaRetos.putAll(this._retos);
-            block22: for (Map.Entry entry : copiaRetos.entrySet()) {
-                int reto = (Integer)entry.getKey();
-                int exitoReto = (Integer)entry.getValue();
-                if (exitoReto != 0) continue;
-                int idLuch = 0;
-                int size2 = this._equipo2.size();
-                int nivel = 10000;
-                TreeMap<Integer, Integer> ordenNivelMobs = new TreeMap<Integer, Integer>();
-                TreeMap<Integer, Luchador> ordenLuchMobs = new TreeMap<Integer, Luchador>();
-                switch (reto) {
-                    case 30: {
-                        for (Luchador luch : this._equipo1.values()) {
-                            if (luch.getNivel() >= nivel) continue;
-                            this._luchMenorNivelReto = luch.getID();
-                            nivel = luch.getNivel();
-                        }
-                        continue block22;
-                    }
-                    case 10: {
-                        while (ordenNivelMobs.size() < size2) {
-                            nivel = 10000;
-                            for (Luchador luch : this._equipo2.values()) {
-                                if (luch.getNivel() >= nivel || ordenNivelMobs.containsKey(luch.getID())) continue;
-                                idLuch = luch.getID();
-                                nivel = luch.getNivel();
-                            }
-                            ordenNivelMobs.put(idLuch, nivel);
-                        }
-                        this._ordenNivelMobs.putAll(ordenNivelMobs);
-                        break;
-                    }
-                    case 17: {
-                        for (Luchador luch : this._equipo1.values()) {
-                            luch._intocable = true;
-                        }
-                        continue block22;
-                    }
-                    case 25: {
-                        while (ordenNivelMobs.size() < size2) {
-                            nivel = 0;
-                            for (Luchador luch : this._equipo2.values()) {
-                                if (luch.getNivel() <= nivel || ordenNivelMobs.containsKey(luch.getID())) continue;
-                                idLuch = luch.getID();
-                                nivel = luch.getNivel();
-                            }
-                            ordenNivelMobs.put(idLuch, nivel);
-                        }
-                        this._ordenNivelMobs.putAll(ordenNivelMobs);
-                        break;
-                    }
-                    case 35: {
-                        ArrayList<Luchador> temporal = new ArrayList<Luchador>();
-                        temporal.addAll(this._equipo2.values());
-                        while (ordenLuchMobs.size() < size2) {
-                            Luchador l = (Luchador)temporal.get(Fórmulas.getRandomValor(0, temporal.size() - 1));
-                            temporal.remove(l);
-                            ordenLuchMobs.put(l.getID(), l);
-                        }
-                        this._ordenLuchMobs.putAll(ordenLuchMobs);
-                        Iterator<Object> iterator = this._ordenLuchMobs.entrySet().iterator();
-                        if (!iterator.hasNext()) break;
-                        Map.Entry e = (Map.Entry)iterator.next();
-                        SocketManager.ENVIAR_Gf_MOSTRAR_CASILLA_EN_PELEA(this, 5, (Integer)e.getKey(), ((Luchador)e.getValue()).getCeldaPelea().getID());
-                        break;
-                    }
-                    case 47: {
-                        for (Luchador luch : this._equipo1.values()) {
-                            luch._contaminacion = true;
-                        }
-                        continue block22;
-                    }
-                }
-            }
-        }
-        this.inicioTurno();
-    }
-
-    public Map<Integer, Personagens> getEspectadores() {
+          Map<Integer, Integer> copiaRetos = new TreeMap<Integer, Integer>();
+          copiaRetos.putAll(this._retos);
+          for (Map.Entry<Integer, Integer> entry : copiaRetos.entrySet()) {
+            ArrayList<Luchador> temporal;
+            int reto = ((Integer)entry.getKey()).intValue();
+            int exitoReto = ((Integer)entry.getValue()).intValue();
+            if (exitoReto != 0)
+              continue; 
+            int idLuch = 0;
+            int size2 = this._equipo2.size();
+            int nivel = 10000;
+            Map<Integer, Integer> ordenNivelMobs = new TreeMap<Integer, Integer>();
+            Map<Integer, Luchador> ordenLuchMobs = new TreeMap<Integer, Luchador>();
+            switch (reto) {
+              case 30:
+                for (Luchador luch : this._equipo1.values()) {
+                  if (luch.getNivel() < nivel) {
+                    this._luchMenorNivelReto = luch.getID();
+                    nivel = luch.getNivel();
+                  } 
+                } 
+              case 10:
+                while (ordenNivelMobs.size() < size2) {
+                  nivel = 10000;
+                  for (Luchador luch : this._equipo2.values()) {
+                    if (luch.getNivel() < nivel && !ordenNivelMobs.containsKey(Integer.valueOf(luch.getID()))) {
+                      idLuch = luch.getID();
+                      nivel = luch.getNivel();
+                    } 
+                  } 
+                  ordenNivelMobs.put(Integer.valueOf(idLuch), Integer.valueOf(nivel));
+                } 
+                this._ordenNivelMobs.putAll(ordenNivelMobs);
+              case 17:
+                for (Luchador luch : this._equipo1.values())
+                  luch._intocable = true; 
+              case 25:
+                while (ordenNivelMobs.size() < size2) {
+                  nivel = 0;
+                  for (Luchador luch : this._equipo2.values()) {
+                    if (luch.getNivel() > nivel && !ordenNivelMobs.containsKey(Integer.valueOf(luch.getID()))) {
+                      idLuch = luch.getID();
+                      nivel = luch.getNivel();
+                    } 
+                  } 
+                  ordenNivelMobs.put(Integer.valueOf(idLuch), Integer.valueOf(nivel));
+                } 
+                this._ordenNivelMobs.putAll(ordenNivelMobs);
+              case 35:
+                temporal = new ArrayList<Luchador>();
+                temporal.addAll(this._equipo2.values());
+                while (ordenLuchMobs.size() < size2) {
+                  Luchador l = temporal.get(Fórmulas.getRandomValor(0, temporal.size() - 1));
+                  temporal.remove(l);
+                  ordenLuchMobs.put(Integer.valueOf(l.getID()), l);
+                } 
+                this._ordenLuchMobs.putAll(ordenLuchMobs);
+                null = this._ordenLuchMobs.entrySet().iterator(); //FIXME 
+                if (null.hasNext()) {
+                  Map.Entry<Integer, Luchador> e = null.next();
+                  SocketManager.ENVIAR_Gf_MOSTRAR_CASILLA_EN_PELEA(this, 5, ((Integer)e.getKey()).intValue(), ((Luchador)e.getValue()).getCeldaPelea().getID());
+                } 
+              case 47:
+                for (Luchador luch : this._equipo1.values())
+                  luch._contaminacion = true; 
+            } 
+          } 
+        } 
+        inicioTurno();
+      }
+      
+      public Map<Integer, Personagens> getEspectadores() {
         return this._espectadores;
-    }
+      }
 
     public boolean hechizoDisponible(Luchador luchador, int idHechizo) {
         boolean ver = false;
@@ -1203,50 +1200,42 @@ public class Fight {
         }
     }
 
-    public boolean unirsePeleaRecaudador(Personagens perso, int recauID, short mapaID, short celdaID) { //FIXME
-        Luchador luchador;
+    public boolean unirsePeleaRecaudador(Personagens perso, int recauID, short mapaID, short celdaID) {
         PrintWriter out = perso.getCuenta().getEntradaPersonaje().getOut();
         if (this._tiempoInicio != 0L) {
-            SocketManager.ENVIAR_GA903_ERROR_PELEA(out, 'l');
-            return false;
-        }
+          SocketManager.ENVIAR_GA903_ERROR_PELEA(out, 'l');
+          return false;
+        } 
         Luchador jugadorAUnirse = null;
-        Maps.Celda celda = this.getCeldaRandom(this._celdasPos2);
-        if (celda == null) {
-            return false;
-        }
+        Maps.Celda celda = getCeldaRandom(this._celdasPos2);
+        if (celda == null)
+          return false; 
         if (perso.getMapa().getID() != mapaID) {
-            block13: {
-                perso.setMapaDefPerco(perso.getMapa());
-                perso.setCeldaDefPerco(perso.getCelda());
-                try {
-                    if (perso.teleportSinTodos(mapaID, celdaID)) break block13;
-                    return false;
-                }
-                catch (Exception e) {
-                    return false;
-                }
-            }
+          perso.setMapaDefPerco(perso.getMapa());
+          perso.setCeldaDefPerco(perso.getCelda());
+          try {
+            if (!perso.teleportSinTodos(mapaID, celdaID))
+              return false; 
             Thread.sleep(500L);
-        }
+          } catch (Exception e) {
+            return false;
+          } 
+        } 
         int tiempoRecaudador = 0;
-        if (this._Recaudador != null) {
-            tiempoRecaudador = this._Recaudador.getTiempoTurno();
-        }
+        if (this._Recaudador != null)
+          tiempoRecaudador = this._Recaudador.getTiempoTurno(); 
         int idPerso = perso.getID();
         try {
-            Thread.sleep(500L);
-        }
-        catch (Exception exception) {
-            // empty catch block
-        }
+          Thread.sleep(500L);
+        } catch (Exception exception) {}
         SocketManager.ENVIAR_GJK_UNIRSE_PELEA(perso, 2, false, true, false, tiempoRecaudador, this._tipo);
         SocketManager.ENVIAR_GP_POSICIONES_PELEA(out, this._mapaCopia.getPosicionesPelea(), this._celdaColor2);
-        SocketManager.ENVIAR_GA_ACCION_PELEA(this, 3, 950, String.valueOf(idPerso), String.valueOf(idPerso) + "," + 8 + ",0");
-        SocketManager.ENVIAR_GA_ACCION_PELEA(this, 3, 950, String.valueOf(idPerso), String.valueOf(idPerso) + "," + 3 + ",0");
-        jugadorAUnirse = luchador = new Luchador(this, perso);
+        SocketManager.ENVIAR_GA_ACCION_PELEA(this, 3, 950, (new StringBuilder(String.valueOf(idPerso))).toString(), String.valueOf(idPerso) + "," + '\b' + ",0");
+        SocketManager.ENVIAR_GA_ACCION_PELEA(this, 3, 950, (new StringBuilder(String.valueOf(idPerso))).toString(), String.valueOf(idPerso) + "," + '\003' + ",0");
+        Luchador luchador = new Luchador(this, perso);
+        jugadorAUnirse = luchador;
         luchador.setEquipoBin(1);
-        this._equipo2.put(idPerso, luchador);
+        this._equipo2.put(Integer.valueOf(idPerso), luchador);
         perso.setPelea(this);
         luchador.setCeldaPelea(celda);
         celda.addLuchador(luchador);
@@ -1254,65 +1243,51 @@ public class Fight {
         SocketManager.ENVIAR_Gt_AGREGAR_NOMBRE_ESPADA(perso.getMapa(), recauID, jugadorAUnirse);
         SocketManager.ENVIAR_GM_JUGADO_UNIRSE_PELEA(this, 7, jugadorAUnirse);
         try {
-            Thread.sleep(300L);
-        }
-        catch (Exception exception) {
-            // empty catch block
-        }
+          Thread.sleep(300L);
+        } catch (Exception exception) {}
         SocketManager.ENVIAR_GM_LUCHADORES(this, this._mapaCopia, perso);
         try {
-            Thread.sleep(300L);
-        }
-        catch (Exception exception) {
-            // empty catch block
-        }
+          Thread.sleep(300L);
+        } catch (Exception exception) {}
         return true;
-    }
+      }
 
-    public boolean unirsePeleaPrisma(Personagens perso, int prismaID, short mapaID, short celdaID) { //FIXME
-        Luchador luchador;
+    public boolean unirsePeleaPrisma(Personagens perso, int prismaID, short mapaID, short celdaID) {
         PrintWriter out = perso.getCuenta().getEntradaPersonaje().getOut();
         if (this._tiempoInicio != 0L) {
-            SocketManager.ENVIAR_GA903_ERROR_PELEA(out, 'l');
-            return false;
-        }
+          SocketManager.ENVIAR_GA903_ERROR_PELEA(out, 'l');
+          return false;
+        } 
         Luchador jugadorAUnirse = null;
-        Maps.Celda celda = this.getCeldaRandom(this._celdasPos2);
-        if (celda == null) {
-            return false;
-        }
+        Maps.Celda celda = getCeldaRandom(this._celdasPos2);
+        if (celda == null)
+          return false; 
         if (perso.getMapa().getID() != mapaID) {
-            block13: {
-                perso.setMapaDefPerco(perso.getMapa());
-                perso.setCeldaDefPerco(perso.getCelda());
-                try {
-                    if (perso.teleportSinTodos(mapaID, celdaID)) break block13;
-                    return false;
-                }
-                catch (Exception e) {
-                    return false;
-                }
-            }
+          perso.setMapaDefPerco(perso.getMapa());
+          perso.setCeldaDefPerco(perso.getCelda());
+          try {
+            if (!perso.teleportSinTodos(mapaID, celdaID))
+              return false; 
             Thread.sleep(500L);
-        }
+          } catch (Exception e) {
+            return false;
+          } 
+        } 
         int tiempoPrisma = 0;
-        if (this._Prisma != null) {
-            tiempoPrisma = this._Prisma.getTiempoTurno();
-        }
+        if (this._Prisma != null)
+          tiempoPrisma = this._Prisma.getTiempoTurno(); 
         int idPerso = perso.getID();
         try {
-            Thread.sleep(500L);
-        }
-        catch (Exception exception) {
-            // empty catch block
-        }
+          Thread.sleep(500L);
+        } catch (Exception exception) {}
         SocketManager.ENVIAR_GJK_UNIRSE_PELEA(perso, 2, false, true, false, tiempoPrisma, this._tipo);
         SocketManager.ENVIAR_GP_POSICIONES_PELEA(out, this._mapaCopia.getPosicionesPelea(), this._celdaColor2);
-        SocketManager.ENVIAR_GA_ACCION_PELEA(this, 3, 950, String.valueOf(idPerso), String.valueOf(idPerso) + "," + 8 + ",0");
-        SocketManager.ENVIAR_GA_ACCION_PELEA(this, 3, 950, String.valueOf(idPerso), String.valueOf(idPerso) + "," + 3 + ",0");
-        jugadorAUnirse = luchador = new Luchador(this, perso);
+        SocketManager.ENVIAR_GA_ACCION_PELEA(this, 3, 950, (new StringBuilder(String.valueOf(idPerso))).toString(), String.valueOf(idPerso) + "," + '\b' + ",0");
+        SocketManager.ENVIAR_GA_ACCION_PELEA(this, 3, 950, (new StringBuilder(String.valueOf(idPerso))).toString(), String.valueOf(idPerso) + "," + '\003' + ",0");
+        Luchador luchador = new Luchador(this, perso);
+        jugadorAUnirse = luchador;
         luchador.setEquipoBin(1);
-        this._equipo2.put(idPerso, luchador);
+        this._equipo2.put(Integer.valueOf(idPerso), luchador);
         perso.setPelea(this);
         luchador.setCeldaPelea(celda);
         celda.addLuchador(luchador);
@@ -1320,20 +1295,14 @@ public class Fight {
         SocketManager.ENVIAR_Gt_AGREGAR_NOMBRE_ESPADA(perso.getMapa(), prismaID, jugadorAUnirse);
         SocketManager.ENVIAR_GM_JUGADO_UNIRSE_PELEA(this, 7, jugadorAUnirse);
         try {
-            Thread.sleep(300L);
-        }
-        catch (Exception exception) {
-            // empty catch block
-        }
+          Thread.sleep(300L);
+        } catch (Exception exception) {}
         SocketManager.ENVIAR_GM_LUCHADORES(this, this._mapaCopia, perso);
         try {
-            Thread.sleep(300L);
-        }
-        catch (Exception exception) {
-            // empty catch block
-        }
+          Thread.sleep(300L);
+        } catch (Exception exception) {}
         return true;
-    }
+      }
 
     public void unirseEspectador(Personagens perso) {
         if (this._tiempoInicio == 0L || perso == null) {
@@ -1855,317 +1824,273 @@ public class Fight {
         }
     }
 
-    public void agregarAMuertos(Luchador victima) { //FIXME 
-        block62: {
-            block64: {
-                block63: {
-                    if (Luchador.access$0(victima)) {
-                        return;
-                    }
-                    this.addTiempoReset(300);
-                    Luchador.access$18(victima, true);
-                    idVictima = victima.getID();
-                    if (!Luchador.access$19(victima)) {
-                        this._listaMuertos.put(idVictima, victima);
-                    }
-                    if ((this._tipo == 4 || this._tipo == 3) && !victima.esInvocacion() && this._equipo2.values().contains(victima)) {
-                        this._mobsMuertosReto.add(idVictima);
-                    }
-                    if (this._nroOrdenLuc < 0) {
-                        return;
-                    }
-                    if (this._nroOrdenLuc >= this._ordenJugadores.size()) {
-                        this._nroOrdenLuc = 0;
-                    }
-                    asesino = null;
-                    try {
-                        asesino = this._ordenJugadores.get(this._nroOrdenLuc);
-                    }
-                    catch (Exception var4_4) {
-                        // empty catch block
-                    }
-                    if (!(this._tipo != 4 && this._tipo != 3 || victima.getMob() == null || victima.esInvocacion() || asesino == null)) {
-                        copiaRetos = new TreeMap<Integer, Integer>();
-                        copiaRetos.putAll(this._retos);
-                        block21: for (Map.Entry<K, V> entry : copiaRetos.entrySet()) {
-                            reto = (Integer)entry.getKey();
-                            exitoReto = (Integer)entry.getValue();
-                            if (exitoReto != 0) continue;
-                            cant2 = 0;
-                            nivelVict = victima.getNivel();
-                            block4 : switch (reto) {
-                                case 3: {
-                                    if (this._mobsMuertosReto.size() <= 0) break;
-                                    if (this._mobsMuertosReto.get(0) == this._idMobReto) {
-                                        SocketManager.ENVIAR_GdaK_RETO_REALIZADO(this, reto);
-                                        exitoReto = 1;
-                                        break;
-                                    }
-                                    SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
-                                    exitoReto = 2;
-                                    break;
-                                }
-                                case 4: {
-                                    cant2 = this._inicioLucEquipo2.size();
-                                    if (this._mobsMuertosReto.size() != cant2) break;
-                                    if (this._mobsMuertosReto.get(cant2 - 1) == this._idMobReto) {
-                                        SocketManager.ENVIAR_GdaK_RETO_REALIZADO(this, reto);
-                                        exitoReto = 1;
-                                        break;
-                                    }
-                                    SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
-                                    exitoReto = 2;
-                                    break;
-                                }
-                                case 10: 
-                                case 25: {
-                                    for (Map.Entry<Integer, Integer> e : this._ordenNivelMobs.entrySet()) {
-                                        if (e.getValue() == nivelVict) {
-                                            if (e.getKey() != idVictima) continue;
-                                            this._ordenNivelMobs.remove(idVictima);
-                                            break block4;
-                                        }
-                                        SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
-                                        exitoReto = 2;
-                                        break block4;
-                                    }
-                                    break;
-                                }
-                                case 28: {
-                                    if (asesino.getPersonaje() == null) continue block21;
-                                    if (asesino.getPersonaje().getSexo() != 0) break;
-                                    SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
-                                    exitoReto = 2;
-                                    break;
-                                }
-                                case 29: {
-                                    if (asesino.getPersonaje() == null) continue block21;
-                                    if (asesino.getPersonaje().getSexo() != 1) break;
-                                    SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
-                                    exitoReto = 2;
-                                    break;
-                                }
-                                case 30: {
-                                    if (asesino.getPersonaje() == null) continue block21;
-                                    if (asesino.getID() == this._luchMenorNivelReto) break;
-                                    SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
-                                    exitoReto = 2;
-                                    break;
-                                }
-                                case 31: {
-                                    if (this._idMobReto == 0) {
-                                        this._idMobReto = idVictima;
-                                        break;
-                                    }
-                                    if (!this._mobsMuertosReto.contains(this._idMobReto)) break;
-                                    this._idMobReto = 0;
-                                    break;
-                                }
-                                case 32: {
-                                    if (this._idMobReto == idVictima) {
-                                        SocketManager.ENVIAR_GdaK_RETO_REALIZADO(this, reto);
-                                        exitoReto = 1;
-                                        break;
-                                    }
-                                    SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
-                                    exitoReto = 2;
-                                    break;
-                                }
-                                case 35: {
-                                    siguiente = false;
-                                    var13_28 = this._ordenLuchMobs.entrySet().iterator();
-                                    if (var13_28.hasNext()) {
-                                        e = var13_28.next();
-                                        if (e.getKey() == idVictima) {
-                                            this._ordenLuchMobs.remove(idVictima);
-                                            siguiente = true;
-                                        } else {
-                                            SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
-                                            exitoReto = 2;
-                                        }
-                                    }
-                                    if (!siguiente || !(var13_28 = this._ordenLuchMobs.entrySet().iterator()).hasNext()) break;
-                                    e = var13_28.next();
-                                    SocketManager.ENVIAR_Gf_MOSTRAR_CASILLA_EN_PELEA(this, 5, e.getKey(), e.getValue().getCeldaPelea().getID());
-                                    break;
-                                }
-                                case 42: {
-                                    this._cantMobsMuerto = (byte)(this._cantMobsMuerto + 1);
-                                    if (this._cantMobsMuerto <= 2) break;
-                                    SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
-                                    exitoReto = 2;
-                                    break;
-                                }
-                                case 44: 
-                                case 46: {
-                                    if (asesino.getPersonaje() == null) continue block21;
-                                    Luchador.access$20(asesino).add(idVictima);
-                                }
-                            }
-                            if (exitoReto == 0) continue;
-                            this._retos.remove(reto);
-                            this._retos.put(reto, exitoReto);
-                        }
-                    }
-                    if (this._inicioLucEquipo1.contains(victima) && !victima.esInvocacion() && !this._muertesLuchInic1.contains(idVictima)) {
-                        this._muertesLuchInic1.add(idVictima);
-                    }
-                    if (this._inicioLucEquipo2.contains(victima) && !victima.esInvocacion() && !this._muertesLuchInic2.contains(idVictima)) {
-                        this._muertesLuchInic2.add(idVictima);
-                    }
-                    SocketManager.ENVIAR_GA103_JUGADOR_MUERTO(this, 7, idVictima);
-                    if (victima.tieneEstado(3)) {
-                        transportado = victima.getTransportando();
-                        transportado.setEstado(8, 0);
-                        victima.setEstado(3, 0);
-                        transportado.setTransportadoPor(null);
-                        victima.setTransportando(null);
-                    } else if (victima.tieneEstado(8)) {
-                        portador = victima.getTransportadoPor();
-                        victima.setEstado(8, 0);
-                        portador.setEstado(3, 0);
-                        victima.setTransportadoPor(null);
-                        portador.setTransportando(null);
-                    }
-                    victima.getCeldaPelea().removerLuchador(victima);
-                    if (victima.getEquipoBin() != 0) break block63;
-                    team = new TreeMap<Integer, Luchador>();
-                    team.putAll(this._equipo1);
-                    reto = team.entrySet().iterator();
-                    ** GOTO lbl168
-                }
-                if (victima.getEquipoBin() != 1) break block64;
-                team = new TreeMap<K, V>();
-                team.putAll(this._equipo2);
-                reto = team.entrySet().iterator();
-                ** GOTO lbl179
-lbl-1000:
-                // 1 sources
-
-                {
-                    entry = reto.next();
-                    invocacion = (Luchador)entry.getValue();
-                    if (Luchador.access$0(invocacion) || Luchador.access$19(invocacion) || !invocacion.esInvocacion() || invocacion.getInvocador().getID() != idVictima) continue;
-                    try {
-                        Thread.sleep(150L);
-                    }
-                    catch (Exception exitoReto) {
-                        // empty catch block
-                    }
-                    this.agregarAMuertos(invocacion);
-lbl168:
-                    // 3 sources
-
-                    ** while (reto.hasNext())
-                }
-lbl169:
-                // 1 sources
-
-                break block64;
-lbl-1000:
-                // 1 sources
-
-                {
-                    entry = reto.next();
-                    invocacion = (Luchador)entry.getValue();
-                    if (Luchador.access$0(invocacion) || Luchador.access$19(invocacion) || !invocacion.esInvocacion() || invocacion.getInvocador().getID() != idVictima) continue;
-                    try {
-                        Thread.sleep(150L);
-                    }
-                    catch (Exception exitoReto) {
-                        // empty catch block
-                    }
-                    this.agregarAMuertos(invocacion);
-lbl179:
-                    // 3 sources
-
-                    ** while (reto.hasNext())
-                }
-            }
-            if (victima.getMob() != null) {
-                try {
-                    esEstatico = false;
-                    var9_21 = Constantes.INVOCACIONES_ESTATICAS;
-                    exitoReto = Constantes.INVOCACIONES_ESTATICAS.length;
-                    reto = 0;
-                    do {
-                        if (reto >= exitoReto) {
-                            if (victima.esInvocacion() && !esEstatico) {
-                                v0 = victima.getInvocador();
-                                Luchador.access$22(v0, Luchador.access$21(v0) - 1);
-                                if (!this._ordenJugadores.isEmpty()) {
-                                    index = this._ordenJugadores.indexOf(victima);
-                                    if (index != -1) {
-                                        if (this._nroOrdenLuc >= index && this._nroOrdenLuc > 0) {
-                                            this._nroOrdenLuc = (byte)(this._nroOrdenLuc - 1);
-                                        }
-                                        this._ordenJugadores.remove(index);
-                                    }
-                                    if (this._nroOrdenLuc >= 0) break;
-                                    this._tempAccion = "";
-                                    return;
-                                }
-                            }
-                            break block62;
-                        }
-                        id = var9_21[reto];
-                        if (id == victima.getMob().getModelo().getID()) {
-                            esEstatico = true;
-                        }
-                        ++reto;
-                    } while (true);
-                    if (this._equipo1.containsKey(idVictima)) {
-                        this._equipo1.remove(idVictima);
-                    } else if (this._equipo2.containsKey(idVictima)) {
-                        this._equipo2.remove(idVictima);
-                    }
-                    SocketManager.ENVIAR_GA_ACCION_PELEA(this, 7, 999, String.valueOf(idVictima), this.stringOrdenJugadores());
-                    if (victima.puedeJugar() && asesino.getID() == idVictima) {
-                        this._tempAccion = "";
-                        this.finTurno(victima);
-                    }
-                    Thread.sleep(500L);
-                }
-                catch (Exception esEstatico) {
-                    // empty catch block
-                }
-            }
-        }
-        glifos = new ArrayList<Glifo>();
+    public void agregarAMuertos(Luchador victima) {
+        if (victima._estaMuerto)
+          return; 
+        addTiempoReset(300);
+        victima._estaMuerto = true;
+        int idVictima = victima.getID();
+        if (!victima._estaRetirado)
+          this._listaMuertos.put(Integer.valueOf(idVictima), victima); 
+        if ((this._tipo == 4 || this._tipo == 3) && !victima.esInvocacion() && this._equipo2.values().contains(victima))
+          this._mobsMuertosReto.add(Integer.valueOf(idVictima)); 
+        if (this._nroOrdenLuc < 0)
+          return; 
+        if (this._nroOrdenLuc >= this._ordenJugadores.size())
+          this._nroOrdenLuc = 0; 
+        Luchador asesino = null;
+        try {
+          asesino = this._ordenJugadores.get(this._nroOrdenLuc);
+        } catch (Exception exception) {}
+        if ((this._tipo == 4 || this._tipo == 3) && victima.getMob() != null && !victima.esInvocacion() && asesino != null) {
+          Map<Integer, Integer> copiaRetos = new TreeMap<Integer, Integer>();
+          copiaRetos.putAll(this._retos);
+          for (Map.Entry<Integer, Integer> entry : copiaRetos.entrySet()) {
+            boolean siguiente;
+            Iterator<Map.Entry<Integer, Luchador>> iterator;
+            int reto = ((Integer)entry.getKey()).intValue();
+            int exitoReto = ((Integer)entry.getValue()).intValue();
+            if (exitoReto != 0)
+              continue; 
+            int cant2 = 0;
+            int nivelVict = victima.getNivel();
+            switch (reto) {
+              case 3:
+                if (this._mobsMuertosReto.size() > 0) {
+                  if (((Integer)this._mobsMuertosReto.get(0)).intValue() == this._idMobReto) {
+                    SocketManager.ENVIAR_GdaK_RETO_REALIZADO(this, reto);
+                    exitoReto = 1;
+                    break;
+                  } 
+                  SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
+                  exitoReto = 2;
+                } 
+                break;
+              case 4:
+                cant2 = this._inicioLucEquipo2.size();
+                if (this._mobsMuertosReto.size() == cant2) {
+                  if (((Integer)this._mobsMuertosReto.get(cant2 - 1)).intValue() == this._idMobReto) {
+                    SocketManager.ENVIAR_GdaK_RETO_REALIZADO(this, reto);
+                    exitoReto = 1;
+                    break;
+                  } 
+                  SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
+                  exitoReto = 2;
+                } 
+                break;
+              case 10:
+              case 25:
+                for (Map.Entry<Integer, Integer> e : this._ordenNivelMobs.entrySet()) {
+                  if (((Integer)e.getValue()).intValue() == nivelVict) {
+                    if (((Integer)e.getKey()).intValue() == idVictima) {
+                      this._ordenNivelMobs.remove(Integer.valueOf(idVictima));
+                      break;
+                    } 
+                    continue;
+                  } 
+                  SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
+                  exitoReto = 2;
+                  break;
+                } 
+                break;
+              case 28:
+                if (asesino.getPersonaje() == null)
+                  continue; 
+                if (asesino.getPersonaje().getSexo() == 0) {
+                  SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
+                  exitoReto = 2;
+                } 
+                break;
+              case 29:
+                if (asesino.getPersonaje() == null)
+                  continue; 
+                if (asesino.getPersonaje().getSexo() == 1) {
+                  SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
+                  exitoReto = 2;
+                } 
+                break;
+              case 30:
+                if (asesino.getPersonaje() == null)
+                  continue; 
+                if (asesino.getID() != this._luchMenorNivelReto) {
+                  SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
+                  exitoReto = 2;
+                } 
+                break;
+              case 31:
+                if (this._idMobReto == 0) {
+                  this._idMobReto = idVictima;
+                  break;
+                } 
+                if (this._mobsMuertosReto.contains(Integer.valueOf(this._idMobReto)))
+                  this._idMobReto = 0; 
+                break;
+              case 32:
+                if (this._idMobReto == idVictima) {
+                  SocketManager.ENVIAR_GdaK_RETO_REALIZADO(this, reto);
+                  exitoReto = 1;
+                  break;
+                } 
+                SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
+                exitoReto = 2;
+                break;
+              case 35:
+                siguiente = false;
+                iterator = this._ordenLuchMobs.entrySet().iterator();
+                if (iterator.hasNext()) {
+                  Map.Entry<Integer, Luchador> e = iterator.next();
+                  if (((Integer)e.getKey()).intValue() == idVictima) {
+                    this._ordenLuchMobs.remove(Integer.valueOf(idVictima));
+                    siguiente = true;
+                  } else {
+                    SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
+                    exitoReto = 2;
+                  } 
+                } 
+                if (siguiente) {
+                  iterator = this._ordenLuchMobs.entrySet().iterator();
+                  if (iterator.hasNext()) {
+                    Map.Entry<Integer, Luchador> e = iterator.next();
+                    SocketManager.ENVIAR_Gf_MOSTRAR_CASILLA_EN_PELEA(this, 5, ((Integer)e.getKey()).intValue(), ((Luchador)e.getValue()).getCeldaPelea()
+                        .getID());
+                  } 
+                } 
+                break;
+              case 42:
+                this._cantMobsMuerto = (byte)(this._cantMobsMuerto + 1);
+                if (this._cantMobsMuerto > 2) {
+                  SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
+                  exitoReto = 2;
+                } 
+                break;
+              case 44:
+              case 46:
+                if (asesino.getPersonaje() == null)
+                  continue; 
+                asesino._mobMatadosReto.add(Integer.valueOf(idVictima));
+                break;
+            } 
+            if (exitoReto != 0) {
+              this._retos.remove(Integer.valueOf(reto));
+              this._retos.put(Integer.valueOf(reto), Integer.valueOf(exitoReto));
+            } 
+          } 
+        } 
+        if (this._inicioLucEquipo1.contains(victima) && !victima.esInvocacion() && !this._muertesLuchInic1.contains(Integer.valueOf(idVictima)))
+          this._muertesLuchInic1.add(Integer.valueOf(idVictima)); 
+        if (this._inicioLucEquipo2.contains(victima) && !victima.esInvocacion() && !this._muertesLuchInic2.contains(Integer.valueOf(idVictima)))
+          this._muertesLuchInic2.add(Integer.valueOf(idVictima)); 
+        SocketManager.ENVIAR_GA103_JUGADOR_MUERTO(this, 7, idVictima);
+        if (victima.tieneEstado(3)) {
+          Luchador transportado = victima.getTransportando();
+          transportado.setEstado(8, 0);
+          victima.setEstado(3, 0);
+          transportado.setTransportadoPor(null);
+          victima.setTransportando(null);
+        } else if (victima.tieneEstado(8)) {
+          Luchador portador = victima.getTransportadoPor();
+          victima.setEstado(8, 0);
+          portador.setEstado(3, 0);
+          victima.setTransportadoPor(null);
+          portador.setTransportando(null);
+        } 
+        victima.getCeldaPelea().removerLuchador(victima);
+        if (victima.getEquipoBin() == 0) {
+          TreeMap<Integer, Luchador> team = new TreeMap<Integer, Luchador>();
+          team.putAll(this._equipo1);
+          for (Map.Entry<Integer, Luchador> entry : team.entrySet()) {
+            Luchador invocacion = entry.getValue();
+            if (invocacion._estaMuerto || invocacion._estaRetirado || !invocacion.esInvocacion() || 
+              invocacion.getInvocador().getID() != idVictima)
+              continue; 
+            try {
+              Thread.sleep(150L);
+            } catch (Exception exception) {}
+            agregarAMuertos(invocacion);
+          } 
+        } else if (victima.getEquipoBin() == 1) {
+          TreeMap<Integer, Luchador> team = new TreeMap<Integer, Luchador>();
+          team.putAll(this._equipo2);
+          for (Map.Entry<Integer, Luchador> entry : team.entrySet()) {
+            Luchador invocacion = entry.getValue();
+            if (invocacion._estaMuerto || invocacion._estaRetirado)
+              continue; 
+            if (!invocacion.esInvocacion() || invocacion.getInvocador().getID() != idVictima)
+              continue; 
+            try {
+              Thread.sleep(150L);
+            } catch (Exception exception) {}
+            agregarAMuertos(invocacion);
+          } 
+        } 
+        if (victima.getMob() != null)
+          try {
+            boolean esEstatico = false;
+            byte b;
+            int i, arrayOfInt[];
+            for (i = (arrayOfInt = Constantes.INVOCACIONES_ESTATICAS).length, b = 0; b < i; ) {
+              int id = arrayOfInt[b];
+              if (id == victima.getMob().getModelo().getID())
+                esEstatico = true; 
+              b++;
+            } 
+            if (victima.esInvocacion() && !esEstatico) {
+              (victima.getInvocador())._nroInvocaciones = (victima.getInvocador())._nroInvocaciones - 1;
+              if (!this._ordenJugadores.isEmpty()) {
+                int index = this._ordenJugadores.indexOf(victima);
+                if (index != -1) {
+                  if (this._nroOrdenLuc >= index && this._nroOrdenLuc > 0)
+                    this._nroOrdenLuc = (byte)(this._nroOrdenLuc - 1); 
+                  this._ordenJugadores.remove(index);
+                } 
+                if (this._nroOrdenLuc < 0) {
+                  this._tempAccion = "";
+                  return;
+                } 
+                if (this._equipo1.containsKey(Integer.valueOf(idVictima))) {
+                  this._equipo1.remove(Integer.valueOf(idVictima));
+                } else if (this._equipo2.containsKey(Integer.valueOf(idVictima))) {
+                  this._equipo2.remove(Integer.valueOf(idVictima));
+                } 
+                SocketManager.ENVIAR_GA_ACCION_PELEA(this, 7, 999, (new StringBuilder(String.valueOf(idVictima))).toString(), stringOrdenJugadores());
+                if (victima.puedeJugar() && asesino.getID() == idVictima) {
+                  this._tempAccion = "";
+                  finTurno(victima);
+                } 
+                Thread.sleep(500L);
+              } 
+            } 
+          } catch (Exception exception) {} 
+        ArrayList<Glifo> glifos = new ArrayList<Glifo>();
         glifos.addAll(this._glifos);
         for (Glifo glifo : glifos) {
-            if (glifo.getLanzador().getID() != idVictima) continue;
-            celdaID = glifo.getCelda().getID();
-            SocketManager.ENVIAR_GDZ_ACTUALIZA_ZONA_EN_PELEA(this, 7, "-", celdaID, glifo.getTama\u00f1o(), 4);
+          if (glifo.getLanzador().getID() == idVictima) {
+            int celdaID = glifo.getCelda().getID();
+            SocketManager.ENVIAR_GDZ_ACTUALIZA_ZONA_EN_PELEA(this, 7, "-", celdaID, glifo.getTamaño(), 4);
             SocketManager.ENVIAR_GDC_ACTUALIZAR_CELDA_EN_PELEA(this, 7, celdaID);
             this._glifos.remove(glifo);
-        }
-        trampas = new ArrayList<Trampa>();
+          } 
+        } 
+        ArrayList<Trampa> trampas = new ArrayList<Trampa>();
         trampas.addAll(this._trampas);
         for (Trampa trampa : trampas) {
-            if (trampa.getLanzador().getID() != idVictima) continue;
+          if (trampa.getLanzador().getID() == idVictima) {
             trampa.desaparecer();
             this._trampas.remove(trampa);
-        }
+          } 
+        } 
         this._tempAccion = "";
         if (this._tipo == 5 && victima.esRecaudador()) {
-            this.acaboPelea(true, false);
-            return;
-        }
-        if (this._tipo == 2 && victima.esPrisma()) {
-            this.acaboPelea(true, false);
-            return;
-        }
-        if (this._muertesLuchInic1.size() == this._cantLucEquipo1 || this._muertesLuchInic2.size() == this._cantLucEquipo2) {
-            this.acaboPelea(false, false);
-            return;
-        }
-        if (victima.puedeJugar() == false) return;
-        if (victima.getMob() == null || victima.esInvocacion()) {
-            if (victima.getMob() != null) return;
-        }
-        this.finTurno(victima);
-    }
+          acaboPelea(true, false);
+        } else if (this._tipo == 2 && victima.esPrisma()) {
+          acaboPelea(true, false);
+        } else if (this._muertesLuchInic1.size() == this._cantLucEquipo1 || this._muertesLuchInic2.size() == this._cantLucEquipo2) {
+          acaboPelea(false, false);
+        } else if (victima.puedeJugar() && ((
+          victima.getMob() != null && !victima.esInvocacion()) || victima.getMob() == null)) {
+          finTurno(victima);
+        } 
+      }
 
     private Timer resetFinTurno(final Luchador luch) {
         ActionListener accion = new ActionListener(){
@@ -2971,7 +2896,7 @@ lbl179:
                 this._kamasRobadas += pjPerd.getKamas() / 2L;
                 pjPerd.setKamas(pjPerd.getKamas() / 2L);
                 for (Object object : objPerder) {
-                    SocketManager.ENVIAR_OR_ELIMINAR_OBJETO(pjPerd, object.getID());
+                    SocketManager.ENVIAR_OR_ELIMINAR_OBJETO(pjPerd, object.getID()); //FIXME 
                     pjPerd.borrarObjetoSinEliminar(object.getID());
                 }
                 int n2 = pjPerd.getObjetos().size() / 2;
