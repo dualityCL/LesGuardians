@@ -653,7 +653,6 @@ public class GameThread implements Runnable {
 	private void zaap_Cerrar() {
 		_perso.cerrarZaap();
 	}
-
 	private void zaap_Usar(String packet) {
 		if (_perso.getDeshonor() >= 3) {
 			SocketManager.ENVIAR_Im_INFORMACION(_out, "183");
@@ -662,9 +661,7 @@ public class GameThread implements Runnable {
 		short id = -1;
 		try {
 			id = Short.parseShort(packet.substring(2));
-		} catch (Exception exception) {
-			// empty catch block
-		}
+		} catch (Exception exception) {}
 		if (id == -1) {
 			return;
 		}
