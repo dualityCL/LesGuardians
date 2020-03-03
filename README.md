@@ -1,13 +1,8 @@
 # LesGuardians
-![Version](https://img.shields.io/badge/Version-2.7.5-green.svg) ![Build Status](https://img.shields.io/badge/build-WIP-green.svg)
+![Version](https://img.shields.io/badge/Version-2.7.5-purple.svg) ![Build Status](https://img.shields.io/badge/build-WIP-purple.svg)
 
 <p align="center"><img src="https://i.imgur.com/SubpjnI.png" width="50%"><br>Escrito en Java</p>
 
-Emulador en su versión 2.7.5 desarrollado por EduardoLBS y Samuka, decompilado por mí ❤️
-
-- INICIALIZACIÓN DEL SERVIDOR ✔️
-- CONEXIÓN AL SERVIDOR DE CONEXIÓN ✔️
-- CONEXIÓN AL SERVIDOR DE JUEGO ✔️
-- DESPLAZAMIENTO (PATHFINDING) ❌
+Emulador LesGuardins v2.7.5 desarrollado por EduardoLBS (eduardo.lbs@live.com) y Samuka, decompilado por mí (RSPAWN) ❤️
 
 
