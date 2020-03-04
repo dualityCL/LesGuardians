@@ -34,7 +34,7 @@ public class Dragopavo {
     private int _serenidad;
     private Personaje.Stats _stats = new Personaje.Stats();
     private String _ancestros = "?,?,?,?,?,?,?,?,?,?,?,?,?,?";
-    private ArrayList<Objeto> _objetos = new ArrayList();
+    private ArrayList<Objeto> _objetos = new ArrayList<Objeto>();
     private List<Integer> _capacidades = new ArrayList<Integer>(2);
     String _habilidad = ",";
     private short _celdaID;

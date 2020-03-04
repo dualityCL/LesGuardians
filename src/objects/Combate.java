@@ -2292,7 +2292,7 @@ public class Combate {
 					if ((_tipo == 4 || _tipo == 3) && perso != null) {
 						TreeMap<Integer, Integer> copiaRetos = new TreeMap<Integer, Integer>();
 						copiaRetos.putAll(_retos);
-						for (Map.Entry entry : copiaRetos.entrySet()) {
+						for (Entry entry : copiaRetos.entrySet()) {
 							int reto = (Integer) entry.getKey();
 							int exitoReto = (Integer) entry.getValue();
 							if (exitoReto != 0)
@@ -3157,8 +3157,7 @@ public class Combate {
 			}
 			while (ordenLuchMasAMenosPP.size() < ganadores.size()) {
 				int tempPP = -1;
-				for (Entry<Integer, Luchador> entry : todosConPP.entrySet()) { // FIXME Revisar que este ciclo for y su
-																				// contenido funcione
+				for (Entry<Integer, Luchador> entry : todosConPP.entrySet()) { // FIXME Revisar que este ciclo for y su contenido funcione
 					if (entry.getKey() > tempPP && !ordenLuchMasAMenosPP.contains(entry.getValue())) {
 						lucConMaxPP = entry.getValue();
 						tempPP = entry.getKey();

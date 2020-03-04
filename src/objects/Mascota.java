@@ -5,6 +5,7 @@ import common.Mundo;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import objects.Objeto;
 
@@ -184,7 +185,7 @@ public class Mascota {
         String almasDevoradas = "";
         boolean primero = true;
         if (almas.size() != 0) {
-            for (Map.Entry entry : almas.entrySet()) {
+            for (Entry entry : almas.entrySet()) {
                 if (!primero) {
                     almasDevoradas = String.valueOf(almasDevoradas) + ";";
                 }

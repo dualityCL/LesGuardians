@@ -4,6 +4,8 @@ import common.Constantes;
 import common.Fórmulas;
 import common.LesGuardians;
 import common.Mundo;
+import common.Mundo.Drop;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Timer;
@@ -24,22 +26,22 @@ public class MobModelo {
     private int _minKamas;
     private int _maxKamas;
     private Map<Integer, MobGrado> _grados = new TreeMap<Integer, MobGrado>();
-    private ArrayList<Mundo.Drop> _drops = new ArrayList();
+    private ArrayList<Drop> _drops = new ArrayList<Drop>();
     private boolean _esCapturable;
     private int _talla;
     private String _nombre;
 
     public MobModelo(int id, String nombre, int gfx, byte alineacion, String colores, String grados, String hechizos, String stats, String pdvs, String puntos, String init, int mK, int MK, String xpstr, byte tipoIA, boolean capturable, int talla) {
-        this._ID = id;
-        this._gfxID = gfx;
-        this._alineacion = alineacion;
-        this._colores = colores;
-        this._minKamas = mK;
-        this._maxKamas = MK;
-        this._tipoIA = tipoIA;
-        this._esCapturable = capturable;
-        this._talla = talla;
-        this._nombre = nombre;
+        _ID = id;
+        _gfxID = gfx;
+        _alineacion = alineacion;
+        _colores = colores;
+        _minKamas = mK;
+        _maxKamas = MK;
+        _tipoIA = tipoIA;
+        _esCapturable = capturable;
+        _talla = talla;
+        _nombre = nombre;
         int idGrado = 1;
         for (int n = 0; n < 11; ++n) {
             try {
@@ -86,7 +88,7 @@ public class MobModelo {
                 catch (Exception exception) {
                     // empty catch block
                 }
-                this._grados.put(idGrado, new MobGrado(this, idGrado, nivel, PA, PM, resistencias, aStats, aHechizos, pdvMax, aInit, xp));
+                _grados.put(idGrado, new MobGrado(this, idGrado, nivel, PA, PM, resistencias, aStats, aHechizos, pdvMax, aInit, xp));
                 ++idGrado;
                 continue;
             }
@@ -97,55 +99,55 @@ public class MobModelo {
     }
 
     public int getID() {
-        return this._ID;
+        return _ID;
     }
 
     public void addDrop(Mundo.Drop drop) {
-        this._drops.add(drop);
+        _drops.add(drop);
     }
 
     public int getTalla() {
-        return this._talla;
+        return _talla;
     }
 
     public ArrayList<Mundo.Drop> getDrops() {
-        return this._drops;
+        return _drops;
     }
 
     public int getGfxID() {
-        return this._gfxID;
+        return _gfxID;
     }
 
     public int getMinKamas() {
-        return this._minKamas;
+        return _minKamas;
     }
 
     public int getMaxKamas() {
-        return this._maxKamas;
+        return _maxKamas;
     }
 
     public byte getAlineacion() {
-        return this._alineacion;
+        return _alineacion;
     }
 
     public String getColores() {
-        return this._colores;
+        return _colores;
     }
 
     public byte getTipoInteligencia() {
-        return this._tipoIA;
+        return _tipoIA;
     }
 
     public void setTipoInteligencia(byte IA2) {
-        this._tipoIA = IA2;
+        _tipoIA = IA2;
     }
 
     public Map<Integer, MobGrado> getGrados() {
-        return this._grados;
+        return _grados;
     }
 
     public MobGrado getGradoPorNivel(int nivel) {
-        for (Map.Entry<Integer, MobGrado> grado : this._grados.entrySet()) {
+        for (Map.Entry<Integer, MobGrado> grado : _grados.entrySet()) {
             if (grado.getValue().getNivel() != nivel) continue;
             return grado.getValue();
         }
@@ -155,7 +157,7 @@ public class MobModelo {
     public MobGrado getRandomGrado() {
         int randomgrade = (int)(Math.random() * 5.0 + 1.0);
         int graderandom = 1;
-        for (Map.Entry<Integer, MobGrado> grade : this._grados.entrySet()) {
+        for (Map.Entry<Integer, MobGrado> grade : _grados.entrySet()) {
             if (graderandom == randomgrade) {
                 return grade.getValue();
             }
@@ -165,11 +167,11 @@ public class MobModelo {
     }
 
     public boolean esCapturable() {
-        return this._esCapturable;
+        return _esCapturable;
     }
 
     public String getNombre() {
-        return this._nombre;
+        return _nombre;
     }
 
     public static class GrupoMobs {
@@ -188,8 +190,8 @@ public class MobModelo {
         private String _strGrupoMob = "";
 
         public GrupoMobs(int id, byte alineacion, ArrayList<MobGrado> posiblesMobs, Mapa Mapa, short celda, int maxMobsPorGrupo) {
-            this._id = id;
-            this._alin = alineacion;
+            _id = id;
+            _alin = alineacion;
             int rand = 0;
             int nroMobs = 0;
             switch (maxMobsPorGrupo) {
@@ -314,36 +316,36 @@ public class MobModelo {
                 if (mob.getNivel() > maxNivel) {
                     maxNivel = mob.getNivel();
                 }
-                if (this._almas.containsKey(idModeloMob = mob.getModelo().getID())) {
-                    int valor = this._almas.get(idModeloMob);
-                    this._almas.remove(idModeloMob);
-                    this._almas.put(idModeloMob, valor + 1);
+                if (_almas.containsKey(idModeloMob = mob.getModelo().getID())) {
+                    int valor = _almas.get(idModeloMob);
+                    _almas.remove(idModeloMob);
+                    _almas.put(idModeloMob, valor + 1);
                 } else {
-                    this._almas.put(idModeloMob, 1);
+                    _almas.put(idModeloMob, 1);
                 }
-                this._mobs.put(idMob, mob);
+                _mobs.put(idMob, mob);
                 --idMob;
             }
-            this._distanciaAgresion = Constantes.agresionPorNivel(maxNivel);
-            if (this._alin != 0) {
-                this._distanciaAgresion = 15;
+            _distanciaAgresion = Constantes.agresionPorNivel(maxNivel);
+            if (_alin != 0) {
+                _distanciaAgresion = 15;
             }
-            short s = this._celdaID = celda == -1 ? Mapa.getRandomCeldaIDLibre() : celda;
-            if (this._celdaID == 0) {
+            _celdaID = celda == -1 ? Mapa.getRandomCeldaIDLibre() : celda;
+            if (_celdaID == 0) {
                 return;
             }
-            this._orientacion = (byte)(Fórmulas.getRandomValor(0, 3) * 2);
-            this._esFixeado = false;
-            this._estrellas = 0;
+            _orientacion = (byte)(Fórmulas.getRandomValor(0, 3) * 2);
+            _esFixeado = false;
+            _estrellas = 0;
         }
 
         public GrupoMobs(int id, short celdaID, String strGrupoMob) {
-            this._id = id;
-            this._alin = 0;
-            this._celdaID = celdaID;
-            this._distanciaAgresion = Constantes.agresionPorNivel(0);
-            this._esFixeado = true;
-            this._strGrupoMob = strGrupoMob;
+            _id = id;
+            _alin = 0;
+            _celdaID = celdaID;
+            _distanciaAgresion = Constantes.agresionPorNivel(0);
+            _esFixeado = true;
+            _strGrupoMob = strGrupoMob;
             int idMob = -1;
             for (String data : strGrupoMob.split(";")) {
                 String[] infos = data.split(",");
@@ -358,99 +360,97 @@ public class MobModelo {
                         mgs.add(MG);
                     }
                     if (mgs.isEmpty()) continue;
-                    if (this._almas.containsKey(idMobModelo)) {
-                        int valor = this._almas.get(idMobModelo);
-                        this._almas.remove(idMobModelo);
-                        this._almas.put(idMobModelo, valor + 1);
+                    if (_almas.containsKey(idMobModelo)) {
+                        int valor = _almas.get(idMobModelo);
+                        _almas.remove(idMobModelo);
+                        _almas.put(idMobModelo, valor + 1);
                     } else {
-                        this._almas.put(idMobModelo, 1);
+                        _almas.put(idMobModelo, 1);
                     }
-                    this._mobs.put(idMob, (MobGrado)mgs.get(Fórmulas.getRandomValor(0, mgs.size() - 1)));
+                    _mobs.put(idMob, (MobGrado)mgs.get(Fórmulas.getRandomValor(0, mgs.size() - 1)));
                     --idMob;
                 }
-                catch (Exception exception) {
-                    // empty catch block
-                }
+                catch (Exception exception) {}
             }
-            this._orientacion = (byte)(Fórmulas.getRandomValor(0, 3) * 2 + 1);
+            _orientacion = (byte)(Fórmulas.getRandomValor(0, 3) * 2 + 1);
         }
 
         public int getID() {
-            return this._id;
+            return _id;
         }
 
         public String getStrGrupoMob() {
-            return this._strGrupoMob;
+            return _strGrupoMob;
         }
 
         public void setMuerto(boolean muerto) {
-            this._muerto = muerto;
+            _muerto = muerto;
         }
 
         public boolean estaMuerto() {
-            return this._muerto;
+            return _muerto;
         }
 
         public short getEstrellas() {
-            return this._estrellas;
+            return _estrellas;
         }
 
         public void setEstrellas(short estre) {
-            this._estrellas = estre;
+            _estrellas = estre;
         }
 
         public void aumentarEstrellas() {
-            if (this._estrellas == 0) {
-                this._estrellas = 1;
+            if (_estrellas == 0) {
+                _estrellas = 1;
                 return;
             }
-            this._estrellas = (short)(this._estrellas + 25);
-            if (this._estrellas > 1025) {
-                this._estrellas = 0;
+            _estrellas = (short)(_estrellas + 25);
+            if (_estrellas > 1025) {
+                _estrellas = 0;
             }
         }
 
         public void aumentarEstrellasCant(int cant) {
-            this._estrellas = (short)(this._estrellas + cant);
-            if (this._estrellas > 1025) {
-                this._estrellas = 0;
+            _estrellas = (short)(_estrellas + cant);
+            if (_estrellas > 1025) {
+                _estrellas = 0;
             }
         }
 
         public short getCeldaID() {
-            return this._celdaID;
+            return _celdaID;
         }
 
         public byte getOrientacion() {
-            return this._orientacion;
+            return _orientacion;
         }
 
         public int getDistanciaAgresion() {
-            return this._distanciaAgresion;
+            return _distanciaAgresion;
         }
 
         public boolean esPermanente() {
-            return this._esFixeado;
+            return _esFixeado;
         }
 
         public void setOrientacion(byte o) {
-            this._orientacion = 0;
+            _orientacion = 0;
         }
 
         public void setCeldaID(short id) {
-            this._celdaID = id;
+            _celdaID = id;
         }
 
         public byte getAlineamiento() {
-            return this._alin;
+            return _alin;
         }
 
         public MobGrado getMobGradoPorID(int id) {
-            return this._mobs.get(id);
+            return _mobs.get(id);
         }
 
         public int getCantMobs() {
-            return this._mobs.size();
+            return _mobs.size();
         }
 
         public String enviarGM() {
@@ -459,10 +459,10 @@ public class MobModelo {
             String mobNiveles = "";
             String colores = "";
             boolean primero = true;
-            if (this._mobs.isEmpty()) {
+            if (_mobs.isEmpty()) {
                 return "";
             }
-            for (Map.Entry<Integer, MobGrado> entry : this._mobs.entrySet()) {
+            for (Map.Entry<Integer, MobGrado> entry : _mobs.entrySet()) {
                 if (!primero) {
                     mobIDs = String.valueOf(mobIDs) + ",";
                     mobGFX = String.valueOf(mobGFX) + ",";
@@ -475,43 +475,43 @@ public class MobModelo {
                 colores = String.valueOf(colores) + mob.getColores() + ";0,0,0,0;";
                 primero = false;
             }
-            return "+" + this._celdaID + ";" + this._orientacion + ";" + this._estrellas + ";" + this._id + ";" + mobIDs + ";-3;" + mobGFX + ";" + mobNiveles + ";" + colores;
+            return "+" + _celdaID + ";" + _orientacion + ";" + _estrellas + ";" + _id + ";" + mobIDs + ";-3;" + mobGFX + ";" + mobNiveles + ";" + colores;
         }
 
         public Map<Integer, MobGrado> getMobs() {
-            return this._mobs;
+            return _mobs;
         }
 
         public Map<Integer, Integer> getAlmasMobs() {
-            return this._almas;
+            return _almas;
         }
 
         public void setCondicion(String cond) {
-            this._condicion = cond;
+            _condicion = cond;
         }
 
         public String getCondicion() {
-            return this._condicion;
+            return _condicion;
         }
 
         public void setEsPermanente(boolean fix) {
-            this._esFixeado = fix;
+            _esFixeado = fix;
         }
 
         public void inicioTiempoCondicion() {
-            this._tiempoCondicion = new Timer();
-            this._tiempoCondicion.schedule(new TimerTask(){
+            _tiempoCondicion = new Timer();
+            _tiempoCondicion.schedule(new TimerTask(){
 
                 @Override
                 public void run() {
-                    GrupoMobs.this._condicion = "";
+                    _condicion = "";
                 }
             }, LesGuardians.TIEMPO_ARENA);
         }
 
         public void stopConditionTimer() {
             try {
-                this._tiempoCondicion.cancel();
+                _tiempoCondicion.cancel();
             }
             catch (Exception exception) {
                 // empty catch block
@@ -533,19 +533,19 @@ public class MobModelo {
         private int _baseXp = 10;
         private Map<Integer, Integer> _stats = new TreeMap<Integer, Integer>();
         private Map<Integer, Hechizo.StatsHechizos> _hechizos = new TreeMap<Integer, Hechizo.StatsHechizos>();
-        private ArrayList<Objeto> _objetosHeroico = new ArrayList();
+        private ArrayList<Objeto> _objetosHeroico = new ArrayList<Objeto>();
         private long _kamasHeroico = 0L;
 
         public MobGrado(MobModelo modelo, int grado, short nivel, short PA, short PM, String resistencia, String stats, String hechizos, int pdvMax, int iniciativa, int xp) {
             String[] spellsArray;
-            this._modelo = modelo;
-            this._grado = grado;
-            this._nivel = nivel;
-            this._PDV = this._PDVMAX = pdvMax;
-            this._PA = PA;
-            this._PM = PM;
-            this._baseXp = xp;
-            this._iniciativa = iniciativa;
+            _modelo = modelo;
+            _grado = grado;
+            _nivel = nivel;
+            _PDV = _PDVMAX = pdvMax;
+            _PA = PA;
+            _PM = PM;
+            _baseXp = xp;
+            _iniciativa = iniciativa;
             String[] resistencias = resistencia.split(";");
             String[] statsArray = stats.split(",");
             int RNeutral = 0;
@@ -577,28 +577,28 @@ public class MobModelo {
             catch (Exception e) {
                 e.printStackTrace();
             }
-            this._stats.clear();
-            this._stats.put(118, fuerza);
-            this._stats.put(124, sabiduria);
-            this._stats.put(126, inteligencia);
-            this._stats.put(123, suerte);
-            this._stats.put(119, agilidad);
-            this._stats.put(214, RNeutral);
-            this._stats.put(213, RFuego);
-            this._stats.put(211, RAgua);
-            this._stats.put(212, RAire);
-            this._stats.put(210, RTierra);
-            this._stats.put(160, EPA);
-            this._stats.put(161, EPM);
-            this._stats.put(111, Integer.valueOf(PA));
-            this._stats.put(128, Integer.valueOf(PM));
-            if (this._modelo.getID() == 423) {
-                this._stats.put(182, 4);
-                this._stats.put(105, 100);
+            _stats.clear();
+            _stats.put(118, fuerza);
+            _stats.put(124, sabiduria);
+            _stats.put(126, inteligencia);
+            _stats.put(123, suerte);
+            _stats.put(119, agilidad);
+            _stats.put(214, RNeutral);
+            _stats.put(213, RFuego);
+            _stats.put(211, RAgua);
+            _stats.put(212, RAire);
+            _stats.put(210, RTierra);
+            _stats.put(160, EPA);
+            _stats.put(161, EPM);
+            _stats.put(111, Integer.valueOf(PA));
+            _stats.put(128, Integer.valueOf(PM));
+            if (_modelo.getID() == 423) {
+                _stats.put(182, 4);
+                _stats.put(105, 100);
             } else {
-                this._stats.put(182, 2);
+                _stats.put(182, 2);
             }
-            this._hechizos.clear();
+            _hechizos.clear();
             String[] arrstring = spellsArray = hechizos.split(";");
             int n = spellsArray.length;
             for (int i = 0; i < n; ++i) {
@@ -617,120 +617,120 @@ public class MobModelo {
                     continue;
                 }
                 if (hechizoID == 0 || hechizoNivel == 0 || (hechizo = Mundo.getHechizo(hechizoID)) == null || (hechizoStats = hechizo.getStatsPorNivel(hechizoNivel)) == null) continue;
-                this._hechizos.put(hechizoID, hechizoStats);
+                _hechizos.put(hechizoID, hechizoStats);
             }
         }
 
         private MobGrado(MobModelo modelo, int grado, short nivel, int pdv, int pdvmax, short PA, short PM, Map<Integer, Integer> stats, Map<Integer, Hechizo.StatsHechizos> hechizos, int iniciativa, int xp) {
-            this._modelo = modelo;
-            this._grado = grado;
-            this._nivel = nivel;
-            this._PDV = pdv;
-            this._PDVMAX = pdvmax;
-            this._PA = PA;
-            this._PM = PM;
-            this._iniciativa = iniciativa;
-            this._stats = stats;
-            this._hechizos = hechizos;
-            this._idEnPelea = -1;
-            this._baseXp = xp;
+            _modelo = modelo;
+            _grado = grado;
+            _nivel = nivel;
+            _PDV = pdv;
+            _PDVMAX = pdvmax;
+            _PA = PA;
+            _PM = PM;
+            _iniciativa = iniciativa;
+            _stats = stats;
+            _hechizos = hechizos;
+            _idEnPelea = -1;
+            _baseXp = xp;
         }
 
         public long getBaseXp() {
-            return this._baseXp;
+            return _baseXp;
         }
 
         public int getIniciativa() {
-            return this._iniciativa;
+            return _iniciativa;
         }
 
         public MobGrado copiarMob() {
             TreeMap<Integer, Integer> nuevoStats = new TreeMap<Integer, Integer>();
-            nuevoStats.putAll(this._stats);
-            return new MobGrado(this._modelo, this._grado, this._nivel, this._PDV, this._PDVMAX, this._PA, this._PM, nuevoStats, this._hechizos, this._iniciativa, this._baseXp);
+            nuevoStats.putAll(_stats);
+            return new MobGrado(_modelo, _grado, _nivel, _PDV, _PDVMAX, _PA, _PM, nuevoStats, _hechizos, _iniciativa, _baseXp);
         }
 
         public Personaje.Stats getStats() {
-            return new Personaje.Stats(this._stats);
+            return new Personaje.Stats(_stats);
         }
 
         public int getNivel() {
-            return this._nivel;
+            return _nivel;
         }
 
         public void addKamasHeroico(long kamas) {
             if (kamas < 1L) {
                 return;
             }
-            this._kamasHeroico += kamas;
+            _kamasHeroico += kamas;
         }
 
         public long getKamasHeroico() {
-            return this._kamasHeroico;
+            return _kamasHeroico;
         }
 
         public void borrarKamasHeroico() {
-            this._kamasHeroico = 0L;
+            _kamasHeroico = 0L;
         }
 
         public void addObjetoHeroico(Objeto obj) {
-            this._objetosHeroico.add(obj);
+            _objetosHeroico.add(obj);
         }
 
         public ArrayList<Objeto> getObjetoHeroico() {
-            return this._objetosHeroico;
+            return _objetosHeroico;
         }
 
         public void borrarObjetosHeroico() {
-            this._objetosHeroico.clear();
+            _objetosHeroico.clear();
         }
 
         public Mapa.Celda getCeldaPelea() {
-            return this._celdaPelea;
+            return _celdaPelea;
         }
 
         public void setCeldaPelea(Mapa.Celda celda) {
-            this._celdaPelea = celda;
+            _celdaPelea = celda;
         }
 
         public Map<Integer, Hechizo.StatsHechizos> getHechizos() {
-            return this._hechizos;
+            return _hechizos;
         }
 
         public MobModelo getModelo() {
-            return this._modelo;
+            return _modelo;
         }
 
         public int getPDV() {
-            return this._PDV;
+            return _PDV;
         }
 
         public void setPDV(int pdv) {
-            this._PDV = pdv;
+            _PDV = pdv;
         }
 
         public int getPDVMAX() {
-            return this._PDVMAX;
+            return _PDVMAX;
         }
 
         public int getGrado() {
-            return this._grado;
+            return _grado;
         }
 
         public void setIdEnPelea(int i) {
-            this._idEnPelea = i;
+            _idEnPelea = i;
         }
 
         public int getIdEnPelea() {
-            return this._idEnPelea;
+            return _idEnPelea;
         }
 
         public int getPA() {
-            return this._PA;
+            return _PA;
         }
 
         public int getPM() {
-            return this._PM;
+            return _PM;
         }
 
         public void modificarStatsPorInvocador(Combate.Luchador invocador) {
@@ -751,27 +751,26 @@ public class MobModelo {
                 coefVita = (float)invocador.getNivel() / 100.0f;
             }
             Personaje.Stats stats = invocador.getTotalStatsSinBuff();
-            this._PDV = (int)((float)this._PDVMAX * coefVita) + stats.getEfecto(125) / 40;
-            if (this._PDV < 1) {
-                this._PDV = 1;
+            _PDV = (int)((float)_PDVMAX * coefVita) + stats.getEfecto(125) / 40;
+            if (_PDV < 1) {
+                _PDV = 1;
             }
-            this._PDVMAX = this._PDV;
-            int fuerza = (int)((float)this._stats.get(118).intValue() + (float)stats.getEfecto(118) * coefStats);
-            int inteligencia = (int)((float)this._stats.get(126).intValue() + (float)stats.getEfecto(126) * coefStats);
-            int agilidad = (int)((float)this._stats.get(119).intValue() + (float)stats.getEfecto(119) * coefStats);
-            int sabiduria = (int)((float)this._stats.get(124).intValue() + (float)stats.getEfecto(124) * coefStats);
-            int suerte = (int)((float)this._stats.get(123).intValue() + (float)stats.getEfecto(123) * coefStats);
-            this._stats.remove(118);
-            this._stats.remove(126);
-            this._stats.remove(119);
-            this._stats.remove(124);
-            this._stats.remove(123);
-            this._stats.put(118, fuerza);
-            this._stats.put(126, inteligencia);
-            this._stats.put(119, agilidad);
-            this._stats.put(124, sabiduria);
-            this._stats.put(123, suerte);
+            _PDVMAX = _PDV;
+            int fuerza = (int)((float)_stats.get(118).intValue() + (float)stats.getEfecto(118) * coefStats);
+            int inteligencia = (int)((float)_stats.get(126).intValue() + (float)stats.getEfecto(126) * coefStats);
+            int agilidad = (int)((float)_stats.get(119).intValue() + (float)stats.getEfecto(119) * coefStats);
+            int sabiduria = (int)((float)_stats.get(124).intValue() + (float)stats.getEfecto(124) * coefStats);
+            int suerte = (int)((float)_stats.get(123).intValue() + (float)stats.getEfecto(123) * coefStats);
+            _stats.remove(118);
+            _stats.remove(126);
+            _stats.remove(119);
+            _stats.remove(124);
+            _stats.remove(123);
+            _stats.put(118, fuerza);
+            _stats.put(126, inteligencia);
+            _stats.put(119, agilidad);
+            _stats.put(124, sabiduria);
+            _stats.put(123, suerte);
         }
     }
 }
-

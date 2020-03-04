@@ -34,33 +34,33 @@ public class Recaudador {
 
 	public Recaudador(int ID, short mapa, short celdaID, byte orientacion, int gremioID, String N1, String N2,
 			String items, long kamas, long xp) {
-		this._id = ID;
-		this._mapaID = mapa;
-		this._celdaID = celdaID;
-		this._orientacion = orientacion;
-		this._gremioID = gremioID;
-		this._nombre_1 = N1;
-		this._nombre_2 = N2;
+		_id = ID;
+		_mapaID = mapa;
+		_celdaID = celdaID;
+		_orientacion = orientacion;
+		_gremioID = gremioID;
+		_nombre_1 = N1;
+		_nombre_2 = N2;
 		for (String item : items.split("\\|")) {
-			String[] infos;
-			int id;
-			Objeto obj;
+			String[] infos = item.split(":");
+			int id = Integer.parseInt(infos[0]);
+			Objeto obj = Mundo.getObjeto(id);
 			if (item.equals("") || (obj = Mundo.getObjeto(id = Integer.parseInt((infos = item.split(":"))[0]))) == null)
 				continue;
-			this._objetos.put(obj.getID(), obj);
+			_objetos.put(obj.getID(), obj);
 		}
-		this._xp = xp;
-		this._kamas = kamas;
-		this._pelea = null;
+		_xp = xp;
+		_kamas = kamas;
+		_pelea = null;
 	}
 
 	public long getKamas() {
-		return this._kamas;
+		return _kamas;
 	}
 
 	public int getPodsActuales() {
 		int pods = 0;
-		for (Map.Entry<Integer, Objeto> entry : this._objetos.entrySet()) {
+		for (Map.Entry<Integer, Objeto> entry : _objetos.entrySet()) {
 			Objeto obj = entry.getValue();
 			if (obj == null)
 				continue;
@@ -70,43 +70,43 @@ public class Recaudador {
 	}
 
 	public void setKamas(long kamas) {
-		this._kamas = kamas;
+		_kamas = kamas;
 	}
 
 	public long getXp() {
-		return this._xp;
+		return _xp;
 	}
 
 	public void setXp(long xp) {
-		this._xp = xp;
+		_xp = xp;
 	}
 
 	public void addXp(long xp) {
-		this._xp += xp;
+		_xp += xp;
 	}
 
 	public Map<Integer, Objeto> getObjetos() {
-		return this._objetos;
+		return _objetos;
 	}
 
 	public void borrarObjeto(int id) {
-		this._objetos.remove(id);
+		_objetos.remove(id);
 	}
 
 	public boolean tieneObjeto(int id) {
-		return this._objetos.get(id) != null;
+		return _objetos.get(id) != null;
 	}
 
 	public void descontarTiempoTurno(int tiempo) {
-		this._tiempoTurno -= tiempo;
+		_tiempoTurno -= tiempo;
 	}
 
 	public void setTiempoTurno(int tiempo) {
-		this._tiempoTurno = tiempo;
+		_tiempoTurno = tiempo;
 	}
 
 	public int getTiempoTurno() {
-		return this._tiempoTurno;
+		return _tiempoTurno;
 	}
 
 	public static String enviarGMDeRecaudador(Mapa mapa) {
@@ -141,20 +141,20 @@ public class Recaudador {
 	}
 
 	public int getGremioID() {
-		return this._gremioID;
+		return _gremioID;
 	}
 
 	public void borrarRecaudador(int idRecaudador) {
-		for (Objeto obj : this._objetos.values()) {
+		for (Objeto obj : _objetos.values()) {
 			Mundo.eliminarObjeto(obj._id);
 		}
 		Mundo.borrarRecaudador(idRecaudador);
 	}
 
 	public void borrarRecauPorRecolecta(int idRecaudador, Personaje perso) {
-		perso.addKamas(this._kamas);
+		perso.addKamas(_kamas);
 		try {
-			for (Objeto obj : this._objetos.values()) {
+			for (Objeto obj : _objetos.values()) {
 				if (obj == null)
 					continue;
 				int id = 0;
@@ -177,47 +177,47 @@ public class Recaudador {
 	}
 
 	public byte getEstadoPelea() {
-		return this._estadoPelea;
+		return _estadoPelea;
 	}
 
 	public void setEstadoPelea(byte estado) {
-		this._estadoPelea = estado;
+		_estadoPelea = estado;
 	}
 
 	public int getID() {
-		return this._id;
+		return _id;
 	}
 
 	public short getCeldalID() {
-		return this._celdaID;
+		return _celdaID;
 	}
 
 	public void setPeleaID(short ID) {
-		this._peleaID = ID;
+		_peleaID = ID;
 	}
 
 	public void setPelea(Combate pelea) {
-		this._pelea = pelea;
+		_pelea = pelea;
 	}
 
 	public Combate getPelea() {
-		return this._pelea;
+		return _pelea;
 	}
 
 	public short getPeleaID() {
-		return this._peleaID;
+		return _peleaID;
 	}
 
 	public short getMapaID() {
-		return this._mapaID;
+		return _mapaID;
 	}
 
 	public String getN1() {
-		return this._nombre_1;
+		return _nombre_1;
 	}
 
 	public String getN2() {
-		return this._nombre_2;
+		return _nombre_2;
 	}
 
 	public static String analizarRecaudadores(int gremioID) {
@@ -335,18 +335,18 @@ public class Recaudador {
 
 	public String getListaObjRecaudador() {
 		String objetos = "";
-		for (Objeto obj : this._objetos.values()) {
+		for (Objeto obj : _objetos.values()) {
 			objetos = String.valueOf(objetos) + "O" + obj.stringObjetoConGui\u00f1o();
 		}
-		if (this._kamas != 0L) {
-			objetos = String.valueOf(objetos) + "G" + this._kamas;
+		if (_kamas != 0L) {
+			objetos = String.valueOf(objetos) + "G" + _kamas;
 		}
 		return objetos;
 	}
 
 	public String stringListaObjetosBD() {
 		String objetos = "";
-		for (Objeto obj : this._objetos.values()) {
+		for (Objeto obj : _objetos.values()) {
 			objetos = String.valueOf(objetos) + obj._id + "|";
 		}
 		return objetos;
@@ -358,7 +358,7 @@ public class Recaudador {
 		int nuevaCant = RecauObj.getCantidad() - cantidad;
 		if (PersoObj == null) {
 			if (nuevaCant <= 0) {
-				this.borrarObjeto(idObjeto);
+				borrarObjeto(idObjeto);
 				perso.addObjetoPut(RecauObj);
 				SocketManager.ENVIAR_OAKO_APARECER_OBJETO(perso, RecauObj);
 				String str = "O-" + idObjeto;
@@ -374,7 +374,7 @@ public class Recaudador {
 				SocketManager.ENVIAR_EsK_MOVER_A_TIENDA_COFRE_BANCO(perso, str);
 			}
 		} else if (nuevaCant <= 0) {
-			this.borrarObjeto(idObjeto);
+			borrarObjeto(idObjeto);
 			Mundo.eliminarObjeto(RecauObj.getID());
 			PersoObj.setCantidad(PersoObj.getCantidad() + RecauObj.getCantidad());
 			SocketManager.ENVIAR_OQ_CAMBIA_CANTIDAD_DEL_OBJETO(perso, PersoObj);
@@ -394,7 +394,7 @@ public class Recaudador {
 	public String stringObjetos() {
 		String str = "";
 		boolean esPrimero = true;
-		for (Objeto obj : this._objetos.values()) {
+		for (Objeto obj : _objetos.values()) {
 			if (!esPrimero) {
 				str = String.valueOf(str) + ";";
 			}
@@ -405,31 +405,31 @@ public class Recaudador {
 	}
 
 	public void addObjeto(Objeto nuevoObj) {
-		this._objetos.put(nuevoObj.getID(), nuevoObj);
+		_objetos.put(nuevoObj.getID(), nuevoObj);
 	}
 
 	public void setEnRecolecta(boolean Exchange) {
-		this._enRecolecta = Exchange;
+		_enRecolecta = Exchange;
 	}
 
 	public boolean getEnRecolecta() {
-		return this._enRecolecta;
+		return _enRecolecta;
 	}
 
 	public int getOrientacion() {
-		return this._orientacion;
+		return _orientacion;
 	}
 
 	public Mapa getMapa() {
-		return Mundo.getMapa(this._mapaID);
+		return Mundo.getMapa(_mapaID);
 	}
 
 	public void moverPerco() {
-		Mapa mapa = Mundo.getMapa(this._mapaID);
-		short celdadestino = Pathfinding.celdaMovPerco(mapa, this._celdaID);
-		ArrayList<Mapa.Celda> celdas = Pathfinding.pathMasCortoEntreDosCeldas(mapa, this._celdaID, celdadestino, 0);
+		Mapa mapa = Mundo.getMapa(_mapaID);
+		short celdadestino = Pathfinding.celdaMovPerco(mapa, _celdaID);
+		ArrayList<Mapa.Celda> celdas = Pathfinding.pathMasCortoEntreDosCeldas(mapa, _celdaID, celdadestino, 0);
 		String pathstr = "";
-		short tempCeldaID = this._celdaID;
+		short tempCeldaID = _celdaID;
 		byte tempDireccion = 0;
 		for (Mapa.Celda celda : celdas) {
 			char dir = Pathfinding.getDirEntreDosCeldas(tempCeldaID, celda.getID(), mapa, true);
@@ -468,7 +468,7 @@ public class Recaudador {
 			}
 			tempCeldaID = celda.getID();
 		}
-		if (tempCeldaID != this._celdaID)
+		if (tempCeldaID != _celdaID)
 			pathstr = String.valueOf(pathstr) + CryptManager.celdaIDACodigo(tempCeldaID);
 		try {
 			Thread.sleep(100L);
@@ -481,7 +481,7 @@ public class Recaudador {
 			return;
 		}
 		AtomicReference<String> pathRef = new AtomicReference<String>(path);
-		int resultado = Pathfinding.numeroMovimientos(getMapa(), this._celdaID, pathRef, null);
+		int resultado = Pathfinding.numeroMovimientos(getMapa(), _celdaID, pathRef, null);
 		if (resultado == 0)
 			return;
 		if (resultado != -1000 && resultado < 0)
@@ -491,9 +491,9 @@ public class Recaudador {
 			path = String.valueOf(CryptManager.getValorHashPorNumero(getOrientacion()))
 					+ CryptManager.celdaIDACodigo(getCeldalID());
 		SocketManager.ENVIAR_GA_ACCION_JUEGO_AL_MAPA(getMapa(), "0", 1,
-				(new StringBuilder(String.valueOf(this._id))).toString(),
-				"a" + CryptManager.celdaIDACodigo(this._celdaID) + path);
-		this._celdaID = celdadestino;
-		this._orientacion = tempDireccion;
+				(new StringBuilder(String.valueOf(_id))).toString(),
+				"a" + CryptManager.celdaIDACodigo(_celdaID) + path);
+		_celdaID = celdadestino;
+		_orientacion = tempDireccion;
 	}
 }
