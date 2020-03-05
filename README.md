@@ -7,11 +7,8 @@
 Inicio este proyecto porque los desarrolladores han dejado de trabajar en él a finales del año 2012 y a modo de aprendizaje decidí decompilar la última versión publicada por ellos, la v2.7.5 (compilada el 28 de novimebre de 2012).
 
 # Changelog
-Leyenda:
-* ⚠️: Advertencias (warnings) detectadas por el IDE.
-* ❗: Errores (errors) detectados por el IDE.
 
-# Rev2 (03/03/2020 - 05/03/2020)
+# Rev2 (03/03/2020 - 05/03/2020) - VERSIÓN ESTABLE
 * Correcta inicialización  y ejecución del servidor (RealmServer y GameServer).
 * Desplazamiento de los personajes funcionando (Pathfinding).
 * Los zaaps ya se encuentran operativos.
@@ -30,7 +27,7 @@ Leyenda:
 * Oficio y sus clases estáticas: Varios ArrayList parametrizados y correcciones aplicadas a los métodos "iniciarReceta", "recetaForjaMagia", "iniciarTrabajoPago" y "trabajoPagoFM".
 * Mercadillo y sus clases estáticas: Varios ArrayList's parametrizados, corrección en el método "ordenar".
 * Mascota y sus clases estáticas: Dos ArrayList parametrizados y varios ciclos for completados.
-* Progreso total: Ya no hay ⚠️ en el código fuente, inicialmente habían 287 ❗ y 231 ⚠️.
+* Progreso total: Ya no hay errores en el código fuente, inicialmente habían 287 errores y 231 advertencias detectadas por el IDE.
 
 # Rev1 - Versión base (02/03/2020)
 * Esta versión es el resultado de la decompilación del JAR, por lo tanto los errores están a la orden del día en el código fuente.
@@ -44,7 +41,7 @@ Leyenda:
 * Maps: Corrección aplicada a los métodos "delAccionFinPelea", "getObjectosGDF", "refrescarGrupoMobs" y "copiarMapa".
 * ConsolePersonalizado: Reparado void run().
 * Conta: Reconstrucción del método "resetTodosPjs".
-* Pathfinding: Reconstrucción de los métodos "numeroMovimientos", "checkearLineaDeVista", "listaCeldasDesdeLuchador" y  "getDirEntreDosCeldas".
+* Pathfinding: Reconstrucción de los métodos "numeroMovimientos", "checkearLineaDeVista", "listaCeldasDesdeLuchador" y "getDirEntreDosCeldas".
 
 A continuación se encuentran listados todos los cambios realizados por los autores originales del proyecto:
 
@@ -110,8 +107,8 @@ A continuación se encuentran listados todos los cambios realizados por los auto
 - trigger (agrega triggers sin tener que hacerlo desde la DB).
 * Emulador portugués.
 
-Puedes revisar el Changelog haciendo [clic aquí](https://github.com/RSPAWN/LesGuardians/blob/master/Changelog).
-
 # Créditos
 
-El emulador fue desarrollado originalmente por EduardoLBS (eduardo.lbs@live.com) y Samuka basándose en Elbustemu 3.9 (probablemente). Si lo deseas, puedes visitar la página oficial de los desarrolladores: [LesGuardians](http://www.lesguardiansemu.xpg.com.br/).
+El emulador fue desarrollado originalmente por EduardoLBS (eduardo.lbs@live.com) y Samuka basándose en el emulador Elbustemu. 
+
+Si lo deseas, puedes visitar la página oficial de los desarrolladores haciendo [clic aquí](http://www.lesguardiansemu.xpg.com.br/).
