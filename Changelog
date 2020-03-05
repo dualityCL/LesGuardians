@@ -4,25 +4,35 @@
 * CONEXIÓN AL SERVIDOR DE JUEGO ✔️
 * DESPLAZAMIENTO (PATHFINDING) ✔️
 * OBJETO INTERACTIVO: ZAAPS ✔️
+* Se han traducido varios nombres de clases Java.
 * Mundo: Ahora los zaaps son cargados al iniciar el servidor.
 * GameServer: ArrayList parametrizados y eliminada variable booleana inncesaria en void run().
 * Recaudador y Cofre: Se han modificado las declaraciones del ciclo for para objetos.
 * Objeto: ArrayList's y Map Entry's parametrizados.
 * Dragopavo, Tutorial, PiedraAlma, MobModelo, NPCModelo y RespuestaNPC: ArrayList's parametrizados.
-* EfectoHechizo: Múltiples correcciones  eaplicarBuffContraGolpe múltiples correcciones, ciclo for corregido del método aplicarAPelea, múltiples correcciones en aplicarEfecto_5, aplicarEfecto_671 y aplicarEfecto_672.
+* EfectoHechizo: Múltiples correcciones en el método "aplicarBuffContraGolpe", ciclo for corregido del método "aplicarAPelea" y varias correcciones en  los métodos "aplicarEfecto_5", "aplicarEfecto_671" y "aplicarEfecto_672".
 * Cuenta: Argumentos de ArrayList's parametrizados y modificación de algunas declaraciones del ciclo for de objetos en banco.
 * LesGuardians: Eliminado apartado static, se han agregado los valores correspondientes a cada variable. Todos los printOut's han sido traducidos del PT al ES.
 * (HOTFIX 05-03-2020) Cuenta, Cofre y Recaudador: Corrección en tres ciclos for; objetos de banco, cofres y recaudadores. Impedían el inicio del emulador (NumberFormatException).
 * Progreso total: Solo quedan 63 advertencias (⚠️) en el código fuente, inicialmente habían 287 errores (❗) y 231 advertencias (⚠️).
 
-# Rev1 (02/03/2020)
+# Rev1 - Versión base (02/03/2020)
 * Esta versión es el resultado de la decompilación del JAR, por lo tanto los errores están a la orden del día en el código fuente.
 * INICIALIZACIÓN DEL SERVIDOR ❌
 * CONEXIÓN AL SERVIDOR DE CONEXIÓN ❌
 * CONEXIÓN AL SERVIDOR DE JUEGO ❌
 * DESPLAZAMIENTO (PATHFINDING) ❌
 * OBJETO INTERACTIVO: ZAAP ❌
-* NOTA: Faltan cambios en esta versión, se agregarán a la brevedad.
+* Comandos: Corrección aplicada a los comandos "who", "SHOWFIGHTPOS", "TELEPORT", "IRMAPA", "ENERGIA", "ITEM", "KAMAS", "ENCHERVIDA" y "LEVEL".
+* Constantes: Corrección aplicada a los métodos "getObjetoPorTrabajo" y "esRetoPosible1".
+* IA: Reconstrucción de los métodos "listaEnemigosMenosPDV", "listaTodoLuchadores" y "objetivosMasCercanos".
+* SQLManager: Reconstrucción de los métodos "analizarHechizoStats" y "ejecutarConsultaSQL".
+* GameThread: Correcciones menores.
+* Acción: Corregido constructor Prisma en "case 201".
+* Maps: Corrección aplicada a los métodos "delAccionFinPelea", "getObjectosGDF", "refrescarGrupoMobs" y "copiarMapa".
+* ConsolePersonalizado: Reparado void run().
+* Conta: Reconstrucción del método "resetTodosPjs".
+* Pathfinding: Reconstrucción de los métodos "numeroMovimientos", "checkearLineaDeVista", "listaCeldasDesdeLuchador" y  "getDirEntreDosCeldas".
 
 A continuación se encuentran listados todos los cambios realizados por los autores originales del proyecto:
 
