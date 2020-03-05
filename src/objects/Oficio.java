@@ -20,7 +20,7 @@ import objects.EfectoHechizo;
 
 public class Oficio {
     private int _id;
-    private ArrayList<Integer> _herramientas = new ArrayList();
+    private ArrayList<Integer> _herramientas = new ArrayList<Integer>();
     private Map<Integer, ArrayList<Integer>> _recetas = new TreeMap<Integer, ArrayList<Integer>>();
 
     public Oficio(int id, String herramientas, String recetas) {
@@ -31,9 +31,7 @@ public class Oficio {
                     int herramienta = Integer.parseInt(str);
                     this._herramientas.add(herramienta);
                 }
-                catch (Exception herramienta) {
-                    // empty catch block
-                }
+                catch (Exception herramienta) {}
             }
         }
         if (!recetas.equals("")) {
@@ -482,8 +480,6 @@ public class Oficio {
                 return;
             }
             try {
-                int jet;
-                boolean exito;
                 PrintWriter out = this._artesano.getCuenta().getEntradaPersonaje().getOut();
                 TreeMap<Integer, Integer> ingredPorModelo = new TreeMap<Integer, Integer>();
                 for (Map.Entry<Integer, Integer> ingrediente : this._ingredientes.entrySet()) {
@@ -527,7 +523,8 @@ public class Oficio {
                     return;
                 }
                 int suerte = Constantes.getSuertePorNroCasillaYNivel(SO.getNivel(), this._ingredientes.size());
-                boolean bl = exito = suerte >= (jet = Fórmulas.getRandomValor(1, 100));
+                int jet = Fórmulas.getRandomValor(1, 100);
+                boolean exito = (suerte >= jet);
                 if (!exito) {
                     SocketManager.ENVIAR_Ec_INICIAR_RECETA(this._artesano, "EF");
                     SocketManager.ENVIAR_IO_ICONO_OBJ_INTERACTIVO(this._artesano.getMapa(), this._artesano.getID(), "-" + idReceta);
@@ -572,8 +569,6 @@ public class Oficio {
         }
 
         private void recetaForjaMagia() {
-            int jet;
-            boolean exito;
             boolean firmado = false;
             Objeto objAMaguear = null;
             Objeto objRunaFirma = null;
@@ -586,7 +581,7 @@ public class Oficio {
             int runa = 0;
             boolean vip = false;
             String statAMaguear = "-1";
-            block79: for (int idIngrediente : this._ingredientes.keySet()) {
+            for (int idIngrediente : this._ingredientes.keySet()) {
                 Objeto ing = Mundo.getObjeto(idIngrediente);
                 if (ing == null || !this._artesano.tieneObjetoID(idIngrediente)) {
                     SocketManager.ENVIAR_Ec_INICIAR_RECETA(this._artesano, "EI");
@@ -1167,7 +1162,7 @@ public class Oficio {
                     }
                     default: {
                         int tipo = ing.getModelo().getTipo();
-                        if (!(tipo >= 1 && tipo <= 11 || tipo >= 16 && tipo <= 22 || tipo == 81 || tipo == 102 || tipo == 114) && ing.getModelo().getCostePA() <= 0) continue block79;
+                        if (!(tipo >= 1 && tipo <= 11 || tipo >= 16 && tipo <= 22 || tipo == 81 || tipo == 102 || tipo == 114) && ing.getModelo().getCostePA() <= 0) continue;
                         objAMaguear = ing;
                         SocketManager.ENVIAR_EMK_MOVER_OBJETO_LOCAL(this._artesano.getCuenta().getEntradaPersonaje().getOut(), 'O', "+", String.valueOf(objAMaguear.getID()) + "|" + 1);
                         idABorrar = idIngrediente;
@@ -1252,7 +1247,8 @@ public class Oficio {
                     suerte = 100;
                 }
             }
-            boolean bl = exito = suerte >= (jet = Fórmulas.getRandomValor(1, 100));
+            int jet = Fórmulas.getRandomValor(1, 100);
+            boolean exito = (suerte >= jet);
             if (!exito) {
                 int romper = Fórmulas.getRandomValor(1, 100);
                 if (objRunaFirma != null) {
@@ -1424,8 +1420,6 @@ public class Oficio {
         }
 
         public boolean iniciarTrabajoPago(Personaje artesano, Personaje cliente, ArrayList<Mundo.Duo<Integer, Integer>> objArtesano, ArrayList<Mundo.Duo<Integer, Integer>> objCliente) {
-            int jet;
-            boolean exito;
             if (!this._esReceta) {
                 return false;
             }
@@ -1494,8 +1488,9 @@ public class Oficio {
                 this._ingredientes.clear();
                 return false;
             }
-            int suerte = Constantes.getSuertePorNroCasillaYNivel(SO.getNivel(), this._ingredientes.size());
-            boolean bl = exito = suerte >= (jet = Fórmulas.getRandomValor(1, 100));
+            int suerte = Constantes.getSuertePorNroCasillaYNivel(SO.getNivel(), _ingredientes.size());
+            int jet = Fórmulas.getRandomValor(1, 100);
+            boolean exito = (suerte >= jet);
             if (!exito) {
                 SocketManager.ENVIAR_Ec_INICIAR_RECETA(this._artesano, "EF");
                 SocketManager.ENVIAR_IO_ICONO_OBJ_INTERACTIVO(this._artesano.getMapa(), this._artesano.getID(), "-" + idReceta);
@@ -1536,8 +1531,6 @@ public class Oficio {
         }
 
         private boolean trabajoPagoFM() {
-            int jet;
-            boolean exito;
             boolean firmado = false;
             Objeto objAMaguear = null;
             Objeto objRunaFirma = null;
@@ -2212,9 +2205,9 @@ public class Oficio {
                     suerte = 100;
                 }
             }
-            boolean bl = exito = suerte >= (jet = Fórmulas.getRandomValor(1, 100));
+            int jet = Fórmulas.getRandomValor(1, 100);
+            boolean exito = (suerte >= jet);
             if (!exito) {
-                int romper;
                 if (objRunaFirma != null) {
                     Personaje modificado = this._artesano.tieneObjetoID(objRunaFirma.getID()) ? this._artesano : this._cliente;
                     int nuevaCant = objRunaFirma.getCantidad() - 1;
@@ -2239,8 +2232,9 @@ public class Oficio {
                         SocketManager.ENVIAR_OQ_CAMBIA_CANTIDAD_DEL_OBJETO(modificado, objModificador);
                     }
                 }
-                if ((romper = Fórmulas.getRandomValor(1, 100)) == 100) {
-                    this._romperse = true;
+                int romper = Fórmulas.getRandomValor(1, 100);
+                if (romper == 100) {
+                  this._romperse = true;
                     Personaje modificado = this._artesano.tieneObjetoID(idObjMaguear) ? this._artesano : this._cliente;
                     Mundo.eliminarObjeto(idObjMaguear);
                     modificado.borrarObjetoSinEliminar(idObjMaguear);
@@ -2458,7 +2452,7 @@ public class Oficio {
         private Oficio _oficio;
         private int _nivel;
         private long _exp;
-        private ArrayList<AccionTrabajo> _trabajosPoderRealizar = new ArrayList();
+        private ArrayList<AccionTrabajo> _trabajosPoderRealizar = new ArrayList<AccionTrabajo>();
         private boolean _esPagable;
         private boolean _gratisSiFalla;
         private boolean _noProporcRecurso;

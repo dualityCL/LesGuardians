@@ -194,7 +194,6 @@ public class Combate {
 
 	public Combate(short id, Mapa mapa, Personaje init1, Personaje init2, byte tipo) {
 		try {
-			Random equipos;
 			_tipo = tipo;
 			_id = id;
 			_mapaCopia = mapa.copiarMapa();
@@ -225,7 +224,8 @@ public class Combate {
 				});
 				_tiempoTurno.start();
 			}
-			if ((equipos = new Random()).nextBoolean()) {
+			Random equipos = new Random();
+			if (equipos.nextBoolean()) {
 				_celdasPos1 = analizarPosiciones(0);
 				_celdasPos2 = analizarPosiciones(1);
 				SocketManager.ENVIAR_GP_POSICIONES_PELEA(this, 1, _mapaCopia.getPosicionesPelea(), 0);
@@ -337,7 +337,7 @@ public class Combate {
 		SocketManager.ENVIAR_GA_ACCION_PELEA(this, 3, 950, String.valueOf(id1), String.valueOf(id1) + "," + 3 + ",0");
 		ArrayList<Map.Entry<Integer, Luchador>> equipo2 = new ArrayList<Map.Entry<Integer, Luchador>>();
 		equipo2.addAll(_equipo2.entrySet());
-		for (Map.Entry entry : equipo2) {
+		for (Entry<Integer, Luchador> entry : equipo2) {
 			Luchador mob = (Luchador) entry.getValue();
 			Mapa.Celda celdaRandom = getCeldaRandom(_celdasPos2);
 			if (celdaRandom == null) {
@@ -423,7 +423,7 @@ public class Combate {
 		SocketManager.ENVIAR_GA_ACCION_PELEA(this, 3, 950, String.valueOf(id1), String.valueOf(id1) + "," + 3 + ",0");
 		ArrayList<Map.Entry<Integer, Luchador>> equipo2 = new ArrayList<Map.Entry<Integer, Luchador>>();
 		equipo2.addAll(_equipo2.entrySet());
-		for (Map.Entry entry : equipo2) {
+		for (Entry<Integer, Luchador> entry : equipo2) {
 			Luchador recau = (Luchador) entry.getValue();
 			Mapa.Celda celdaRandom = getCeldaRandom(_celdasPos2);
 			if (celdaRandom == null) {
@@ -519,7 +519,7 @@ public class Combate {
 		SocketManager.ENVIAR_GA_ACCION_PELEA(this, 3, 950, String.valueOf(id1), String.valueOf(id1) + "," + 3 + ",0");
 		ArrayList<Map.Entry<Integer, Luchador>> equipo2 = new ArrayList<Map.Entry<Integer, Luchador>>();
 		equipo2.addAll(_equipo2.entrySet());
-		for (Map.Entry entry : equipo2) {
+		for (Entry<Integer, Luchador> entry : equipo2) {
 			Luchador lprisma = (Luchador) entry.getValue();
 			Mapa.Celda celdaRandom = getCeldaRandom(_celdasPos2);
 			if (celdaRandom == null) {
@@ -614,7 +614,7 @@ public class Combate {
 			SocketManager.ENVIAR_GP_POSICIONES_PELEA(this, 1, _mapaCopia.getPosicionesPelea(), 1);
 			SocketManager.ENVIAR_GP_POSICIONES_PELEA(this, 2, _mapaCopia.getPosicionesPelea(), 0);
 		}
-		for (Map.Entry entry : equipo2) {
+		for (Entry<Integer, Luchador> entry : equipo2) {
 			Luchador lucha = (Luchador) entry.getValue();
 			Mapa.Celda celdaRandom = getCeldaRandom(_celdasPos2);
 			if (celdaRandom == null) {
@@ -1456,9 +1456,7 @@ public class Combate {
 		try {
 			getLuchadorPorPJ(perso)._desconectado = false;
 			SocketManager.ENVIAR_Im_INFORMACION_A_PELEA(this, 7, "1184;" + perso.getNombre());
-		} catch (Exception exception) {
-			// empty catch block
-		}
+		} catch (Exception exception) {}
 	}
 
 	public void botonBloquearMasJug(int id) {
@@ -1475,7 +1473,7 @@ public class Combate {
 
 	public synchronized void botonSoloGrupo(int id) {
 		if (_luchInit1 != null && _idLuchInit1 == id) {
-			boolean bl = _soloGrupo1 = !_soloGrupo1;
+			_soloGrupo1 = !_soloGrupo1;
 			if (_soloGrupo1) {
 				ArrayList<Integer> lista = new ArrayList<Integer>();
 				ArrayList<Integer> expulsar = new ArrayList<Integer>();
@@ -1499,7 +1497,7 @@ public class Combate {
 			SocketManager.ENVIAR_Go_BOTON_ESPEC_AYUDA(_mapaReal, _soloGrupo1 ? (char) '+' : '-', 'P', id);
 			SocketManager.ENVIAR_Im_INFORMACION_A_PELEA(this, 1, _soloGrupo1 ? "093" : "094");
 		} else if (_luchInit2 != null && _idLuchInit2 == id) {
-			boolean bl = _soloGrupo2 = !_soloGrupo2;
+			_soloGrupo2 = !_soloGrupo2;
 			if (_soloGrupo2) {
 				ArrayList<Integer> lista = new ArrayList<Integer>();
 				ArrayList<Integer> expulsar = new ArrayList<Integer>();
@@ -1527,7 +1525,7 @@ public class Combate {
 
 	public synchronized void botonBloquearEspect(int id) {
 		if (_luchInit1 != null && _idLuchInit1 == id || _luchInit2 != null && _idLuchInit2 == id) {
-			boolean bl = _espectadorOk = !_espectadorOk;
+			_espectadorOk = !_espectadorOk;
 			if (_idLuchInit1 == id) {
 				SocketManager.ENVIAR_Go_BOTON_ESPEC_AYUDA(_mapaReal, _espectadorOk ? (char) '+' : '-', 'S',
 						_idLuchInit1);
@@ -1638,7 +1636,7 @@ public class Combate {
 		if ((_tipo == 4 || _tipo == 3) && movedor.getPersonaje() != null) {
 			TreeMap<Integer, Integer> copiaRetos = new TreeMap<Integer, Integer>();
 			copiaRetos.putAll(_retos);
-			for (Map.Entry entry : copiaRetos.entrySet()) {
+			for (Entry<Integer, Integer> entry : copiaRetos.entrySet()) { //FIXME Is this really working?
 				int reto = (Integer) entry.getKey();
 				int exitoReto = (Integer) entry.getValue();
 				if (exitoReto != 0)
@@ -1856,7 +1854,7 @@ public class Combate {
 		if ((_tipo == 4 || _tipo == 3) && luchador.getPersonaje() != null) {
 			TreeMap<Integer, Integer> copiaRetos = new TreeMap<Integer, Integer>();
 			copiaRetos.putAll(_retos);
-			for (Map.Entry entry : copiaRetos.entrySet()) {
+			for (Entry<Integer, Integer> entry : copiaRetos.entrySet()) { //FIXME Is this really working?
 				int reto = (Integer) entry.getKey();
 				int exitoReto = (Integer) entry.getValue();
 				if (exitoReto != 0)
@@ -2229,9 +2227,7 @@ public class Combate {
 			SocketManager.ENVIAR_GTF_FIN_DE_TURNO(this, 7, luchador.getID());
 			try {
 				Thread.sleep(250L);
-			} catch (Exception exception) {
-				// empty catch block
-			}
+			} catch (Exception exception) {}
 			if (!luchador._estaRetirado) {
 				_tempAccion = "";
 				if (!luchador._estaMuerto) {
@@ -2292,7 +2288,7 @@ public class Combate {
 					if ((_tipo == 4 || _tipo == 3) && perso != null) {
 						TreeMap<Integer, Integer> copiaRetos = new TreeMap<Integer, Integer>();
 						copiaRetos.putAll(_retos);
-						for (Entry entry : copiaRetos.entrySet()) {
+						for (Entry<Integer, Integer> entry : copiaRetos.entrySet()) { //FIXME Is this really working?
 							int reto = (Integer) entry.getKey();
 							int exitoReto = (Integer) entry.getValue();
 							if (exitoReto != 0)
@@ -2437,7 +2433,7 @@ public class Combate {
 				_tempLuchadorPAusados = (short) (_tempLuchadorPAusados + sHechizo.getCostePA());
 			}
 			SocketManager.ENVIAR_GAS_INICIO_DE_ACCION(this, 7, lanzador.getID());
-			boolean bl = esFC = sHechizo.getPorcFC() != 0
+			esFC = sHechizo.getPorcFC() != 0
 					&& Fórmulas.getRandomValor(1, sHechizo.getPorcFC()) == sHechizo.getPorcFC();
 			if (esFC) {
 				SocketManager.ENVIAR_GA_ACCION_PELEA(this, 7, 302, String.valueOf(lanzador.getID()),
@@ -2446,7 +2442,7 @@ public class Combate {
 				if ((_tipo == 4 || _tipo == 3) && lanzador.getPersonaje() != null) {
 					TreeMap<Integer, Integer> copiaRetos = new TreeMap<Integer, Integer>();
 					copiaRetos.putAll(_retos);
-					for (Map.Entry entry : copiaRetos.entrySet()) {
+					for (Entry<Integer, Integer> entry : copiaRetos.entrySet()) { //FIXME Is this really working?
 						int reto = (Integer) entry.getKey();
 						int exitoReto = (Integer) entry.getValue();
 						if (exitoReto != 0)
@@ -2527,15 +2523,11 @@ public class Combate {
 				}
 				try {
 					sHechizo.aplicaHechizoAPelea(this, lanzador, celda, esGC);
-				} catch (Exception exception) {
-					// empty catch block
-				}
+				} catch (Exception exception) {}
 				if (lanzador.getPersonaje() == null) {
 					try {
 						Thread.sleep(1000L);
-					} catch (Exception exception) {
-						// empty catch block
-					}
+					} catch (Exception exception) {}
 				}
 			}
 			if (lanzador.getTipo() == 1 && perso.getHechizosSetClase().containsKey(sHechizo.getHechizoID())) {
@@ -2569,9 +2561,7 @@ public class Combate {
 		}
 		try {
 			Thread.sleep(_tiempoResetAccion);
-		} catch (Exception exception) {
-			// empty catch block
-		}
+		} catch (Exception exception) {}
 		_tempAccion = "";
 		return 0;
 	}
@@ -2584,11 +2574,12 @@ public class Combate {
 		if (_tipo == 4 || _tipo == 3) {
 			TreeMap<Integer, Integer> copiaRetos = new TreeMap<Integer, Integer>();
 			copiaRetos.putAll(_retos);
-			for (Map.Entry entry : copiaRetos.entrySet()) {
+			for (Entry<Integer, Integer> entry : copiaRetos.entrySet()) { //FIXME Is this really working?
 				int reto = (Integer) entry.getKey();
 				int exitoReto = (Integer) entry.getValue();
-				if (exitoReto != 0)
+				if (exitoReto != 0) {
 					continue;
+				}
 				switch (reto) {
 				case 5: {
 					if (lanzador._hechiLanzadosReto.contains(0)) {
@@ -2675,7 +2666,7 @@ public class Combate {
 				return;
 			}
 			SocketManager.ENVIAR_GAS_INICIO_DE_ACCION(this, 7, perso.getID());
-			boolean bl = esFC = arma.getModelo().getPorcFC() != 0
+			esFC = arma.getModelo().getPorcFC() != 0
 					&& Fórmulas.getRandomValor(1, arma.getModelo().getPorcFC()) == arma.getModelo().getPorcFC();
 			if (esFC) {
 				SocketManager.ENVIAR_GA_ACCION_PELEA(this, 7, 305, String.valueOf(perso.getID()), "");
@@ -2770,7 +2761,7 @@ public class Combate {
 		}
 		if (lanzador.getTipo() == 1 && perso.getHechizosSetClase().containsKey(sHechizo.getHechizoID())) {
 			modi = perso.getModifSetClase(sHechizo.getHechizoID(), 288);
-			boolean bl = modif = modi == 1;
+			modif = modi == 1;
 			if (sHechizo.esLanzLinea() && !modif
 					&& !Pathfinding.siCeldasEstanEnMismaLinea(_mapaCopia, celdaDondeLanza, celda.getID(), 'z')) {
 				if (perso != null) {
@@ -2787,7 +2778,7 @@ public class Combate {
 		}
 		if (lanzador.getTipo() == 1 && perso.getHechizosSetClase().containsKey(sHechizo.getHechizoID())) {
 			modi = perso.getModifSetClase(sHechizo.getHechizoID(), 289);
-			boolean bl = modif = modi == 1;
+			modif = modi == 1;
 			if (sHechizo.tieneLineaVuelo()
 					&& !Pathfinding.checkearLineaDeVista(_mapaCopia, celdaDondeLanza, celda.getID(), lanzador)
 					&& !modif) {
@@ -2814,7 +2805,7 @@ public class Combate {
 		if (lanzador.getTipo() == 1 && perso.getHechizosSetClase().containsKey(sHechizo.getHechizoID())) {
 			boolean modif2;
 			int modi4 = perso.getModifSetClase(sHechizo.getHechizoID(), 282);
-			boolean bl = modif2 = modi4 == 1;
+			modif2 = modi4 == 1;
 			if ((sHechizo.esModifAlc() || modif2) && (maxAlc += statsConBuff.getEfecto(117)) < minAlc) {
 				maxAlc = minAlc;
 			}
@@ -2849,7 +2840,7 @@ public class Combate {
 				|| nroLanzObjetivo <= 0;
 	}
 
-	public String getPanelResultados(int equipoGanador) { // FIXME
+	public String getPanelResultados(int equipoGanador) {
 		int n;
 		long tiempo = System.currentTimeMillis() - _tiempoInicio;
 		int initID = _idLuchInit1;
@@ -2864,17 +2855,17 @@ public class Combate {
 			TreeMap<Integer, Integer> copiaRetos = new TreeMap<Integer, Integer>();
 			copiaRetos.putAll(_retos);
 			if (equipoGanador == 1) {
-				for (Map.Entry entry : copiaRetos.entrySet()) {
+				for (Entry<Integer, Integer> entry : copiaRetos.entrySet()) { //FIXME Is this really working?
 					reto = (Integer) entry.getKey();
 					exitoReto = (Integer) entry.getValue();
-					block2: switch (reto) {
+					switch (reto) {
 					case 33: {
 						for (Luchador luchador : _inicioLucEquipo1) {
 							if (!luchador._estaMuerto)
 								continue;
 							exitoReto = 2;
 							SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
-							break block2;
+							break;
 						}
 						break;
 					}
@@ -2885,7 +2876,7 @@ public class Combate {
 								continue;
 							exitoReto = 2;
 							SocketManager.ENVIAR_GdaO_RETO_PERDIDO(this, reto);
-							break block2;
+							break;
 						}
 						break;
 					}
@@ -2901,7 +2892,7 @@ public class Combate {
 					_retos.put(reto, exitoReto);
 				}
 			} else {
-				for (Map.Entry entry : copiaRetos.entrySet()) {
+				for (Entry<Integer, Integer> entry : copiaRetos.entrySet()) { //FIXME Is this really working?
 					reto = (Integer) entry.getKey();
 					exitoReto = (Integer) entry.getValue();
 					if (exitoReto != 0)
@@ -3157,7 +3148,7 @@ public class Combate {
 			}
 			while (ordenLuchMasAMenosPP.size() < ganadores.size()) {
 				int tempPP = -1;
-				for (Entry<Integer, Luchador> entry : todosConPP.entrySet()) { // FIXME Revisar que este ciclo for y su contenido funcione
+				for (Entry<Integer, Luchador> entry : todosConPP.entrySet()) {
 					if (entry.getKey() > tempPP && !ordenLuchMasAMenosPP.contains(entry.getValue())) {
 						lucConMaxPP = entry.getValue();
 						tempPP = entry.getKey();
@@ -3334,14 +3325,15 @@ public class Combate {
 				}
 				if (_tipo == 5 && pjGanador != null) {
 					if (pjGanador.getGremio() == null || _Recaudador.getGremioID() != pjGanador.getGremio().getID()) {
-						Object var50_108 = null;
+						Collection<Objeto> objRecaudador = null;
 						ArrayList<Integer> idObjetos = new ArrayList<Integer>();
-						Collection<Objeto> collection = _Recaudador.getObjetos().values();
-						if (collection.size() > 0) {
-							maximo = collection.size() / parteCorresponde;
-							for (Objeto objeto : collection) {
-								if (objeto == null)
+						objRecaudador = _Recaudador.getObjetos().values();
+						if (objRecaudador.size() > 0) {
+							maximo = objRecaudador.size() / parteCorresponde;
+							for (Objeto objeto : objRecaudador) {
+								if (objeto == null) {
 									continue;
+								}
 								if (drops.length() > 0) {
 									drops = String.valueOf(drops) + ",";
 								}
@@ -3716,7 +3708,7 @@ public class Combate {
 			}
 		} else {
 			equipo1Muerto = e1Muerto;
-			boolean bl = equipo2Muerto = !e1Muerto;
+			equipo2Muerto = !e1Muerto;
 		}
 		if (_tipo == 4) {
 			if (equipo2Muerto) {

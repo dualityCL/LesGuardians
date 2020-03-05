@@ -199,7 +199,7 @@ public class Mapa {
 
 	public void addAccionFinPelea(int tipo, Acción accion) {
 		if (_accionFinPelea.get(tipo) == null) {
-			_accionFinPelea.put(tipo, new ArrayList());
+			_accionFinPelea.put(tipo, new ArrayList<Acción>());
 		}
 		delAccionFinPelea(tipo, accion.getID());
 		_accionFinPelea.get(tipo).add(accion);
@@ -969,7 +969,7 @@ public class Mapa {
 
 		public void addAccionEnUnaCelda(int id, String args, String cond) {
 			if (_celdaAccion == null) {
-				_celdaAccion = new ArrayList();
+				_celdaAccion = new ArrayList<Acción>();
 			}
 			_celdaAccion.add(new Acción(id, args, cond));
 		}

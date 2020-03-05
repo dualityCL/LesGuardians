@@ -1,15 +1,16 @@
 package objects;
 
-import common.SQLManager;
-import common.SocketManager;
-import common.Mundo;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import common.SQLManager;
+import common.SocketManager;
+import common.Mundo;
+
 import objects.Cuenta;
 import objects.Objeto;
 import objects.Personaje;
@@ -160,7 +161,7 @@ public class Mercadillo {
 
     public class LineaMercadillo {
         private int _lineaID;
-        private ArrayList<ArrayList<ObjetoMercadillo>> _categorias = new ArrayList(3);
+        private ArrayList<ArrayList<ObjetoMercadillo>> _categorias = new ArrayList<ArrayList<ObjetoMercadillo>>(3);
         private String _strStats;
         private int _modeloID;
 
@@ -170,7 +171,7 @@ public class Mercadillo {
             this._strStats = objeto.convertirStatsAString();
             this._modeloID = objeto.getModelo().getID();
             for (int i = 0; i < 3; ++i) {
-                this._categorias.add(new ArrayList());
+                this._categorias.add(new ArrayList<ObjetoMercadillo>());
             }
             this.addObjMercaALinea(objMercadillo);
         }
@@ -248,8 +249,8 @@ public class Mercadillo {
         }
 
         public void ordenar(byte categoria) {
-            Collections.sort((List)this._categorias.get(categoria));
-        }
+			Collections.sort(_categorias.get(categoria));
+		}
 
         public boolean categoriaVacia() {
             int i = 0;
@@ -406,10 +407,11 @@ public class Mercadillo {
 
     private class TipoObjetos {
         Map<Integer, Modelo> _modelos = new HashMap<Integer, Modelo>();
-        int _tipoObjID;
+        @SuppressWarnings("unused")
+		int _tipoObjID;
 
         public TipoObjetos(int categoriaID) {
-            this._tipoObjID = categoriaID;
+            _tipoObjID = categoriaID;
         }
 
         public void addModeloVerificacion(ObjetoMercadillo objMerca) {

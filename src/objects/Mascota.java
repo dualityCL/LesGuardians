@@ -1,12 +1,14 @@
 package objects;
 
-import common.LesGuardians;
-import common.Mundo;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+
+import common.LesGuardians;
+import common.Mundo;
+import common.Mundo.Duo;
+
 import objects.Objeto;
 
 public class Mascota {
@@ -185,7 +187,7 @@ public class Mascota {
         String almasDevoradas = "";
         boolean primero = true;
         if (almas.size() != 0) {
-            for (Entry entry : almas.entrySet()) {
+        	for (Entry<Integer, Integer> entry : almas.entrySet()) {
                 if (!primero) {
                     almasDevoradas = String.valueOf(almasDevoradas) + ";";
                 }
@@ -218,7 +220,7 @@ public class Mascota {
             }
         }
         boolean puedeAumentar = maxPorStat < this._mascModelo.getStatsPorEfecto(efecto);
-        boolean bl = puede = maximo < this._mascModelo._maxStats;
+        puede = maximo < this._mascModelo._maxStats;
         if (!puedeAumentar || !puede) {
             return;
         }
@@ -244,7 +246,7 @@ public class Mascota {
             String statsfinal = "";
             boolean esPrimero = true;
             if (stasitos.size() != 0) {
-                for (Map.Entry entry : stasitos.entrySet()) {
+                for (Entry<Integer, Integer> entry : stasitos.entrySet()) {
                     if (!esPrimero) {
                         statsfinal = String.valueOf(statsfinal) + ",";
                     }
@@ -301,7 +303,7 @@ public class Mascota {
                 }
             }
             boolean puedeAumentar = maxPorStat < this._mascModelo.getStatsPorEfecto(efecto);
-            boolean bl = puede = maximo < this._mascModelo._maxStats;
+            puede = maximo < this._mascModelo._maxStats;
             if (!puedeAumentar || !puede) {
                 return;
             }
@@ -326,7 +328,7 @@ public class Mascota {
             String statsfinal = "";
             boolean esPrimero = true;
             if (stasitos.size() != 0) {
-                for (Map.Entry entry : stasitos.entrySet()) {
+                for (Entry<Integer, Integer> entry : stasitos.entrySet()) {
                     if (!esPrimero) {
                         statsfinal = String.valueOf(statsfinal) + ",";
                     }
@@ -449,8 +451,8 @@ public class Mascota {
 
     public static class MascotaModelo {
         private int _maxStats;
-        private ArrayList<Mundo.Duo<Integer, Integer>> _statsPorEfecto = new ArrayList();
-        private ArrayList<Comida> _comidas = new ArrayList();
+        private ArrayList<Duo<Integer, Integer>> _statsPorEfecto = new ArrayList<Duo<Integer, Integer>>();
+        private ArrayList<Comida> _comidas = new ArrayList<Comida>();
         private boolean _esDevorador;
 
         public MascotaModelo(int maxStas, String statsPorEfecto, String comidas, int devorador) {

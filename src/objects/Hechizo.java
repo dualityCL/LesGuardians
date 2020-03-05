@@ -15,7 +15,7 @@ public class Hechizo {
     private int _spriteID;
     private String _spriteInfos;
     private Map<Integer, StatsHechizos> _statsHechizos = new TreeMap<Integer, StatsHechizos>();
-    private ArrayList<Integer> _afectadosEstandar = new ArrayList();
+    private ArrayList<Integer> _afectadosEstandar = new ArrayList<Integer>();
 
     public Hechizo(int aHechizoID, String aNombre, int aSpriteID, String aSpriteInfos, String afectados) {
         this._ID = aHechizoID;
@@ -129,10 +129,11 @@ public class Hechizo {
         private ArrayList<EfectoHechizo> _efectos;
         private ArrayList<EfectoHechizo> _efectosGC;
         private String _afectados;
-        private ArrayList<Integer> _estadosProhibidos = new ArrayList();
-        private ArrayList<Integer> _estadosNecesarios = new ArrayList();
+        private ArrayList<Integer> _estadosProhibidos = new ArrayList<Integer>();
+        private ArrayList<Integer> _estadosNecesarios = new ArrayList<Integer>();
         private Hechizo _hechizo;
-        private byte _tipoHechizo;
+        @SuppressWarnings("unused")
+		private byte _tipoHechizo;
 
         public StatsHechizos(int hechizoID, int nivel, int costePA, int minAlc, int maxAlc, int porcGC, int porcFC, boolean esLanzLinea, boolean tieneLineaVuelo, boolean esCeldaVacia, boolean esModifAlc, int maxLanzPorTurno, int maxLanzPorObjetivo, int sigLanzamiento, int reqLevel, boolean esFinTurnoSiFC, String efectos, String efectosGC, String afectados, String estadosProhibidos, String estadosNecesarios, Hechizo hechizo, byte tipoHechizo) {
             String[] estadosN;
@@ -170,8 +171,8 @@ public class Hechizo {
                 esta = esta.trim();
                 this._estadosNecesarios.add(Integer.parseInt(esta));
             }
-            this._hechizo = hechizo;
-            this._tipoHechizo = tipoHechizo;
+            _hechizo = hechizo;
+            _tipoHechizo = tipoHechizo;
         }
 
         private ArrayList<EfectoHechizo> analizarEfectos(String e) {
