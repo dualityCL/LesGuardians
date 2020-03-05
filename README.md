@@ -6,9 +6,9 @@
 # Introducción (Motivo del proyecto)
 Inicio este proyecto porque los desarrolladores han dejado de trabajar en él a finales del año 2012 y a modo de aprendizaje decidí decompilar la última versión publicada por ellos, la v2.7.5 (compilada el 28 de novimebre de 2012).
 
-# Changelog
+# Changelog, aviso (05/03/2020): El proyecto estará en una pequeña pausa mientras preparo la publicación completa de la versión v2.7.5-R2 que incluye emulador, código fuente, bases de datos organizadas (datos estáticos y dinámicos separados), cliente con los clips correspondientes y próximamente un lang traducido al español, esto último sin duda es lo que más tiempo me tomará.
 
-🌀 Rev2 (03/03/2020 - 05/03/2020) - VERSIÓN ESTABLE
+🌀 v2.7.5-R2 (03/03/2020 - 05/03/2020) - VERSIÓN ESTABLE
 * Correcta inicialización  y ejecución del servidor (RealmServer y GameServer).
 * Desplazamiento de los personajes funcionando (Pathfinding).
 * Los zaaps ya se encuentran operativos.
@@ -29,7 +29,7 @@ Inicio este proyecto porque los desarrolladores han dejado de trabajar en él a 
 * Mascota y sus clases estáticas: Dos ArrayList parametrizados y varios ciclos for completados.
 * Progreso total: Ya no hay errores en el código fuente, inicialmente habían 287 errores y 231 advertencias detectadas por el IDE.
 
-🌀 Rev1 - Versión base (02/03/2020)
+🌀 v2.7.5-R1 - Versión base (02/03/2020)
 * Esta versión es el resultado de la decompilación del JAR, por lo tanto los errores están a la orden del día en el código fuente.
 * El servidor ni siquiera puede iniciarse correctamente, durante cierto punto ya era posible pero el Pathfinding estaba totalmente estropeado al igual que varios objetos interactivos.
 * Comandos: Corrección aplicada a los comandos "who", "SHOWFIGHTPOS", "TELEPORT", "IRMAPA", "ENERGIA", "ITEM", "KAMAS", "ENCHERVIDA" y "LEVEL".
@@ -65,26 +65,26 @@ A continuación se encuentran listados todos los cambios realizados por los auto
 * Consola (CMD) personalizada.
 * Items 2.0/2.8 (Actualizaciones constantes).
 
-🌀  Versión 2.5.0
+🌀 v2.5.0
 
-🌀 Versión 2.3.4
+🌀 v2.3.4
 * Se corrigió la creación de personajes.
 * Corrección de problemas SQL.
 * Se eliminaron los prefijos en la base de datos (ahora es posible usar cualquier CMS).
 
-🌀 Versión 2.3.3
+🌀 v2.3.3
 
-🌀 Versión 2.3.0
+🌀 v2.3.0
 
-🌀 Versión 2.2.0
+🌀 v2.2.0
 
-🌀 Versión 2.0.0
+🌀 v2.0.0
 
-🌀 Versión 1.5.0
+🌀 v1.5.0
 
-🌀 Versión 1.0.5
+🌀 v1.0.5
 
-🌀 Versión 1.0.0
+🌀 v1.0.0
 * Casamiento.
 * Dragopavo camaleón.
 * Cerca de 40 items VIP en la DB + NPC que los vende.
