@@ -63,11 +63,15 @@ public class Cuenta {
 		_kamasBanco = kamasBanco;
 		_objMercadillos = Mundo.getMisObjetos(_guid);
 		for (String item : banco.split("\\|")) {
+			if (item.equals("")) {
+				continue;
+			}
 			String[] infos = item.split(":");
 			int id = Integer.parseInt(infos[0]);
 			Objeto obj = Mundo.getObjeto(id);
-			if (item.equals("") || (obj = Mundo.getObjeto(id = Integer.parseInt((infos = item.split(":"))[0]))) == null)
+			if (obj == null) {
 				continue;
+			}
 			_objetosEnBanco.put(obj.getID(), obj);
 		}
 		for (String f : amigos.split(";")) {

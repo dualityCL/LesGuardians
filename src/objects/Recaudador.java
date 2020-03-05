@@ -41,12 +41,16 @@ public class Recaudador {
 		_gremioID = gremioID;
 		_nombre_1 = N1;
 		_nombre_2 = N2;
-		for (String item : items.split("\\|")) {
-			String[] infos = item.split(":");
+		for (String str : items.split("\\|")) {
+			if (str.equals("")) {
+				continue;
+			}
+			String[] infos = str.split(":");
 			int id = Integer.parseInt(infos[0]);
 			Objeto obj = Mundo.getObjeto(id);
-			if (item.equals("") || (obj = Mundo.getObjeto(id = Integer.parseInt((infos = item.split(":"))[0]))) == null)
+			if (obj == null) {
 				continue;
+			}
 			_objetos.put(obj.getID(), obj);
 		}
 		_xp = xp;

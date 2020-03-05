@@ -29,10 +29,13 @@ public class Cofre {
 		_mapaID = mapaID;
 		_celdaID = celdaID;
 		for (String objeto : objetos.split("\\|")) {
+			if (objeto.equals("")) {
+				continue;
+			}
 			String[] infos = objeto.split(":");
 			int idObjeto = Integer.parseInt(infos[0]);
 			Objeto obj = Mundo.getObjeto(idObjeto);
-			if (objeto.equals("") || (obj = Mundo.getObjeto(idObjeto = Integer.parseInt((infos = objeto.split(":"))[0]))) == null) {
+			if (obj == null) {
 				continue;
 			}
 			_objetos.put(obj.getID(), obj);
