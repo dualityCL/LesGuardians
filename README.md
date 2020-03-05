@@ -19,13 +19,13 @@ Inicio este proyecto porque los desarrolladores han dejado de trabajar en él a 
 * Objeto: Algunos ArrayList parametrizados e interfaces Map.Entry corregidas.
 * Dragopavo, Tutorial, PiedraAlma, MobModelo, NPCModelo y RespuestaNPC: Varios ArrayList parametrizados.
 * EfectoHechizo: Múltiples correcciones en el método "aplicarBuffContraGolpe", ciclo for corregido del método "aplicarAPelea" y varias correcciones en  los métodos "aplicarEfecto_5", "aplicarEfecto_671" y "aplicarEfecto_672".
-* Cuenta: Argumentos de ArrayList's parametrizados y modificación de algunas declaraciones del ciclo for de objetos en banco.
+* Cuenta: Argumentos de ArrayList parametrizados y modificación de algunas declaraciones del ciclo for de objetos en banco.
 * LesGuardians: Eliminado apartado static, se han agregado los valores correspondientes a cada variable. Todos los printOut's han sido traducidos del PT al ES.
 * (HOTFIX 05-03-2020) Cuenta, Cofre y Recaudador: Corrección en tres ciclos for; objetos de banco, cofres y recaudadores. Impedían el inicio del emulador (NumberFormatException).
 * Combate: Correcciones en los métodos "acaboPelea", "getPanelResultados", "puedeLanzarHechizo", "intentarCaC", "intentarLanzarHechizo", "finTurno", "inicioTurno",  "puedeMoverseLuchador", "botonSoloGrupo" y varios public constructors "Combate".
 * Hechizo y Mapa: Varios ArrayList parametrizados.
 * Oficio y sus clases estáticas: Varios ArrayList parametrizados y correcciones aplicadas a los métodos "iniciarReceta", "recetaForjaMagia", "iniciarTrabajoPago" y "trabajoPagoFM".
-* Mercadillo y sus clases estáticas: Varios ArrayList's parametrizados, corrección en el método "ordenar".
+* Mercadillo y sus clases estáticas: Varios ArrayList parametrizados, corrección en el método "ordenar".
 * Mascota y sus clases estáticas: Dos ArrayList parametrizados y varios ciclos for completados.
 * Progreso total: Ya no hay errores en el código fuente, inicialmente habían 287 errores y 231 advertencias detectadas por el IDE.
 
