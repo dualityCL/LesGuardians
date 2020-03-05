@@ -2714,8 +2714,9 @@ public class Constantes {
 				if (ACCIONES_TRABAJO[v][0] == trabajoID) {
 					ArrayList<Integer> x = new ArrayList<Integer>();
 					x.add(ACCIONES_TRABAJO[v][1]);
-					if (ACCIONES_TRABAJO[v].length > 2)
+					if (ACCIONES_TRABAJO[v].length > 2) {
 						x.add(ACCIONES_TRABAJO[v][2]);
+					}
 					obj.add(x);
 				}
 			}
@@ -4779,61 +4780,69 @@ public class Constantes {
     public static boolean esRetoPosible1(int nuevo, Combate pelea) {
 		try {
 			switch (nuevo) {
-				case 7 :// jardinero, durante el combate, plantar una zanahowia cada vez q se pueda
+				case 7 :
 					for (Luchador luchador : pelea.luchadoresDeEquipo(1)) {
-						if (luchador.getPersonaje().tieneHechizoID(367))
+						if (luchador.getPersonaje().tieneHechizoID(367)) {
 							return true;
+						}
 					}
 					return false;
-				case 12 :// sepultero, invoca un chaferloko cada vez q se pueda
+				case 12 :
 					for (Luchador luchador : pelea.luchadoresDeEquipo(1)) {
-						if (luchador.getPersonaje().tieneHechizoID(373))
+						if (luchador.getPersonaje().tieneHechizoID(373)) {
 							return true;
+						}
 					}
 					return false;
 				case 14 :// casino real, lanzar el hechizo ruleta cada vez q se pueda
 					for (Luchador luchador : pelea.luchadoresDeEquipo(1)) {
-						if (luchador.getPersonaje().tieneHechizoID(101))
+						if (luchador.getPersonaje().tieneHechizoID(101)) {
 							return true;
+						}
 					}
 					return false;
 				case 15 :// aracnofilo, invocar una araña cada vez q se pueda
 					for (Luchador luchador : pelea.luchadoresDeEquipo(1)) {
-						if (luchador.getPersonaje().tieneHechizoID(370))
+						if (luchador.getPersonaje().tieneHechizoID(370)) {
 							return true;
+						}
 					}
 					return false;
 				case 29 :
-				case 28 :// ni pias ni sumisas, los hombres deben acabar con todos los mobs
+				case 28 :
 					int masc = 0;
 					int fem = 0;
 					for (Luchador luchador : pelea.luchadoresDeEquipo(1)) {
-						if (luchador.getPersonaje().getSexo() == 1)
+						if (luchador.getPersonaje().getSexo() == 1) {
 							fem++;
-						else
+						} else {
 							masc++;
+						}
 					}
-					if (fem > 0 && masc > 0)
+					if (fem > 0 && masc > 0) {
 						return true;
+					}
 					return false;
-				case 10 :// Cruel
-				case 25 :// ordenado
-				case 42 :// el dos por uno, Cuando un personaje mata a un adversario, tiene que matar obligatoriamente a un (y sólo
-					if (pelea.luchadoresDeEquipo(2).size() >= 2)
+				case 10 :
+				case 25 :
+				case 42 :
+					if (pelea.luchadoresDeEquipo(2).size() >= 2) {
 						return true;
+					}
 					return false;
-				case 44 :// reparto, Cada personaje debe matar al menos a un adversario (que no sea una invocación) durante el
-				case 46 :// cada uno con su mounstro, Cada personaje debe matar al menos a un adversario durante el combate.
-					if (pelea.luchadoresDeEquipo(2).size() >= pelea.luchadoresDeEquipo(1).size()
-					&& pelea.luchadoresDeEquipo(1).size() > 1)
+				case 44 :
+				case 46 :
+					if (pelea.luchadoresDeEquipo(2).size() >= pelea.luchadoresDeEquipo(1).size() && pelea.luchadoresDeEquipo(1).size() > 1) {
 						return true;
+					}
 					return false;
 				case 37 :
-				case 30 :// los pequeños antes, el personaje de menor nivel debe acabar con todos los mobs
-				case 33 :// superviviente, Ningún aliado debe morir
-				case 47 :// contaminacion, Cuando un aliado pierde puntos de vida, dispones de 3 turnos para rematar a tu aliado o
-					if (pelea.luchadoresDeEquipo(1).size() >= 2)
+				case 30 :
+				case 33 :
+				case 47 :
+					if (pelea.luchadoresDeEquipo(1).size() >= 2) {
 						return true;
+					}
 					return false;
 			}
 			return true;
