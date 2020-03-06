@@ -141,7 +141,7 @@ A continuación se encuentran listados todos los cambios realizados por los auto
 * Objetivos (alvos en PT) que dan experiencia.
 * Comandos para todos los territorios.
 * Nuevos comandos para el jugador: .enchervida y .staff.
-* Nuevos comandos para la consola: block (solo los administradores pueden conectarse al servidor), lock (libera el servidor), shutdown (vuelve a abrir el servidor a la hora deseada) ytrigger (agrega triggers sin tener que hacerlo desde la DB).
+* Nuevos comandos para la consola: block (solo los administradores pueden conectarse al servidor), lock (libera el servidor), shutdown (vuelve a abrir el servidor a la hora deseada) y trigger (agrega triggers sin tener que hacerlo desde la DB).
 * Emulador portugués.
 
 # Créditos
