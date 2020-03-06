@@ -1,5 +1,5 @@
 # LesGuardians
-![Version](https://img.shields.io/badge/Version-2.7.5-R2-purple.svg) ![Rev](https://img.shields.io/badge/Rev-R2-purple.svg) ![Build Status](https://img.shields.io/badge/build-ENDED-purple.svg)
+![Version](https://img.shields.io/badge/Version-2.7.5_R2-purple.svg) ![Rev](https://img.shields.io/badge/Rev-R2-purple.svg) ![Build Status](https://img.shields.io/badge/build-ENDED-purple.svg)
 
 <p align="center"><img src="https://i.imgur.com/SubpjnI.png" width="50%"><br>Escrito en Java</p>
 
