@@ -1978,7 +1978,7 @@ public class SQLManager {
     public static void UPDATE_CUENTA_LOG_UNO(int cuentaID) {
         String consultaSQL = "UPDATE `accounts` SET logged=1 WHERE `guid`=" + cuentaID + ";";
         try {
-            SQLManager.setTitle("Dof'Emu, Connectes : " + LesGuardians._servidorPersonaje.nroJugadoresLinea());
+            SQLManager.setTitle(LesGuardians.NOME_SERVIDOR + ">> Conectados: " + LesGuardians._servidorPersonaje.nroJugadoresLinea());
             PreparedStatement declaracion = SQLManager.nuevaTransaccion(consultaSQL, BDD_OTHER);
             declaracion.executeUpdate();
         }

@@ -194,7 +194,7 @@ public class Personaje {
 	}
 
 	public boolean getReconectado() {
-		Personaje.setTitle("Les Guardians, Conectados : " + LesGuardians._servidorPersonaje.nroJugadoresLinea());
+		Personaje.setTitle("LesGuardians>> Conectados: " + LesGuardians._servidorPersonaje.nroJugadoresLinea());
 		return _reconectado;
 	}
 
@@ -1689,41 +1689,29 @@ public class Personaje {
 	}
 
 	public void mostrarRates() {
-		SocketManager.ENVIAR_BAIO_MENSAJE_PANEL_INFORMACION(this, String.valueOf(LesGuardians.NOME_SERVIDOR)
-				+ "\n<b>Divers\u00e3o garantida !</b> \n\n"
-				+ "Servidor 24/7. Completo e com atualiza\u00e7\u00f5es peri\u00f3dicas para sua melhor jogabilidade. ");
+		SocketManager.ENVIAR_BAIO_MENSAJE_PANEL_INFORMACION(this, LesGuardians.NOME_SERVIDOR + "\n<b>¡Diversión garantizada!</b> \n\n" + "Servidor 24/7, completo y con actualizaciones periódicas para una mejor jugabilidad.");
 	}
 
 	public void RATES() {
-		SocketManager.ENVIAR_BAIO_MENSAJE_PANEL_INFORMACION(this,
-				"<b>Evento Atual : " + LesGuardians.EVENTO + "\n<b>Rates do Servidor</b>" + "\nKAMAS : "
-						+ LesGuardians.RATE_KAMAS + "   \nDROP : " + LesGuardians.RATE_DROP + "\nEXP : "
-						+ LesGuardians.RATE_XP_PVM + "   \nPVP : " + LesGuardians.RATE_XP_PVP + "\nPROF : "
-						+ LesGuardians.RATE_XP_PROF + "  \nForja : " + LesGuardians.RATE_PORC_FM + "</b>");
+		SocketManager.ENVIAR_BAIO_MENSAJE_PANEL_INFORMACION(this, "<b>Evento actual: " + LesGuardians.EVENTO + "\n<b>Rates del servidor</b>" + "\nKAMAS : " + LesGuardians.RATE_KAMAS + "   \nDROP: " + LesGuardians.RATE_DROP + "\nEXP: " + LesGuardians.RATE_XP_PVM + "   \nPVP: " + LesGuardians.RATE_XP_PVP + "\nOFICIO: " + LesGuardians.RATE_XP_PROF + "  \nFM: " + LesGuardians.RATE_PORC_FM + "</b>");
 	}
 
 	public void INFOS() {
 		long enLinea = System.currentTimeMillis() - LesGuardians._servidorPersonaje.getTiempoInicio();
-		int hora = (int) (enLinea / 3600000L);
-		int minuto = (int) ((enLinea %= 3600000L) / 60000L);
-		int segundo = (int) ((enLinea %= 60000L) / 1000L);
-		SocketManager.ENVIAR_BAIO_MENSAJE_PANEL_INFORMACION(this,
-				String.valueOf(LesGuardians.NOME_SERVIDOR) + "\n" + "\nDivers\u00e3o garantida !\n"
-						+ "\nJogadores Online : " + LesGuardians._servidorPersonaje.nroJugadoresLinea()
-						+ "\nM\u00e1ximo de Conex\u00f5es : " + LesGuardians._servidorPersonaje.getRecordJugadores()
-						+ "   </b>" + "\nTempo Online : " + hora + "H " + minuto + "M " + segundo + "s");
+		int hora = (int) (enLinea / 3600000L), minuto = (int) ((enLinea %= 3600000L) / 60000L), segundo = (int) ((enLinea %= 60000L) / 1000L);
+		SocketManager.ENVIAR_BAIO_MENSAJE_PANEL_INFORMACION(this, LesGuardians.NOME_SERVIDOR+ "\n" + "\n¡Diversión garantizada!\n" + "\nJugadores conectados: " + LesGuardians._servidorPersonaje.nroJugadoresLinea() + "\nRécord de conexiones: " + LesGuardians._servidorPersonaje.getRecordJugadores() + "   </b>" + "\nTiempo en línea: " + hora + "h " + minuto + "m " + segundo + "s");
 	}
 
 	public String analizarFiguraDelPJ() {
 		String packetOa = "Oa";
-		packetOa = String.valueOf(packetOa) + _ID + "|";
-		packetOa = String.valueOf(packetOa) + getStringAccesorios();
+		packetOa = packetOa + _ID + "|";
+		packetOa = packetOa + getStringAccesorios();
 		return packetOa;
 	}
 
 	public String stringGMmercante() {
 		StringBuffer str = new StringBuffer();
-		str.append(String.valueOf(_celda.getID()) + ";");
+		str.append(_celda.getID() + ";");
 		str.append("1;");
 		str.append("0;");
 		str.append(String.valueOf(_ID) + ";");
@@ -3040,7 +3028,7 @@ public class Personaje {
 		SocketManager.ENVIAR_ECK_PANEL_DE_INTERCAMBIOS(this, 16, str);
 	}
 
-	private String analizarListaDrago() { // FIXME revisar buen funcionamiento
+	private String analizarListaDrago() {
 		StringBuffer packet = new StringBuffer();
 		boolean primero = false;
 		if (_cuenta.getEstablo().size() > 0) {

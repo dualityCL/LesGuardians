@@ -60,7 +60,8 @@ public class ConsolaPersonalización implements Runnable {
             return;
         }
         if (fct.equals("LIMPAR")) {
-            LesGuardians.ReDofemuStarted();
+        	Consola.clear();
+            LesGuardians.CleanStart();
         } else if (fct.equalsIgnoreCase("ANUNCIAR")) {
             String announce = command.substring(9);
             String PrefixConsole = "<b>Servidor</b> : ";

@@ -134,15 +134,15 @@ public class LesGuardians {
 		});
 		Consola.clear();
 		System.out.println("-------------------------------------------------------------------------------");
-		System.out.println("--- LES Guardians Emu 2.7.5 --- ");
+		System.out.println("--- LesGuardians v2.7.5-R2 --- ");
 		System.out.println("--- Equipo de desarrollo: ---");
-		System.out.println("--- EduardoLBS ---");
-		System.out.println("--- Samuka ---");
+		System.out.println("--- EduardoLBS (Java) ---");
+		System.out.println("--- Samuka (SWF) ---");
 		System.out.println("--- Contacto: eduardo.lbs@live.com ---");
 		System.out.println("--- Contacto: samuel@dpbrasil.net ---");
 		System.out.println("--- Decompilado por RSPAWN ---");
 		System.out.print("\nConfiguración:");
-		LesGuardians.setTitle("Les Guardians, Carregando...");
+		LesGuardians.setTitle("LesGuardians, cargando...");
 		LesGuardians.cargarConfiguracion();
 		_estaIniciado = true;
 		System.out.println(" Cargada.");
@@ -160,24 +160,16 @@ public class LesGuardians {
 	}
 
 	public static void DofemuStarted() {
-		Consola.clear();
+		//Consola.clear();
 		System.out.println("-------------------------------------------------------------------------------");
-		System.out.println("--- LES Guardians Emu 2.7.5 --- ");
-		System.out.println("--- Equipo de desarrollo: ---");
-		System.out.println("--- EduardoLBS ---");
-		System.out.println("--- Samuka ---");
-		System.out.println("--- Contacto: eduardo.lbs@live.com ---");
-		System.out.println("--- Contacto: samuel@dpbrasil.net ---");
-		System.out.println("--- Decompilado por RSPAWN ---");
-		System.out.println("--- Versiones del emulador [JAVA]: 1.0.0, 1,5.0, 2.0.0, 2.2.0, 2.3.0, 2.3.3, 2.3.4, 2.5.0 e 2.7.5");
-		System.out.print("\nCargando servidor...");
+		System.out.println("--- Mundo cargado, iniciando RealmServer y GameServer ---");
+		System.out.print("\nCargando...");
 		for (int i = 0; i < 40; ++i) {
 			System.out.print(".");
 			try {
 				Thread.sleep(100L);
 				continue;
-			} catch (InterruptedException interruptedException) {
-			}
+			} catch (InterruptedException interruptedException) {}
 		}
 		System.out.println(". Ok");
 		String Ip = "";
@@ -187,40 +179,26 @@ public class LesGuardians {
 			System.out.println(e.getMessage());
 			try {
 				Thread.sleep(10000L);
-			} catch (InterruptedException interruptedException) {
-			}
+			} catch (InterruptedException interruptedException) {}
 			System.exit(1);
 		}
 		Ip = IP_PC_SERVER;
 		_servidorGeneral = new RealmServer();
 		_servidorPersonaje = new GameServer(Ip);
 		_cerrando = false;
-		LesGuardians.setTitle("LesGuardians>Conectados: " + _servidorPersonaje.nroJugadoresLinea() + ".");
+		LesGuardians.setTitle("LesGuardians>> Conectados: " + _servidorPersonaje.nroJugadoresLinea());
 		Consola.println("\nServidor iniciado, esperando conexiones...", Consola.ConsoleColorEnum.GREEN);
-		Consola.println("Escribe HELP o ? para ver la lista de comandos).", Consola.ConsoleColorEnum.YELLOW);
+		Consola.println("Escribe HELP o ? para ver la lista de comandos.", Consola.ConsoleColorEnum.YELLOW);
 		new ConsolaPersonalización();
 		try {
 			Thread.sleep(21600000L);
-		} catch (InterruptedException interruptedException) {
-		}
+		} catch (InterruptedException interruptedException) {}
 		System.exit(0);
 	}
 
-	public static void ReDofemuStarted() {
-		System.out.println("-------------------------------------------------------------------------------");
-		System.out.println("--- LES Guardians Emu 2.7.5 --- ");
-		System.out.println("--- Equipo de desarrollo: ---");
-		System.out.println("--- EduardoLBS ---");
-		System.out.println("--- Samuka ---");
-		System.out.println("--- Contacto: eduardo.lbs@live.com ---");
-		System.out.println("--- Contacto: samuel@dpbrasil.net ---");
-		System.out.println("--- Decompilado por RSPAWN ---");
-		System.out.println("--- Versiones del emulador [JAVA]: 1.0.0, 1,5.0, 2.0.0, 2.2.0, 2.3.0, 2.3.3, 2.3.4, 2.5.0 e 2.7.5");
-		System.out.print("\nCargando servidor...");
-		System.out.print("........................................");
-		System.out.println(". Ok");
-		Consola.println("Servidor iniciado, esperando conexiones...", Consola.ConsoleColorEnum.GREEN);
-		Consola.println("Escribe HELP o ? para ver la lista de comandos).", Consola.ConsoleColorEnum.YELLOW);
+	public static void CleanStart() {
+		Consola.println("Consola limpiada, gracias por utilizar LesGuardians v2.7.5-R2.", Consola.ConsoleColorEnum.GREEN);
+		Consola.println("Escribe HELP o ? para ver la lista de comandos.", Consola.ConsoleColorEnum.YELLOW);
 		new ConsolaPersonalización();
 	}
 
@@ -229,13 +207,15 @@ public class LesGuardians {
 			config = new BufferedReader(new FileReader("LesGuardians.txt"));
 			String linea = "";
 			while ((linea = config.readLine()) != null) {
-				if (linea.split("=").length == 1)
+				if (linea.split("=").length == 1) {
 					continue;
+				}
 				String param = linea.split("=")[0].trim();
 				String valor = linea.split("=")[1].trim();
 				if (param.equalsIgnoreCase("ENVIAR_SOS")) {
-					if (!valor.equalsIgnoreCase("true"))
+					if (!valor.equalsIgnoreCase("true")) {
 						continue;
+					}
 					MOSTRAR_ENVIOS_SOS = true;
 					continue;
 				}

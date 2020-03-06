@@ -132,9 +132,9 @@ public class GameServer implements Runnable {
 		AnsiConsole.out.print("\u001b[H\u001b[2J");
 	}
 
-	public static void setTitle(String title) {
+	/*public static void setTitle(String title) {
 		AnsiConsole.out.printf("%c]0;%s%c", Character.valueOf('\u001b'), title, Character.valueOf('\u0007'));
-	}
+	}*/
 
 	public ArrayList<GameThread> getClientes() {
 		return _clientes;

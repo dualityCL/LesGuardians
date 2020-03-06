@@ -620,9 +620,6 @@ public class SocketManager {
         for (Personaje z : mapa.getPersos()) {
             SocketManager.enviar(z, packet);
         }
-        if (LesGuardians.MOSTRAR_ENVIOS_STD) {
-            System.out.println("ENVOYER GROUPE DE MONSTRE: MAP>>  " + packet);
-        }
     }
 
     public static void ENVIAR_GM_PERSONAJE_A_MAPA(Mapa mapa, Personaje perso) {
