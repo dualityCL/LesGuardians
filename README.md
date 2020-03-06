@@ -48,6 +48,22 @@ A continuación se encuentran listados todos los cambios realizados por los auto
 * Items 2.0/2.8 (Actualizaciones constantes).
 
 🌀 v2.5.0
+* Objetos/Acciones: Corrección de los pergaminos, no multipliques y no hagas spam de su efecto en el chat.
+* Sistema: Creación de multiservidor para pruebas internas por parte del Staff.
+* Sistema: Sistema de alimentación de mascotas creado (ahora es necesario alimentar tu mascota para que gane stats).
+* Objetos/Acciones: Objetos de mejora creados para las mascotas (aumenta el límite de stats).
+* Lucha/Personaje: El personaje ya no comienza automáticamente una pelea si aparece en una casilla ocupada por un grupo de monstruos.
+* Lucha/Personaje/Hechizo: Corrección de desbuffs de hechizos.
+* Objetos/Acciones: Corrección de todas las viñetas (Energético, + Estado, etc.)
+* Lucha: Se creó un método que bloquea el acceso al modo espectador de las peleas.
+* Servidor: comandos de teletransporte rediseñados, con restricción para teletransportarse dentro de una pelea.
+* Lucha: Espectador logra ver los rtos actuales de la pelea.
+* Objetos/Acciones: Se agregó acción de aura de vampiro al colocar una de las partes del Set Vampyro.
+* Personaje: El personaje se teletransporta al cementerio más cercano cuando muere.
+* Sistema: Mejorado el sistema VIP del servidor, ahora tiene áreas premium para VIPS. (Dentro del área premium, el jugador normal no puede pelear contra mobs, hacer PvP, entre otras cosas).
+* Fórmula: Añadida fórmula donde cada HIT tomado disminuirá la vitalidad FIJA. (Evitando así peleas interminables entre Ani vs Ani entre otros...).
+* Sistema: Recaudadores (reajustada la frase cuando el recaudador es atacado. se corrigió el panel de defensa en el gremio y la función para recolectar.
+* Sistema reconexión automática creado cuando el servidor sufre cierta inestabilidad. (Evitando que se pierda la conexión).
 
 🌀 v2.3.4
 * Se corrigió la creación de personajes.
@@ -55,16 +71,57 @@ A continuación se encuentran listados todos los cambios realizados por los auto
 * Se eliminaron los prefijos en la base de datos (ahora es posible usar cualquier CMS).
 
 🌀 v2.3.3
+* Comandos fijos: .astrub .shop y .criarguilda.
+* Corregidos hechizos especiales de clase al 80%.
+* Se arregló la invocación de Chaferloko.
+* Se creó el .exe del emulador.
+* Método de comando de jugador rediseñado.
 
 🌀 v2.3.0
+* Corección de objetos con acciones (se implementaron +12 pociones de teletransporte): 25%.
+* Traducción de pociones de mazmorras: 85%
+* Se agregaron +65 elementos 2.0 con estado listo en la base de datos.
+* Creación de lang propio para el emulador.
+* Bases de datos (static y dynamic) ahora están en una sola (peor idea).
+* Reformulación de SocketManager: Detallando todos los procesos del juego por el emulador en portugués.
+* Reformulación de SQLManager.
+* Sistemas de prismas: 50%.
 
 🌀 v2.2.0
+* Sistema de prismas 30%.
+* Sistema de mascotas alimentables 60%.
+* Sistema de mensajes automáticos 100%.
+* Sistema de regalos 100%.
+* Bloquea los comandos del sistema de los jugadores a través de la configuración.
+* Mensaje de bienvenida 100%.
+* Set inicial ajustable por config.
+* Se corrigieron las invocaciones del Osamodas al 100%.
+* Se corrigieron los objevivos al 100%.
+* Se corrigió el comando .life 100%.
+* Se corrigió la lista de amigos al 100%.
+* Recaudadores corregidos (defender recaudador idéntico al servidor oficial).
+* Matrimonios corregidos (teletransportarse usando el botón de unión).
 
 🌀 v2.0.0
+* Mobs con estrellas.
+* Modo comerciante 100%.
+* Retos 100%.
+* Hechizos 90% 
+* Interactividad del emulador con el servidor: Comando mute envía mensajes al chat global del juego, lo mismo sucede cuando se otorgan títulos.
+* Todos los logs del servidor están en portugués (si un jugador se tira un pedo, el personal lo sabe).
+* Experiencia de los mobs ajustada.
+* Nuevos comandos de chat: .a (chat global), .v (chat VIP) y .e (chat de eventos).  
+* Más de 40 comandos.
 
 🌀 v1.5.0
+* Retos 75%.
+* Modo comerciante 90% (bug al quitar modo comerciante).
+* Objevivos 100%
+* Cofres de casas 100%.
 
 🌀 v1.0.5
+* Se corrigió un error al crear personajes.
+* Se corrigió un error cuando se colocaba/retiraba un recaudador.
 
 🌀 v1.0.0
 * Casamiento.
@@ -82,15 +139,11 @@ A continuación se encuentran listados todos los cambios realizados por los auto
 * Objetivos (alvos en PT) que dan experiencia.
 * Comandos para todos los territorios.
 * Nuevos comandos para el jugador: .enchervida y .staff.
-* Nuevos comandos para la consola: 
-- block (solo los administradores pueden conectarse al servidor).
-- lock (libera el servidor).
-- shutdown (vuelve a abrir el servidor a la hora deseada).
-- trigger (agrega triggers sin tener que hacerlo desde la DB).
+* Nuevos comandos para la consola: block (solo los administradores pueden conectarse al servidor), lock (libera el servidor), shutdown (vuelve a abrir el servidor a la hora deseada) ytrigger (agrega triggers sin tener que hacerlo desde la DB).
 * Emulador portugués.
 
 # Créditos
 
-El emulador fue desarrollado originalmente por EduardoLBS (eduardo.lbs@live.com) y Samuka basándose en el emulador Elbustemu. 
+El emulador fue desarrollado originalmente por EduardoLBS (eduardo.lbs@live.com) y Samuka (samuel@dpbrasil.net) basándose en el emulador Elbustemu. 
 
 Si lo deseas, puedes visitar la página oficial de los desarrolladores haciendo [clic aquí](http://www.lesguardiansemu.xpg.com.br/).
