@@ -1,33 +1,15 @@
 # LesGuardians
-![Version](https://img.shields.io/badge/Version-2.7.5-purple.svg) ![Rev](https://img.shields.io/badge/Rev-2-purple.svg) ![Build Status](https://img.shields.io/badge/build-WIP-purple.svg)
+![Version](https://img.shields.io/badge/Version-2.7.5-purple.svg) ![Rev](https://img.shields.io/badge/R2-purple.svg) ![Build Status](https://img.shields.io/badge/build-ENDED-purple.svg)
 
 <p align="center"><img src="https://i.imgur.com/SubpjnI.png" width="50%"><br>Escrito en Java</p>
 
 # Introducción (Motivo del proyecto)
 Inicio este proyecto porque los desarrolladores han dejado de trabajar en él a finales del año 2012 y a modo de aprendizaje decidí decompilar la última versión publicada por ellos, la v2.7.5 (compilada el 28 de novimebre de 2012).
 
-# Changelog, aviso (05/03/2020): El proyecto estará en una pequeña pausa mientras preparo la publicación completa de la versión v2.7.5-R2 que incluye emulador, código fuente, bases de datos organizadas (datos estáticos y dinámicos separados), cliente con los clips correspondientes y próximamente un lang traducido al español, esto último sin duda es lo que más tiempo me tomará.
+# Changelog 
 
 🌀 v2.7.5-R2 (03/03/2020 - 05/03/2020) - VERSIÓN ESTABLE
-* Correcta inicialización  y ejecución del servidor (RealmServer y GameServer).
-* Desplazamiento de los personajes funcionando (Pathfinding).
-* Los zaaps ya se encuentran operativos.
-* Se han traducido varios nombres de clases Java.
-* Mundo: Ahora los zaaps son cargados al iniciar el servidor.
-* GameServer: ArrayList parametrizados y eliminada variable booleana inncesaria en void run().
-* Recaudador y Cofre: Se han modificado las declaraciones del ciclo for para objetos.
-* Objeto: Algunos ArrayList parametrizados e interfaces Map.Entry corregidas.
-* Dragopavo, Tutorial, PiedraAlma, MobModelo, NPCModelo y RespuestaNPC: Varios ArrayList parametrizados.
-* EfectoHechizo: Múltiples correcciones en el método "aplicarBuffContraGolpe", ciclo for corregido del método "aplicarAPelea" y varias correcciones en  los métodos "aplicarEfecto_5", "aplicarEfecto_671" y "aplicarEfecto_672".
-* Cuenta: Argumentos de ArrayList parametrizados y modificación de algunas declaraciones del ciclo for de objetos en banco.
-* LesGuardians: Eliminado apartado static, se han agregado los valores correspondientes a cada variable. Todos los printOut's han sido traducidos del PT al ES.
-* (HOTFIX 05-03-2020) Cuenta, Cofre y Recaudador: Corrección en tres ciclos for; objetos de banco, cofres y recaudadores. Impedían el inicio del emulador (NumberFormatException).
-* Combate: Correcciones en los métodos "acaboPelea", "getPanelResultados", "puedeLanzarHechizo", "intentarCaC", "intentarLanzarHechizo", "finTurno", "inicioTurno",  "puedeMoverseLuchador", "botonSoloGrupo" y varios public constructors "Combate".
-* Hechizo y Mapa: Varios ArrayList parametrizados.
-* Oficio y sus clases estáticas: Varios ArrayList parametrizados y correcciones aplicadas a los métodos "iniciarReceta", "recetaForjaMagia", "iniciarTrabajoPago" y "trabajoPagoFM".
-* Mercadillo y sus clases estáticas: Varios ArrayList parametrizados, corrección en el método "ordenar".
-* Mascota y sus clases estáticas: Dos ArrayList parametrizados y varios ciclos for completados.
-* Progreso total: Ya no hay errores en el código fuente, inicialmente habían 287 errores y 231 advertencias detectadas por el IDE.
+* Puedes descargar el emulador completo reorganizado (jar, src, db, clips, lang) haciendo [clic aquí](https://github.com/RSPAWN/LesGuardians/releases/tag/v2.7.5-R2), donde también encontrarás el changelog completo de dicha versión.
 
 🌀 v2.7.5-R1 - Versión base (02/03/2020)
 * Esta versión es el resultado de la decompilación del JAR, por lo tanto los errores están a la orden del día en el código fuente.
