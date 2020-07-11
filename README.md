@@ -4,7 +4,7 @@
 <p align="center"><img src="https://i.imgur.com/SubpjnI.png" width="50%"><br>Escrito en Java</p>
 
 # Introducción (Motivo del proyecto y una pequeña declaración de copyright)
-Inicio este proyecto porque los desarrolladores han dejado de trabajar en él a finales del año 2012 y a modo de aprendizaje decidí decompilar la última versión publicada por ellos, la v2.7.5 (compilada el 28 de novimebre de 2012).
+Inicio este proyecto porque los desarrolladores han dejado de trabajar en él a finales del año 2012 y a modo de aprendizaje decidí descompilar la última versión publicada por ellos, la v2.7.5 (compilada el 28 de novimebre de 2012).
 
 Todos los derechos de este proyecto pertenecen a los desarrolladores originales, si vas a trabajar con estos archivos tienes que darle crédito a los desarrolladores originales. He dejado datos para contactarlos, revísalos haciendo [clic aquí](https://github.com/RSPAWN/LesGuardians#cr%C3%A9ditos).
 
