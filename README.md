@@ -4,14 +4,14 @@
 <p align="center"><img src="https://i.imgur.com/SubpjnI.png" width="50%"><br>Escrito en Java</p>
 
 # Introducción (Motivo del proyecto y una pequeña declaración de copyright)
-Inicio este proyecto porque los desarrolladores han dejado de trabajar en él a finales del año 2012 y a modo de aprendizaje decidí descompilar la última versión publicada por ellos, la v2.7.5 (compilada el 28 de novimebre de 2012).
+Inicio este proyecto porque los desarrolladores han dejado de trabajar en él a finales del año 2012 y a modo de aprendizaje decidí descompilar la última versión publicada por ellos, la v2.7.5 (compilada el 28 de noviembre de 2012).
 
 Todos los derechos de este proyecto pertenecen a los desarrolladores originales, si vas a trabajar con estos archivos tienes que darle crédito a los desarrolladores originales. He dejado datos para contactarlos, revísalos haciendo [clic aquí](https://github.com/RSPAWN/LesGuardians#cr%C3%A9ditos).
 
 # Changelog 
 
 🌀 v2.7.5-R2 (03/03/2020 - 05/03/2020) - VERSIÓN ESTABLE
-* Puedes descargar el emulador completo reorganizado (jar, src, db, clips, lang) haciendo [clic aquí](https://github.com/RSPAWN/LesGuardians/releases/tag/v2.7.5-R2), donde también encontrarás el changelog completo de dicha versión.
+* Puedes descargar el emulador completo reorganizado (jar, src, db, clips, lang) haciendo [clic aquí](https://github.com/RSPAWN/LesGuardians/releases/tag/v2.7.5-R2), donde también encontrarás el changelog completo de dicha versión. No te preocupes, aquí ya se han solucionado los problemas listados en la v2.7.5-R1.
 
 🌀 v2.7.5-R1 - Versión base (02/03/2020)
 * Esta versión es el resultado de la decompilación del JAR, por lo tanto los errores están a la orden del día en el código fuente.
